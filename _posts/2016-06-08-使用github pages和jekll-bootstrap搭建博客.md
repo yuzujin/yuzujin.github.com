@@ -19,5 +19,5 @@ title: 使用github pages 和jekll-bootstrap搭建博客
     git push origin master
 之所以删除.git等文件，重新初始化仓库，是为了去掉原作者的提交信息。
 
-##运行Jekll
+## 运行Jekll
 访问username.github.io即可显示初始页面。
