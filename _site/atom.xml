@@ -1,16 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
  
- <title>Jekyll Bootstrap</title>
+ <title>Tumbler</title>
  <link href="http://username.github.io/atom.xml" rel="self"/>
  <link href="http://username.github.io"/>
- <updated>2016-06-08T18:49:59+08:00</updated>
+ <updated>2016-06-12T19:33:23+08:00</updated>
  <id>http://username.github.io</id>
  <author>
-   <name>Name Lastname</name>
-   <email>blah@email.test</email>
+   <name>Zujin</name>
+   <email>yuzujin@126.com</email>
  </author>
 
+ 
+ <entry>
+   <title>Apache最大连接数详解</title>
+   <link href="http://username.github.io/2016/06/12/apache"/>
+   <updated>2016-06-12T00:00:00+08:00</updated>
+   <id>http://username.github.io/2016/06/12/apache</id>
+   <content type="html">
+&lt;h2 id=&quot;apachempm&quot;&gt;Apache多路处理模块(MPM)&lt;/h2&gt;
+&lt;p&gt;Apache是一个跨平台的、采用模块化设计的服务器。为了应对不同的平台和不同的环境产生的各种不同的需求，也为了在具体的平台或环境下达到最佳的效果，Apache在web服务器的基础功能方面(端口绑定、接收请求等)也同样采用了模块化设计，这个Apache的核心模块就叫做多路处理模块(Multi-Processing Module，简称MPM)。&lt;/p&gt;
+
+&lt;p&gt;Apache针对不同的操作系统提供了多个不同的MPM模块，例如：mpm_beos、mpm_event、mpm_netware、mpmt_os2、mpm_prefork、mpm_winnt、mpm_worker。如果条件允许，我们可以根据实际需求将指定的MPM模块编译进我们自己的Apache中(Apache的源码是开放的，允许用户自行编译)。不过，如果在编译时我们没有选择，Apache将按照如下表格根据不同的操作系统自行选择对应的MPM模块，这也是Apache针对不同平台推荐使用的MPM模块。&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;不同操作系统上默认的MPM模块&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;操作系统&lt;/td&gt;
+      &lt;td&gt;MPM模块&lt;/td&gt;
+      &lt;td&gt;描述&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;windows&lt;/td&gt;
+      &lt;td&gt;mpm_wint&lt;/td&gt;
+      &lt;td&gt;省略&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>使用github pages 和jekll-bootstrap搭建博客</title>
+   <link href="http://username.github.io/2016/06/08/%E4%BD%BF%E7%94%A8github-pages%E5%92%8Cjekll-bootstrap%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2"/>
+   <updated>2016-06-08T00:00:00+08:00</updated>
+   <id>http://username.github.io/2016/06/08/使用github pages和jekll-bootstrap搭建博客</id>
+   <content type="html">
+&lt;h2 id=&quot;github&quot;&gt;创建一个github仓库&lt;/h2&gt;
+&lt;p&gt;首先，登录&lt;a href=&quot;https://github.com&quot;&gt;https://github.com&lt;/a&gt;建一个仓库，名字为username.github.com，将username替换为你实际的用户名，必须使用你的用户名，这点很重要。&lt;/p&gt;
+
+&lt;h2 id=&quot;jekll-bootstrap&quot;&gt;安装Jekll-bootstrap&lt;/h2&gt;
+&lt;p&gt;执行以下几个命令&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git clone https://github.com/plusjade/jekyll-bootstrap.git username.github.com
+cd username.github.com
+rm -f .git &amp;amp;&amp;amp; rm -f .gitignore
+git init
+git add .
+git remote add origin https://github.com/username/username.github.com.git
+git push origin master 之所以删除.git等文件，重新初始化仓库，是为了去掉原作者的提交信息。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;jekll&quot;&gt;运行Jekll&lt;/h2&gt;
+&lt;p&gt;访问username.github.io即可显示初始页面。&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Jekyll Introduction</title>

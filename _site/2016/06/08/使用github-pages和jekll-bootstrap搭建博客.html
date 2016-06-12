@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-   <title>Categories &larr; </title>
+   <title>使用github pages 和jekll-bootstrap搭建博客 &larr; </title>
    <meta name="author" content="Zujin" />
 
    <link rel="start" href="/" />
@@ -46,49 +46,25 @@
 
 <div id="page">
 	
-<h1 class="emphnext">Categories</h1>
+<h1 class="emphnext">使用github pages 和jekll-bootstrap搭建博客</h1>
 
+<h2 id="github">创建一个github仓库</h2>
+<p>首先，登录<a href="https://github.com">https://github.com</a>建一个仓库，名字为username.github.com，将username替换为你实际的用户名，必须使用你的用户名，这点很重要。</p>
 
+<h2 id="jekll-bootstrap">安装Jekll-bootstrap</h2>
+<p>执行以下几个命令</p>
 
-<ul class="tag_box inline">
-  
-  
+<pre><code>git clone https://github.com/plusjade/jekyll-bootstrap.git username.github.com
+cd username.github.com
+rm -f .git &amp;&amp; rm -f .gitignore
+git init
+git add .
+git remote add origin https://github.com/username/username.github.com.git
+git push origin master 之所以删除.git等文件，重新初始化仓库，是为了去掉原作者的提交信息。
+</code></pre>
 
-
-  
-     
-    	<li><a href="/categories.html#lessons-ref">
-    		lessons <span>1</span>
-    	</a></li>
-    
-  
-
-
-</ul>
-
-
- 
-  <h2 id="lessons-ref">lessons</h2>
-  <ul>
-      
-    
-
-
-  
-    
-      
-      	
-      	<li><a href="/lessons/2011/12/29/jekyll-introduction">Jekyll Introduction</a></li>
-      	
-      
-    
-  
-
-
-
-  </ul>
-
-
+<h2 id="jekll">运行Jekll</h2>
+<p>访问username.github.io即可显示初始页面。</p>
 
 
 </div><!-- End Page -->
