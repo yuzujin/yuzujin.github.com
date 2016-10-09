@@ -17,16 +17,19 @@ tags: []
 
 ##服务端安装&配置&启动
 1. 安装
-   ```python
+
+   ```
    yum install -y python-setuptools
    
    easy_install pip
    
    pip install shadowsocks
    ```
+   
 2. 配置
    创建配置文件 vi /etc/shadowsocks/config.json
-   ```json
+   
+   ```
    {
    	"server":"0.0.0.0",
    	"server_port":8388,
@@ -40,6 +43,8 @@ tags: []
    	}
    ```
    各个字段代表的含义如下：
+   
+   ```
    -**server**: 服务器监听地址
    -**server_port**: 服务器端口
    -**local_address**: 本地监听地址
@@ -49,17 +54,27 @@ tags: []
    -**method**: 加密算法
    -**fast_open**: 使用TCP_FASTOPEN，true/false
    -**workers**: 工作线程数，Unix/Linux可用
+   ```
+   
 3. 启动
    `ssserver -c /etc/shadowsocks.json -d start`
 
 ##客户端安装配置
 1. windows安装shadowsocks客户端
-   下载地址：https://github.com/shadowsocks/shadowsocks-windows/releases
-   服务器地址：aws 实例公用ip
-   服务器端口：ssserver启动的端口
-   密码：shadowsocks配置的密码(123)
+
+   -**下载地址**：https://github.com/shadowsocks/shadowsocks-windows/releases
+   
+   -**服务器地址**：aws 实例公用ip
+   
+   -**服务器端口**：ssserver启动的端口
+   
+   -**密码**：shadowsocks配置的密码(123)
+   
 2. chrome安装switchysharp插件
+
    代理协议：socks5 代理服务器：127.0.0.1 代理端口：1080
+   
 ##访问youtube
 www.youtube.com 成功。
+
 参考链接：http://www.cnblogs.com/wwlzz/p/4321998.html
