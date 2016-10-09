@@ -11,11 +11,13 @@ tags: []
 
 -------------
 
-##创建aws ec2实例
+## 创建aws ec2实例
+
 1. 选择t2.micro实例（可以免费使用一年，当然首先你得需要一个aws账号和信用卡信息），镜像选择AMI（实际上是centos系统）
+
 2. 安全策略中打开tcp端口（ssh:22、shadowsocks:8388）
 
-##服务端安装&配置&启动
+## 服务端安装&配置&启动
 
 1. 安装
 
@@ -58,7 +60,7 @@ tags: []
 3. 启动
    `ssserver -c /etc/shadowsocks.json -d start`
 
-##客户端安装配置
+## 客户端安装配置
 1. windows安装shadowsocks客户端
 
    -**下载地址**：https://github.com/shadowsocks/shadowsocks-windows/releases
