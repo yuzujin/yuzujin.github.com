@@ -16,13 +16,12 @@ tags: []
 2. 安全策略中打开tcp端口（ssh:22、shadowsocks:8388）
 
 ##服务端安装&配置&启动
+
 1. 安装
 
    ```
    yum install -y python-setuptools
-   
    easy_install pip
-   
    pip install shadowsocks
    ```
    
