@@ -28,6 +28,7 @@ tags: []
    ```
    
 2. 配置
+
    创建配置文件 vi /etc/shadowsocks/config.json
    
    ```
@@ -46,15 +47,15 @@ tags: []
    各个字段代表的含义如下：
    
    ```
-   -**server**: 服务器监听地址
-   -**server_port**: 服务器端口
-   -**local_address**: 本地监听地址
-   -**local_port**: 本地端口
-   -**password**: 密码
-   -**timeout**: 超时时间
-   -**method**: 加密算法
-   -**fast_open**: 使用TCP_FASTOPEN，true/false
-   -**workers**: 工作线程数，Unix/Linux可用
+   server: 服务器监听地址
+   server_port: 服务器端口
+   local_address: 本地监听地址
+   local_port: 本地端口
+   password: 密码
+   timeout: 超时时间
+   method: 加密算法
+   fast_open: 使用TCP_FASTOPEN，true/false
+   workers: 工作线程数，Unix/Linux可用
    ```
    
 3. 启动
@@ -75,7 +76,7 @@ tags: []
 
    代理协议：socks5 代理服务器：127.0.0.1 代理端口：1080
    
-##访问youtube
+## 访问youtube
 www.youtube.com 成功。
 
 参考链接：http://www.cnblogs.com/wwlzz/p/4321998.html
