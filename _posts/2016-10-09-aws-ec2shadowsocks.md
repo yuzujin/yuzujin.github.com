@@ -42,7 +42,7 @@ tags: []
    	"method":"aes-256-cfb",
    	"fast_open":false,
    	"workers": 1
-   	}
+   }
    ```
    各个字段代表的含义如下：
    
