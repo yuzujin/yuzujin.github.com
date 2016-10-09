@@ -9,6 +9,8 @@ tags: []
 
 **Shadowsocks**一个可穿透防火墙的快速代理。
 
+github地址：https://github.com/shadowsocks/shadowsocks
+
 -------------
 
 ## 创建aws ec2实例
