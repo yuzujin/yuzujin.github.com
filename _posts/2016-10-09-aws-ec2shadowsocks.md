@@ -6,7 +6,13 @@ category:
 tags: []
 ---
 {% include JB/setup %}
+
 **Shadowsocks**一个可穿透防火墙的快速代理。
+
+-------------
+
+[TOC]
+
 ##创建aws ec2实例
 1. 选择t2.micro实例（可以免费使用一年，当然首先你得需要一个aws账号和信用卡信息），镜像选择AMI（实际上是centos系统）
 2. 安全策略中打开tcp端口（ssh:22、shadowsocks:8388）
