@@ -8,7 +8,8 @@ tagline: Supporting tagline
 To see a world in a grain of sand,    
 And a heaven in a wild flower,   
 Hold infinity in the palm of your hand,     
-And eternity in an hour.   
+And eternity in an hour.  
+                     -- William Blake 
 
     
 ### Posts
