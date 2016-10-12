@@ -34,7 +34,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.91-b14, mixed mode)
 
 配置jre路径：
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/java.png =600x400)
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/java.png)
 
 
 ### 安装maven
@@ -60,11 +60,11 @@ PATH=$JAVA_HOME/bin:$M3_HOME/bin:$PATH
 
 然后再eclipse中配置maven路径，如下图：
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/maven.png =600x400)
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/maven.png)
 
 配置settings.xml文件：
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/maven2.png =600x400)
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/maven2.png)
 
 至此maven配置完成。
 
