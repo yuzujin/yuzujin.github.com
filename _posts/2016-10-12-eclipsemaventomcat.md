@@ -75,7 +75,10 @@ PATH=$JAVA_HOME/bin:$M3_HOME/bin:$PATH
 
 打开eclipse配置：
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/tomcat.png =600x400)
+<center>
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/tomcat.png" width=600 height=400 />
+Figure 4. tomcat
+</center>
 
 点击finish，配置完成。
 
