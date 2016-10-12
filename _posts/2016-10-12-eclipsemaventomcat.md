@@ -74,10 +74,8 @@ PATH=$JAVA_HOME/bin:$M3_HOME/bin:$PATH
 下载apache-tomcat-8.0.33.tar.gz安装包，解压即可使用
 
 打开eclipse配置：
-
 <center>
-<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/tomcat.png" width=600 height=400 />
-Figure 4. tomcat
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/tomcat.png)
 </center>
 
 点击finish，配置完成。
