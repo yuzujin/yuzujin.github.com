@@ -341,10 +341,10 @@ jdbc_password=123
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="  
-           http://www.springframework.org/schema/beans  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
            http://www.springframework.org/schema/aop  
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
@@ -403,4 +403,99 @@ jdbc_password=123
 </beans>
 ```
 
+## 接口和类的配置
 
+### 添加POJO类
+
+在src/main/java下创建package为com.test.global.mobile.tools.pb.model，在package下创建User.java类文件：
+
+```
+package com.test.global.mobile.tools.pb.model;
+
+public class User {
+
+    private Integer userId;  
+    private String userName;  
+    private String userPassword;  
+
+
+    public Integer getUserId() {  
+        return userId;  
+    }  
+
+    public void setUserId(Integer userId) {  
+        this.userId = userId;  
+    }  
+
+    public String getUserName() {  
+        return userName;  
+    }  
+
+    public void setUserName(String userName) {  
+        this.userName = userName;  
+    }  
+
+    public String getUserPassword() {  
+        return userPassword;  
+    }  
+
+    public void setUserPassword(String userPassword) {  
+        this.userPassword = userPassword;  
+    }  
+}
+```
+
+### 添加DAO层类文件
+
+在src/main/java下创建package为com.test.global.mobile.tools.pb.dao，在package下创建UserDao.java类文件：
+
+```
+package com.test.global.mobile.tools.pb.dao;
+
+import com.test.global.mobile.tools.pb.model.User;
+
+public interface UserDao {
+
+    /**
+     * @param userId
+     * @return User
+     */
+    public User selectUserById(Integer userId);  
+
+}
+```
+
+### 添加实现类和接口
+
+在src/main/java下创建package为com.test.global.mobile.tools.pb.service，在package下创建UserService.java接口类和UserServiceImpl实现类：
+
+```
+package com.test.global.mobile.tools.pb.service;
+
+import com.test.global.mobile.tools.pb.model.User;
+
+public interface UserService {
+    User selectUserById(Integer userId);  
+}
+```
+
+```
+package com.test.global.mobile.tools.pb.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.test.global.mobile.tools.pb.dao.UserDao;
+import com.test.global.mobile.tools.pb.model.User;
+
+@Service  
+public class UserServiceImpl implements UserService {
+
+    @Autowired  
+    private UserDao userDao;  
+
+    public User selectUserById(Integer userId) {  
+        return userDao.selectUserById(userId);  
+
+    }  
+}
+```
