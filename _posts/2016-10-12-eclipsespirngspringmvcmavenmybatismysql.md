@@ -44,11 +44,13 @@ INSERT INTO t_user (USER_ID, USER_NAME, USER_PASSWORD) VALUES (2, 'test2', '1234
 
 ![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/1.png)
 
-2. 选择快速框架
+2. 选择工作空间
 
 ![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/2.png)
 
-   下一步
+不要勾选快速框架，下一步，选择webapp框架：
+
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/0.png)
    
 3. 填写输出包名、group id、artifact id
 
@@ -499,3 +501,64 @@ public class UserServiceImpl implements UserService {
     }  
 }
 ```
+
+
+## 单元测试
+
+### 添加测试用例类
+
+在src/test/java下创建包com.test.baseTest，包下面创建测试用例类SpringTestCase.java：
+
+```
+package com.test.baseTest;
+
+import org.junit.runner.RunWith;  
+import org.springframework.test.context.ContextConfiguration;  
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;  
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;  
+
+//指定bean注入的配置文件  
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })  
+//使用标准的JUnit @RunWith注释来告诉JUnit使用Spring TestRunner  
+@RunWith(SpringJUnit4ClassRunner.class)  
+public class SpringTestCase extends AbstractJUnit4SpringContextTests {
+
+}
+```
+
+在src/test/java下创建包com.test.service，包下面创建测试服务类UserServiceTest.java：
+
+```
+package com.test.service;
+
+import org.junit.Test;  
+import org.springframework.beans.factory.annotation.Autowired;  
+import com.test.baseTest.SpringTestCase;  
+import com.test.global.mobile.tools.pd.model.User;
+
+public class UserServiceTest extends SpringTestCase {
+
+    @Autowired  
+    private UserService userService; 
+
+    @Test  
+    public void selectUserByIdTest(){  
+        User user = userService.selectUserById(1);  
+        System.out.println(user.getUserName() + ":" + user.getUserPassword());
+    }  
+}
+```
+
+运行单元测试，UserServiceTest右键Run As –>Junit Test，在控制台可以看到运行结果。
+
+
+## 转换为WEB项目
+
+如果上面webapp为空的，说明这个项目还不是web项目：
+
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/5.png)
+
+右键工程，点击Project Facets，接下来打开如下页面。将红框里面的勾去掉，确定（OK），然后重新打开刚刚那个页面，把Dynamic web Module勾上，就会看到红框的内容，点击：
+
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/6.png)
+
