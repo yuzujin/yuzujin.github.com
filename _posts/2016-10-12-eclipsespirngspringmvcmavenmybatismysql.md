@@ -552,13 +552,192 @@ public class UserServiceTest extends SpringTestCase {
 运行单元测试，UserServiceTest右键Run As –>Junit Test，在控制台可以看到运行结果。
 
 
-## 转换为WEB项目
+## 配置Springmvc
 
-如果上面webapp为空的，说明这个项目还不是web项目：
+在src/main/resource中添加springmvc文件夹，然后添加文件spring-mvc.xml，内容如下：
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/5.png)
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.2.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
-右键工程，点击Project Facets，接下来打开如下页面。将红框里面的勾去掉，确定（OK），然后重新打开刚刚那个页面，把Dynamic web Module勾上，就会看到红框的内容，点击：
+   <mvc:annotation-driven /> 
+   <!-- 扫描controller（controller层注入） -->
+   <context:component-scan base-package="com.test.global.mobile.tools.pd.controller"/>  
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/6.png)
+   <!-- 对模型视图添加前后缀 -->
+   <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+      p:prefix="/WEB-INF/view/" p:suffix=".jsp"/>
+</beans>
+```
+
+## 配置web.xml
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    id="WebApp_ID" version="2.5">
+    <display-name>Archetype Created Web Application</display-name>
+   <!-- 起始欢迎界面 -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- 读取spring配置文件 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:application.xml</param-value>
+    </context-param>
+    <!-- 设计路径变量值 -->
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>springmvc.root</param-value>
+    </context-param>
+
+
+    <!-- Spring字符集过滤器 -->
+    <filter>
+        <filter-name>SpringEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>SpringEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- springMVC核心配置 -->
+    <servlet>
+        <servlet-name>dispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <!--spingMVC的配置路径  -->
+            <param-value>classpath:springmvc/spring-mvc.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <!-- 拦截设置 -->
+    <servlet-mapping>
+        <servlet-name>dispatcherServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!-- 错误跳转页面 -->
+    <error-page>
+        <!-- 路径不正确 -->
+        <error-code>404</error-code>
+        <location>/WEB-INF/errorpage/404.jsp</location>
+    </error-page>
+    <error-page>
+        <!-- 没有访问权限，访问被禁止 -->
+        <error-code>405</error-code>
+        <location>/WEB-INF/errorpage/405.jsp</location>
+    </error-page>
+    <error-page>
+        <!-- 内部错误 -->
+        <error-code>500</error-code>
+        <location>/WEB-INF/errorpage/500.jsp</location>
+    </error-page>
+</web-app>
+```
+
+## 添加控制类
+
+在src/main/java下新建一个包com.test.global.mobile.tools.pd.controller.然后新建一个类UserController.java,其内容如下
+
+```
+package com.test.controller;
+
+import javax.annotation.Resource;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import com.test.global.mobile.tools.pd.model.User;
+import com.test.global.mobile.tools.pd.service.UserService;
+
+@Controller  
+public class UserController {  
+
+    @Resource  
+    private UserService userService;  
+
+    @RequestMapping("/")    
+    public ModelAndView getIndex(){      
+        ModelAndView mav = new ModelAndView("index");   
+        User user = userService.selectUserById(1);  
+        mav.addObject("user", user);   
+        return mav;    
+    }    
+}  
+```
+
+完成。
+
+## 遇到的问题
+
+解决Cannot change version of project facet Dynamic web module to 2.5：
+
+1. 找到 .setting文件夹内的org.eclipse.wst.common.project.facet.core.xml文件，文件格式大致如下：
+<?xml version="1.0" encoding="UTF-8"?>
+<faceted-project>
+<runtime name="Apache Tomcat v5.5"/>
+<fixed facet="jst.web"/>
+<fixed facet="jst.java"/>
+<installed facet="jst.java" version="5.0"/>
+<installed facet="jst.web" version="2.5"/>
+<installed facet="wst.jsdt.web" version="1.0"/>
+</faceted-project>
+直接手动修改jst.web对应的version即可。最后重启tomcatX就可以正常使用了。
+
+2. 修改web.xml
+
+```
+<?xml version="1.0" encoding="UTF-8"?>  
+<web-app version="2.5"  
+    xmlns="http://java.sun.com/xml/ns/javaee"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee  
+    http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">  
+      
+  <display-name>Archetype Created Web Application</display-name>  
+</web-app> 
+```
+
+解决The superclass "javax.servlet.http.HttpServlet" was not found on the Java Build Path
+
+1. 在pom.xml添加依赖
+
+```
+<dependency>
+<groupId>javax.servlet</groupId>
+<artifactId>servlet-api</artifactId>
+<version>2.5</version>
+<scope>provided</scope>
+</dependency>
+```
+
 
