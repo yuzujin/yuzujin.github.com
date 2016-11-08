@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Apache和Nginx的rewrite功能浅析"
+title: "Apache和Nginx的rewrite规则浅析"
 description: ""
 category: 
 tags: []
