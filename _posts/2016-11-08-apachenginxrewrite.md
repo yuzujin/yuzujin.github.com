@@ -97,7 +97,7 @@ RewriteRule      #相当于nginx rewrite命令
 
 **Apache rewrite规则相关`标记`有**：
 
-1.  R[=code](force redirect)           #强制外部重定向, 强制在替代字符串加上http://thishost[:thisport]/前缀重定向到外部的URL.如果code不指定，将用缺省的302 HTTP状态码。
+1.  R\[=code\](force redirect)           #强制外部重定向, 强制在替代字符串加上http://thishost[:thisport]/前缀重定向到外部的URL.如果code不指定，将用缺省的302 HTTP状态码。
 2.  F(force URL to be forbidden)       #禁用URL,返回403HTTP状态码。
 3.  G(force URL to be gone)            #强制URL为GONE，返回410HTTP状态码。
 4.  P(force proxy)                     #强制使用代理转发。
