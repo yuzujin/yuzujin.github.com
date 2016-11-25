@@ -36,7 +36,7 @@ title: 使用github pages 和jekll-bootstrap搭建博客
     $ jekyll serve
 ```
 
-然后打开浏览器，输入http://127.0.0.1 就可以看到你的博客雏形了，恭喜。
+然后打开浏览器，输入http://127.0.0.1:4000 就可以看到你的博客雏形。
 
 
 ## 新建post
