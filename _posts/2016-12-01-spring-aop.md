@@ -237,3 +237,37 @@ Spring在aop的命名空间里面还提供的配置元素:
     	</aop:aspect>
 	</aop:config>
 
+假如增加一个打印日志的横切关注点
+
+	public class LogHandler {
+    	public void LogBefore() {
+        	System.out.println("Log before method");
+    	}
+    	
+    	public void LogAfter() {
+        	System.out.println("Log after method");
+    	}
+	}
+	
+	applicationContext.xml配置文件需要修改
+	
+	<bean id="logHandler" class="com.test.aop.LogHandler" />
+        
+    <aop:config>
+    	<aop:aspect id="eat" ref="eatHelper" order="1">
+    		<aop:before method="beforeEat" pointcut="execution(* *.eat(..))"/>
+    		<aop:after method="afterEat" pointcut="execution(* *.eat(..))"/>
+    	</aop:aspect>
+        <aop:aspect id="log" ref="logHandler" order="2">
+        	<aop:pointcut id="printLog" expression="execution(* com.test.aop.Eatable.*(..))" />
+            <aop:before method="LogBefore" pointcut-ref="printLog" />
+            <aop:after method="LogAfter" pointcut-ref="printLog" />
+        </aop:aspect>
+    </aop:config>
+    
+ 要想让logHandler在eatHelper前使用有两个办法：
+
+（1）aspect里面有一个order属性，order属性的数字就是横切关注点的顺序
+
+（2）把logHandler定义在eatHelper前面，Spring默认以aspect的定义顺序作为织入顺序
+      
