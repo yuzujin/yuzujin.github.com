@@ -1,11 +1,15 @@
 ---
 layout: post
-title: "查看Apache的connection数"
+title: "查看Apache的connection数及time_wait过多问题解决"
 description: ""
 category: 
 tags: []
 ---
 {% include JB/setup %}
+
+## 概述
+
+--------------------
 
 下面介绍一下查看Apache的连接数和当前的连接数以及IP访问次数的常用命令。
 
@@ -50,3 +54,151 @@ ESTABLISHED 表示正在通信，TIME_WAIT 表示主动关闭，CLOSE_WAIT 表�
 2. 服务器保持了大量CLOSE_WAIT状态
 
 因为linux分配给一个用户的文件句柄是有限的，而TIME_WAIT和CLOSE_WAIT两种状态如果一直被保持，那么意味着对应数目的通道就一直被占着，一旦达到句柄数上限，新的请求就无法被处理了，接着就是大量Too Many Open Files异常，tomcat崩溃。。。
+
+## 大量time_wait问题解决
+
+----------------------
+
+**apache参数优化**
+
+如果正在使用apache web服务器，可以从两个方面调整参数：
+
+1.keepalive关闭
+   
+   KeepAlive配置的含义：对于HTTP/1.1的客户端来说，将会尽量的保持客户的HTTP连接，通过一个连接传送多份HTTP请求响应。这样对于客户端来说，可以提高50%左右的响应时间，而于服务器端来说则降低了更多个连接的开销。不过这个依赖于客户端是否想保持连接。IE默认是保持连接的，当你打开100个图片的网站时，IE有可能只打开2个连接，通过这两个连接传送数据，而不是开100个连接。
+   
+   在 Apache 服务器中，KeepAlive 是一个布尔值，On 代表打开，Off 代表关闭，这个指令在其他众多的 HTTPD 服务器中都是存在的。
+   
+   KeepAliveTimeout 为持久连接保持的时间，也就是说，在这此连接结束后开始计时，多长时间内没有重新发送HTTP请求，就断掉连接。默认设置为5秒，这个值可以大点，但不能太大，否则会出现同时等候过多连接，导致多的内存被占用。
+   
+	修改...apache/conf/extra/httpd-default.conf
+	#
+	# KeepAlive: Whether or not to allow persistent connections (more than
+	# one request per connection). Set to "Off" to deactivate.
+	#
+	KeepAlive On
+	#
+	# MaxKeepAliveRequests: The maximum number of requests to allow
+	# during a persistent connection. Set to 0 to allow an unlimited amount.
+	# We recommend you leave this number high, for maximum performance.
+	#
+	MaxKeepAliveRequests 100
+	#
+	# KeepAliveTimeout: Number of seconds to wait for the next request from the
+	# same client on the same connection.
+	#
+	KeepAliveTimeout 5 
+  
+2.mpm参数调整
+  
+  此处可以参考[apache mpm详解](http://blog.hugo.gift/2016/06/12/apache)
+  
+**内核参数调整**
+
+查看当前系统下所有连接状态的数：
+
+	#netstat -n|awk '/^tcp/{++S[$NF]}END{for (key in S) print key,S[key]}'
+	TIME_WAIT 286
+	FIN_WAIT1 5
+	FIN_WAIT2 6
+	ESTABLISHED 269
+	SYN_RECV 5
+	CLOSING 1
+	
+如发现系统存在大量TIME_WAIT状态的连接，通过调整内核参数解决：
+编辑文件/etc/sysctl.conf，加入以下内容：
+
+	net.ipv4.tcp_syncookies = 1
+	net.ipv4.tcp_tw_reuse = 1
+	net.ipv4.tcp_tw_recycle = 1
+	net.ipv4.tcp_fin_timeout = 30
+	
+然后执行 /sbin/sysctl -p 让参数生效。
+
+net.ipv4.tcp_syncookies = 1 表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击，默认为0，表示关闭；
+
+net.ipv4.tcp_tw_reuse = 1 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
+
+net.ipv4.tcp_tw_recycle = 1 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。
+
+net.ipv4.tcp_fin_timeout = 30 表示如果套接字由本端要求关闭，这个参数决定了它保持在FIN-WAIT-2状态的时间。
+
+其它参数说明：
+
+net.ipv4.tcp_keepalive_time = 1200 表示当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时，改为20分钟。
+
+net.ipv4.ip_local_port_range = 1024 65000 表示用于向外连接的端口范围。缺省情况下很小：32768到61000，改为1024到65000。
+
+net.ipv4.tcp_max_syn_backlog = 8192 表示SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数。
+
+net.ipv4.tcp_max_tw_buckets = 5000 表示系统同时保持TIME_WAIT套接字的最大数量，如果超过这个数字，TIME_WAIT套接字将立刻被清除并打印警告信息。
+默 认为180000，改为5000。对于Apache、Nginx等服务器，上几行的参数可以很好地减少TIME_WAIT套接字数量，但是对于Squid，效果却不大。此项参数可以控制TIME_WAIT套接字的最大数量，避免Squid服务器被大量的TIME_WAIT套接字拖死。
+
+注:
+
+net.ipv4.tcp_tw_reuse = 1
+
+net.ipv4.tcp_tw_recycle = 1
+
+设置这两个参数： reuse是表示是否允许重新应用处于TIME-WAIT状态的socket用于新的TCP连接； recyse是加速TIME-WAIT sockets回收
+
+**max user processes调整**
+
+通过ulimit -a查看当前账号(work)的参数
+
+	core file size          (blocks, -c) unlimited
+	data seg size           (kbytes, -d) unlimited
+	scheduling priority             (-e) 0
+	file size               (blocks, -f) unlimited
+	pending signals                 (-i) 515225
+	max locked memory       (kbytes, -l) 64
+	max memory size         (kbytes, -m) unlimited
+	open files                      (-n) 65536
+	pipe size            (512 bytes, -p) 8
+	POSIX message queues     (bytes, -q) 819200
+	real-time priority              (-r) 0
+	stack size              (kbytes, -s) 10240
+	cpu time               (seconds, -t) unlimited
+	max user processes              (-u) 30720
+	virtual memory          (kbytes, -v) unlimited
+	file locks                      (-x) unlimited
+	
+修改 /etc/security/limits.d/90-nproc.conf(或/etc/security/limits.conf)
+
+	#<domain>      <type>  <item>         <value>
+	*               soft    nproc           4096
+	root            soft    nproc          unlimited
+
+	#Where:
+	#<domain> can be:
+	#        - an user name
+	#        - a group name, with @group syntax
+	#        - the wildcard *, for default entry
+	#        - the wildcard %, can be also used with %group syntax,
+	#                 for maxlogin limit
+	#
+	#<type> can have the two values:
+	#        - "soft" for enforcing the soft limits
+	#        - "hard" for enforcing hard limits
+	#
+	#<item> can be one of the following:
+	#        - core - limits the core file size (KB)
+	#        - data - max data size (KB)
+	#        - fsize - maximum filesize (KB)
+	#        - memlock - max locked-in-memory address space (KB)
+	#        - nofile - max number of open files
+	#        - rss - max resident set size (KB)
+	#        - stack - max stack size (KB)
+	#        - cpu - max CPU time (MIN)
+	#        - nproc - max number of processes
+	#        - as - address space limit (KB)
+	#        - maxlogins - max number of logins for this user
+	#        - maxsyslogins - max number of logins on the system
+	#        - priority - the priority to run user process with
+	#        - locks - max number of file locks the user can hold
+	#        - sigpending - max number of pending signals
+	#        - msgqueue - max memory used by POSIX message queues (bytes)
+	#        - nice - max nice priority allowed to raise to values: [-20, 19]
+	#        - rtprio - max realtime priority
+
+注： 使用 ulimit -u 4096 修改max user processes的值，但是只能在当前终端的这个session里面生效，重新登录后仍然是使用系统默认值。
