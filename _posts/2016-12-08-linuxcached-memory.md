@@ -99,7 +99,7 @@ Linux内核中文件Cache替换的具体过程是这样的：刚刚分配的Cach
 	
 通过free -g(-m)命令观察系统的内存使用情况：
 
-    	          total       used       free     shared    buffers     cached
+    	        total       used       free     shared    buffers     cached
 	Mem:            62         57          5          0          0         40
 	-/+ buffers/cache:         15         47
 	Swap:            0          0          0
