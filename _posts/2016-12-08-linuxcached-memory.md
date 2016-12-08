@@ -114,8 +114,11 @@ Linux内核中文件Cache替换的具体过程是这样的：刚刚分配的Cach
 
 第二行描述应用程序的内存使用： 
 
-	前个值表示-buffers/cache——应用程序使用的内存大小，used减去缓存值 	后个值表示+buffers/cache——所有可供应用程序使用的内存大小，free加上缓存值 总结：  
-	-buffers/cache=used-buffers-cached +buffers/cache=free+buffers+cached 
+	前个值表示-buffers/cache——应用程序使用的内存大小，used减去缓存值 
+	后个值表示+buffers/cache——所有可供应用程序使用的内存大小，free加上缓存值 
+	  
+	-buffers/cache=used-buffers-cached 
+	+buffers/cache=free+buffers+cached 
 	
 第三行表示：
 
@@ -133,7 +136,8 @@ Linux内核中文件Cache替换的具体过程是这样的：刚刚分配的Cach
 
 	然后同步一下数据：	
 	#sync
-	(手动执行sync命令(描述:sync 命令运行 sync 子例程。如果必须停止系统，则运行 sync 命令以确保文件系统的完整性。sync 命令将所有未写的系统缓冲区写到磁盘中，包含已修改的 i-node、已延迟的块 I/O 和读写映射文件)
+	(执行sync命令(描述:sync命令运行sync子例程。如果必须停止系统，则运行sync命令以确保文件系统的完整性。
+	sync 命令将所有未写的系统缓冲区写到磁盘中，包含已修改的i-node、已延迟的块I/O和读写映射文件)
 	
 	
 	最后修改/proc/sys/vm/drop_caches：
