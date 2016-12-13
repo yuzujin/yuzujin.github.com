@@ -76,7 +76,7 @@ tags: []
 *示例*
 
 	Apache：
-	<Directory "WEB-INF 目录">
+	<Directory "WEB-INF">
 		Order allow,deny
 		Deny from all
 	</Directory>

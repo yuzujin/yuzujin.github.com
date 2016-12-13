@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>MySql外键介绍 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">MySql外键介绍</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<h2 id="section">基本概念</h2>
+
+<hr />
+
+<p>MySQL中“键”和“索引”的定义相同，所以外键和主键一样也是索引的一种。不同的是MySQL会自动为所有表的主键进行索引，但是外键字段必须由用户进行明确的索引。用于外键关系的字段必须在所有的参照表中进行明确地索引，InnoDB不能自动地创建索引。</p>
+
+<p>外键可以是一对一的，一个表的记录只能与另一个表的一条记录连接，或者是一对多的，一个表的记录与另一个表的多条记录连接。</p>
+
+<p>如果需要更好的性能，并且不需要完整性检查，可以选择使用MyISAM表类型，如果想要在MySQL中根据参照完整性来建立表并且希望在此基础上保持良好的性能，最好选择表结构为innoDB类型。</p>
+
+<p><code>参照完整性</code>：当外键与另一个表的字段有关系，而且这种关系是惟一时，这个系统就称为处于参照完整性的状态。也就是说，如果一个字段在所有的表中只出现一次，而且每个表的这个字段的变化都会影响其他表，这就是存在参照完整性。</p>
+
+<p>外键的好处：可以使得两张表关联，保证数据的一致性和实现一些级联操作。</p>
+
+<p><code>级联操作</code>：外键可以保证新插入的记录的完整性。但是，如果在REFERENCES从句中从已命名的表删除记录会怎样？在使用同样的值作为外键的辅助表中会发生什么？很明显，那些记录也应该被删除，否则在数据库中就会有很多无意义的孤立记录。</p>
+
+<h2 id="section-1">外键的使用条件</h2>
+
+<hr />
+
+<ul>
+  <li>两个表必须是InnoDB表，MyISAM表暂时不支持外键</li>
+  <li>外键列必须建立了索引，MySQL 4.1.2以后的版本在建立外键时会自动创建索引，但如果在较早的版本则需要显式建立；</li>
+  <li>外键关系的两个表的列必须是数据类型相似，也就是可以相互转换类型的列，比如int和tinyint可以，而int和char则不可以；</li>
+</ul>
+
+<h2 id="section-2">使用方法</h2>
+
+<hr />
+
+<p><strong>外键的定义语法</strong></p>
+
+<pre><code>[CONSTRAINT symbol] FOREIGN KEY [id] (index_col_name, ...)
+	REFERENCES tbl_name (index_col_name, ...)
+	[ON DELETE {RESTRICT | CASCADE | SET NULL | NO ACTION | SET DEFAULT}]
+	[ON UPDATE {RESTRICT | CASCADE | SET NULL | NO ACTION | SET DEFAULT}]
+	
+该语法可以在 CREATE TABLE 和 ALTER TABLE 时使用，如果不指定CONSTRAINT symbol，MYSQL会自动生成一个名字。
+
+ON DELETE、ON UPDATE表示事件触发限制，可设参数：
+① RESTRICT（限制外表中的外键改动，默认值）
+② CASCADE（跟随外键改动）
+③ SET NULL（设空值）
+④ SET DEFAULT（设默认值）
+⑤ NO ACTION（无动作，默认的）
+</code></pre>
+
+<p><strong>示例</strong></p>
+
+<pre><code>创建表1
+	create table repo_table(
+		repo_id char(13) not null primary key,
+		repo_name char(14) not null
+	) type=innodb;
+
+创建表2
+	create table busi_table(
+		busi_id char(13) not null primary key,
+		busi_name char(13) not null,
+		repo_id char(13) not null,
+		foreign key(repo_id) references repo_table(repo_id)
+	) type=innodb;
+
+插入数据
+	insert into repo_table values("12","sz"); //success
+	insert into repo_table values("13","cd"); //success
+	insert into busi_table values("1003","cd", "13"); //success
+	insert into busi_table values("1002","sz", "12"); //success
+	insert into busi_table values("1001","gx", "11"); //failed,
+	错误提示：ERROR 1452 (23000): Cannot add or update a child row: 
+	a foreign key constraint fails (`smb_man`.`busi_table`, 
+	CONSTRAINT `busi_table_ibfk_1` FOREIGN KEY (`repo_id`) REFERENCES `repo_table` (`repo_id`))
+	
+增加级联操作
+	alter table busi_table add constraint id_check foreign key(repo_id)
+	references repo_table(repo_id) on delete cascade on update cascade;
+</code></pre>
+
+<p><strong>相关操作</strong></p>
+
+<p>外键约束（表2）对父表（表1）的含义:</p>
+
+<p>在父表上进行update/delete以更新或删除在子表中有一条或多条对应匹配行的候选键时，父表的行为取决于：在定义子表的外键时指定的on update/on delete子句。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">关键字</th>
+      <th style="text-align: left">含义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">CASCADE</td>
+      <td style="text-align: left">删除包含与已删除键值有参照关系的所有记录</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SET NULL</td>
+      <td style="text-align: left">修改包含与已删除键值有参照关系的所有记录，使用NULL值替换(只能用于已标记为NOT NULL的字段)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">RESTRICT</td>
+      <td style="text-align: left">拒绝删除要求，直到使用删除键值的辅助表被手工删除，并且没有参照时(这是默认设置，也是最安全的设置)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">NO ACTION</td>
+      <td style="text-align: left">啥也不做</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>其他</strong></p>
+
+<p>在外键上建立索引:</p>
+
+<pre><code>index repo_id (repo_id),
+foreign key(repo_id) references repo_table(repo_id))
+</code></pre>
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">09 December 2016</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2016/12/12/mysql" class="next" title="MySQL存储引擎介绍">Next Post &rarr;</a>
+  
+  
+    <a href="/2016/12/08/linuxcached-memory" class="prev" title="Linux的Cached Memory">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

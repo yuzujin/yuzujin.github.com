@@ -1,0 +1,543 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Spring Annotation详解 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">Spring Annotation详解</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<h2 id="section">概述</h2>
+
+<p>注解（Annotation）提供了一种安全的类似注释的机制，为我们在代码中添加信息提供了一种形式化的方法，使我们可以在稍后某个时刻方便的使用这些数据（通过解析注解来使用这些数据），用来将任何的信息或者元数据与程序元素（类、方法、成员变量等）进行关联。其实就是更加直观更加明了的说明，这些说明信息与程序业务逻辑没有关系，并且是供指定的工具或框架使用的。Annotation像一种修饰符一样，应用于包、类型、构造方法、方法、成员变量、参数及本地变量的申明语句中。</p>
+
+<p>Annotation其实是一种接口。通过Java的反射机制相关的API来访问Annotation信息。相关类（框架或工具中的类）根据这些信息来决定如何使用该程序元素或改变它们的行为。Java语言解释器在工作时会忽略这些Annotation，因此在JVM中这些Annotation是“不起作用”的，只能通过配套的工具才能对这些Annotation类型的信息进行访问和处理。</p>
+
+<h2 id="section-1">注解</h2>
+
+<p><strong>@RequestMapping</strong></p>
+
+<pre><code>类：
+@Controller 
+@RequestMapping("/feedback")
+public class FeedbackController {
+	@RequestMapping("/listFeedback")
+	http://localhost/feedback/listFeedback&amp;topicId=1&amp;userId=10&amp;userName=tom
+	或者@RequestMapping(params = "method=listFeedback")
+	http://localhost/feedback?method=listFeedback&amp;id=1&amp;userId=10&amp;userName=tom
+	public String listFeedback(int id,User user) {}
+}
+
+方法：
+@RequestMapping("/feedback/submit")
+@RequestMapping(value="/feedback/submit",method = POST)
+@RequestMapping(value="/feedback/submit",params={"modify=false"}, method=POST)
+
+说明：
+@RequestMapping 可以声明到类或方法上
+
+参数绑定说明：
+http://localhost/feedback?method=listFeedback&amp;id=1&amp;userId=10&amp;userName=tom
+id 参数将绑定到id入参上，而userId和userName URL参数将绑定到user对象的 userId和userName 属性中。
+URL 请求中不允许没有 id 参数，否则报错，User的userId属性的类型是基本数据类型，
+如果URL中不存在 userId 参数，Spring 也不会报错，此时 user.userId 值为 0 。
+如果 User 对象拥有一个 dept.deptId 的级联属性，那么它将和 dept.deptId URL 参数绑定。
+
+其他：
+@RequestMapping(value = "/test", consumes="application/json") 
+仅处理request Content-Type为“application/json”类型的请求。
+
+@RequestMapping(value = "/test/{id}", produces="application/json")
+仅处理request请求中Accept头中包含了"application/json"的请求，
+同时暗示了返回的内容类型为application/json
+
+支持正则表达式
+@RequestMapping(value="/{textualPart:[a-z-]+}.{numericPart:[\\d]+}")  
+public String regularExpression( @PathVariable String textualPart, 
+	@PathVariable String numericPart){}
+</code></pre>
+
+<p>handler method 参数绑定常用的注解,我们根据他们处理的Request的不同内容部分分为四类：（主要讲解常用类型）</p>
+
+<p>A、处理requet uri 部分（这里指uri template中variable，不含queryString部分）的注解：   @PathVariable;</p>
+
+<p>B、处理request header部分的注解：   @RequestHeader, @CookieValue;</p>
+
+<p>C、处理request body部分的注解：@RequestParam,  @RequestBody;</p>
+
+<p>D、处理attribute类型是注解： @SessionAttributes, @ModelAttribute;</p>
+
+<p><strong>@PathVariable</strong></p>
+
+<pre><code>.例如
+@Controller  
+@RequestMapping("/owners/{ownerId}")  
+public class RelativePathUriTemplateController {  
+	@RequestMapping("/pets/{petId}")  
+	public void findPet(@PathVariable String ownerId, @PathVariable String petId, 
+		Model model) {      
+		// implementation omitted  
+	}  
+}
+.说明  
+当使用@RequestMapping URI template 样式映射时， 即 someUrl/{paramId}, 
+这时的paramId可通过 @Pathvariable注解绑定它传过来的值到方法的参数上。
+</code></pre>
+
+<p><strong>@RequestHeader</strong></p>
+
+<pre><code>.说明
+可以把Request请求header部分的值绑定到方法的参数上。
+
+.例如
+这是一个Request 的header部分：
+Host                    localhost:8080  
+Accept                  text/html,application/xhtml+xml,application/xml;q=0.9  
+Accept-Language         fr,en-gb;q=0.7,en;q=0.3  
+Accept-Encoding         gzip,deflate  
+Accept-Charset          ISO-8859-1,utf-8;q=0.7,*;q=0.7  
+Keep-Alive  
+
+
+@RequestMapping("/displayHeaderInfo.do")  
+public void displayHeaderInfo(@RequestHeader("Accept-Encoding") String encoding,  
+	@RequestHeader("Keep-Alive") long keepAlive)  {}
+                          
+上面的代码，把request header部分的 Accept-Encoding的值，绑定到参数encoding上了， 
+Keep-Alive header的值绑定到参数keepAlive上。
+</code></pre>
+
+<p><strong>@CookieValue</strong></p>
+
+<pre><code>.说明
+可以把Request header中关于cookie的值绑定到方法的参数上。 
+
+.例如
+有如下Cookie值：JSESSIONID=415A4AC178C59DACE0B2C9CA727CDD84
+@RequestMapping("/displayHeaderInfo.do")  
+public void displayHeaderInfo(@CookieValue("JSESSIONID") String cookie)  {}  
+</code></pre>
+
+<p><strong>@RequestParam</strong></p>
+
+<pre><code>参数绑定说明
+@RequestParam("id")
+http://localhost/bbtForum.do?method=listBoardTopic&amp;id=1&amp;userId=10&amp;userName=tom
+listBoardTopic(@RequestParam("id")int topicId,User user)中的topicId绑定到id这个参数， 
+那么可以通过对入参使用 @RequestParam 注解来达到目的
+
+@RequestParam(required=false)：参数不是必须的，默认为true
+@RequestParam(value="id",required=false)
+
+请求处理方法入参的可选类型
+• Java 基本数据类型和 String
+  默认情况下将按名称匹配的方式绑定到 URL 参数上，可以通过 @RequestParam 注解改变默认的绑定规则
+
+• request/response/session
+  既可以是Servlet API的也可以是Portlet API对应的对象，Spring会将它们绑定到Servlet和Portlet容器
+  的相应对象上
+
+• org.springframework.web.context.request.WebRequest
+  内部包含了 request 对象
+
+• java.util.Locale
+  绑定到 request 对应的 Locale 对象上
+
+• java.io.InputStream/java.io.Reader
+  可以借此访问 request 的内容
+
+• java.io.OutputStream / java.io.Writer
+  可以借此操作 response 的内容
+
+• 任何标注了 @RequestParam 注解的入参
+  被标注 @RequestParam 注解的入参将绑定到特定的 request 参数上。
+
+• java.util.Map / org.springframework.ui.ModelMap
+  它绑定 Spring MVC 框架中每个请求所创建的潜在的模型对象，它们可以被 Web 视图对象访问（如 JSP ）
+
+• 命令/ 表单对象（注：一般称绑定使用 HTTP GET 发送的 URL 参数的对象为命令对象，
+  而称绑定使用HTTP POST 发送的 URL 参数的对象为表单对象）
+  它们的属性将以名称匹配的规则绑定到 URL 参数上，同时完成类型的转换。
+  而类型转换的规则可以通过 @InitBinder 注解或通过 HandlerAdapter 的配置进行调整
+
+• org.springframework.validation.Errors / org.springframework.validation.BindingResult
+  为属性列表中的命令/ 表单对象的校验结果，注意检验结果参数必须紧跟在命令/ 表单对象的后面
+
+• org.springframework.web.bind.support.SessionStatus
+  可以通过该类型status对象显式结束表单的处理，这相当于触发session清除其中的通过@SessionAttributes定义的属性
+  请求处理方法返回值的可选类型
+  
+• void
+  此时逻辑视图名由请求处理方法对应的 URL 确定，如以下的方法：
+  @RequestMapping("/welcome.do")
+  public void welcomeHandler() {}
+  对应的逻辑视图名为 “ welcome ” 
+
+• String
+  此时逻辑视图名为返回的字符，如以下的方法：
+  @RequestMapping(method = RequestMethod.GET)
+  public String setupForm(@RequestParam("ownerId") int ownerId, ModelMap model) {
+      Owner owner = this.clinic.loadOwner(ownerId);
+      model.addAttribute(owner);
+      return "ownerForm";
+  }
+  对应的逻辑视图名为 “ ownerForm ” 
+
+• org.springframework.ui.ModelMap
+  和返回类型为 void 一样，逻辑视图名取决于对应请求的 URL ，如下面的例子：
+  @RequestMapping("/vets.do")
+  public ModelMap vetsHandler() {
+      return new ModelMap(this.clinic.getVets());
+  }
+  对应的逻辑视图名为“vets”，返回的ModelMap将被作为请求对应的模型对象，可以在JSP视图页面中访问到。
+
+• ModelAndView
+  当然还可以是传统的 ModelAndView 。
+</code></pre>
+
+<p><strong>@RequestBody</strong></p>
+
+<pre><code>.说明
+ 该注解常用来处理Content-Type: 不是application/x-www-form-urlencoded编码的内容，
+ 例如application/json, application/xml等；
+ 
+ 它是通过使用HandlerAdapter配置的HttpMessageConverters来解析post data body，然后绑定到相应的bean上的。
+ 
+ 因为配置有FormHttpMessageConverter，所以也可以用来处理application/x-www-form-urlencoded的内容，
+ 处理完的结果放在一个MultiValueMap&lt;String, String&gt;里，这种情况在某些特殊需求下使用，
+ 详情查看FormHttpMessageConverter api;	
+ 
+ .例如
+ @RequestMapping(value = "/something", method = RequestMethod.PUT)  
+ public void handle(@RequestBody String body, Writer writer) 
+ 	throws IOException { 
+  		writer.write(body);  
+ }  
+</code></pre>
+
+<p><strong>@ModelAttribute</strong></p>
+
+<pre><code>• 作用域：request
+• 例如
+  @RequestMapping("/base/userManageCooper/init.do")
+  public String handleInit(@ModelAttribute("queryBean") ManagedUser sUser,Model model){
+  • 或者
+  @ModelAttribute("coopMap")// 将coopMap 返回到页面
+  public Map&lt;Long,CooperatorInfo&gt; coopMapItems(){}
+
+• 说明
+  @ModelAttribute 声明在属性上，表示该属性的value 来源于model里"queryBean" ，并被保存到model里
+  @ModelAttribute 声明在方法上，表示该方法的返回值被保存到model里
+</code></pre>
+
+<p><strong>@SessionAttributes</strong></p>
+
+<pre><code>• 说明
+  Spring 允许我们有选择地指定 ModelMap 中的哪些属性需要转存到 session 中，
+  以便下一个请求属对应的 ModelMap 的属性列表中还能访问到这些属性。
+  这一功能是通过类定义处标注 @SessionAttributes 注解来实现的。
+  
+  @SessionAttributes 只能声明在类上，而不能声明在方法上。 
+  • 例如
+  @SessionAttributes("currUser") // 将ModelMap 中属性名为currUser 的属性
+  @SessionAttributes({"attr1","attr2"})
+  @SessionAttributes(types = User.class)
+  @SessionAttributes(types = {User.class,Dept.class})
+  @SessionAttributes(types = {User.class,Dept.class},value={"attr1","attr2"})
+</code></pre>
+
+<p><strong>@Controller</strong></p>
+
+<pre><code>例如
+@Controller
+public class SoftCreateController extends SimpleBaseController {}
+或者
+@Controller("softCreateController")
+
+说明
+@Controller 负责注册一个bean 到spring 上下文中，bean 的ID 默认为类名称开头字母小写
+</code></pre>
+
+<p><strong>@ResponseBody</strong></p>
+
+<pre><code>.说明
+ 该注解用于将Controller的方法返回的对象，通过适当的HttpMessageConverter转换为指定格式后，
+ 写入到Response对象的body数据区。
+ 使用时机：返回的数据不是html标签的页面，而是其他某种格式的数据时（如json、xml等）使用；
+
+.例如
+ @RequestMapping(value = "feedback/submit", method = { RequestMethod.POST })
+ @ResponseBody
+ public String submitSuggestion(@RequestBody(required = false) String requestBody) {}
+</code></pre>
+
+<p><strong>@Service</strong></p>
+
+<pre><code>例如
+@Service
+public class SoftCreateServiceImpl implements ISoftCreateService {}
+或者
+@Service("softCreateServiceImpl")
+
+说明
+@Service 负责注册一个bean 到spring 上下文中，bean 的ID 默认为类名称开头字母小写
+</code></pre>
+
+<p><strong>@Autowired</strong></p>
+
+<pre><code>例如
+@Autowired
+private ISoftPMService softPMService;
+或者
+@Autowired(required=false)
+private ISoftPMService softPMService = new SoftPMServiceImpl();
+
+说明
+@Autowired 根据bean 类型从spring 上线文中进行查找，注册类型必须唯一，否则报异常。
+与@Resource的区别在于，@Resource允许通过bean名称或bean类型两种方式进行查找
+@Autowired(required=false) 表示，如果spring上下文中没有找到该类型的bean时，
+才会使用new SoftPMServiceImpl();
+
+@Autowired 标注作用于Map类型时，如果Map的key为String类型，则Spring会将容器中所有类型符合Map的
+value对应的类型的 Bean 增加进来，用 Bean 的 id 或 name 作为 Map 的 key。
+
+@Autowired 还有一个作用就是，如果将其标注在 BeanFactory 类型、ApplicationContext 类型、
+ResourceLoader 类型、ApplicationEventPublisher 类型、MessageSource 类型上，那么 Spring
+会自动注入这些实现类的实例，不需要额外的操作。
+
+default-autowire属性取值如下：	
+byType：按类型装配，可以根据属性的类型，在容器中寻找根该类型匹配的bean.如果发现多个，那么将会抛出异常。如果没有找到，即属性值为null。
+byName：按名称装配，可以根据属性的名称，在容器中寻找根该属性名相同的bean,如果没有找到，即属性值为null。
+Constructor与byType的方式类似，不同之处在于它应用于构造器参数。如果在容器中没有找到与构造器参数类型一致的bean,那么将会抛出异常。
+Autodetect：通过bean类的自省机制来决定是使用constructor还是byType方式进行自动装配。如果发现默认的构造器，那么将使用byType方式。
+</code></pre>
+
+<p><strong>@Cacheable和@CacheFlush</strong></p>
+
+<pre><code>• @Cacheable ：声明一个方法的返回值应该被缓存
+  例如：@Cacheable(modelId = "testCaching")
+
+• @CacheFlush ：声明一个方法是清空缓存的触发器
+  例如：@CacheFlush(modelId = "testCaching")
+
+• 说明
+  要配合缓存处理器使用，参考： http://hanqunfeng.iteye.com/blog/603719
+</code></pre>
+
+<p><strong>@Resource</strong></p>
+
+<pre><code>• 例如
+  @Resource
+  private DataSource dataSource; // inject the bean named 'dataSource'
+
+  • 或者
+	@Resource(name="dataSource")
+	@Resource(type=DataSource.class)
+
+• 说明
+  @Resource 默认按bean的name 进行查找，如果没有找到会按type 进行查找，
+  此时与@Autowired 类似
+  在没有为 @Resource 注解显式指定 name 属性的前提下，如果将其标注在 BeanFactory 类型、
+  ApplicationContext 类型、ResourceLoader 类型、ApplicationEventPublisher 类型、
+  MessageSource 类型上，那么 Spring 会自动注入这些实现类的实例，不需要额外的操作。
+  此时 name 属性不需要指定 ( 或者指定为"")，否则注入失败；
+</code></pre>
+
+<p><strong>@PostConstruct 和@PreDestroy</strong></p>
+
+<pre><code>• @PostConstruct
+  在方法上加上注解@PostConstruct ，这个方法就会在Bean 初始化之后被Spring 容器执行
+ （注：Bean 初始化包括，实例化Bean ，并装配Bean 的属性（依赖注入）)。
+
+• @PreDestroy
+  在方法上加上注解@PreDestroy ，这个方法就会在Bean 被销毁前被Spring 容器执行。
+</code></pre>
+
+<p><strong>@repository</strong></p>
+
+<pre><code>• 与@Controller 、@Service 类似，都是向spring 上下文中注册bean ，不在赘述。
+</code></pre>
+
+<p><strong>@component （不推荐使用)</strong></p>
+
+<pre><code>• @component
+
+  @component 是所有受Spring 管理组件的通用形式，Spring 还提供了更加细化的注解形式：  
+  @repository 、@Service 、@Controller ，它们分别对应存储层Bean ，业务层Bean ，和展示层Bean 。
+  
+  目前版本（2.5 ）中，这些注解与@component 的语义是一样的，完全通用， 在Spring以后的版本中可能
+  会给它们追加更多的语义。推荐使用@repository、@Service、@Controller 来替代@component 。
+</code></pre>
+
+<p><strong>@scope</strong></p>
+
+<pre><code>• 例如
+  @Scope("session")
+  @Repository()
+  public class UserSessionBean implementsSerializable {}
+
+• 说明
+  在使用XML 定义Bean 时，可以通过bean 的scope 属性来定义一个Bean 的作用范围，
+  同样可以通过@scope 注解来完成
+
+   @Scope中可以指定如下值：
+   singleton:定义bean的范围为每个spring容器一个实例（默认值）
+   prototype:定义bean可以被多次实例化（使用一次就创建一次）
+   request:定义bean的范围是http请求（springMVC中有效）
+   session:定义bean的范围是http会话（springMVC中有效）
+   global-session:定义bean的范围是全局http会话（portlet中有效）
+</code></pre>
+
+<p><strong>@InitBinder</strong></p>
+
+<pre><code>• 说明
+  如果希望某个属性编辑器仅作用于特定的 Controller ，
+  可以在 Controller 中定义一个标注 @InitBinder 注解的方法，
+  可以在该方法中向 Controller 了注册若干个属性编辑器
+
+• 例如
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      dateFormat.setLenient(false);
+      binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
+  }
+</code></pre>
+
+<p><strong>@Required</strong></p>
+
+<pre><code>• 例如
+  @required              
+  public  setName(String name){} 
+
+• 说明
+  @ required 负责检查一个bean在初始化时其声明的 set方法是否被执行， 当某个被标注了 @Required 
+  的 Setter 方法没有被调用，则 Spring 在解析的时候会抛出异常，以提醒开发者对相应属性进行设置。 
+  @Required 注解只能标注在 Setter 方法之上。因为依赖注入的本质是检查 Setter 方法是否被调用了，
+  而不是真的去检查属性是否赋值了以及赋了什么样的值。如果将该注解标注在非setXxxx() 类型的方法则被忽略。
+</code></pre>
+
+<p><strong>@qualifier</strong></p>
+
+<pre><code>• 例如
+  @Autowired
+  @Qualifier("softService")
+  private ISoftPMService softPMService; 
+  
+• 说明
+  使用@Autowired 时，如果找到多个同一类型的bean，则会抛异常，此时可以使用 @Qualifier("beanName")，
+  明确指定bean的名称进行注入，此时与 @Resource指定name属性作用相同。
+</code></pre>
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">05 December 2016</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2016/12/08/linuxcached-memory" class="next" title="Linux的Cached Memory">Next Post &rarr;</a>
+  
+  
+    <a href="/2016/12/01/springmvc" class="prev" title="SpringMVC框架理解">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

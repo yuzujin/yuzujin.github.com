@@ -1,0 +1,187 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>配置eclipse&maven&tomcat基础开发环境 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">配置eclipse&maven&tomcat基础开发环境</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<h3 id="eclipse">安装eclipse</h3>
+
+<p>本次实验下载的是eclipse MARS release，版本，该版本已经集成里maven插件。</p>
+
+<h3 id="java">安装Java</h3>
+
+<p>根据系统版本（本文系统基于ios）选择合适的jdk版本下载安装，安装过程中会出现两次安装提示，第一次是安装jdk，第二次是安装jre。</p>
+
+<p>安装完成后, 在.bash_profile中设置jdk环境变量：JAVA_HOME，修改Path变量</p>
+
+<pre><code>JAVA_HOME="`/usr/libexec/java_home`"
+PATH=$JAVA_HOME/bin:$PATH
+</code></pre>
+<p>修改完成后，不要忘记运行source .bash_profile，使其生效</p>
+
+<p>查看java是否安装配置成功，运行java -version</p>
+
+<pre><code>java version "1.8.0_91"
+Java(TM) SE Runtime Environment (build 1.8.0_91-b14)
+Java HotSpot(TM) 64-Bit Server VM (build 25.91-b14, mixed mode)
+</code></pre>
+
+<p>配置jre路径：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/java.png" alt="image" /></p>
+
+<h3 id="maven">安装maven</h3>
+
+<p>下载apache-maven-3.3.9-bin.tar.gz安装包，解压即可使用。</p>
+
+<p>打开.bash_profile，配置maven环境变量：MAVEN_HOME</p>
+
+<pre><code>M3_HOME=/Users/test/app/maven3.3.9
+PATH=$JAVA_HOME/bin:$M3_HOME/bin:$PATH
+</code></pre>
+
+<p>修改完成后，不要忘记运行source .bash_profile，使其生效</p>
+
+<p>接下来在maven根目录下创建本地仓库目录：repo，同时打开maven下的conf/settings.xml，修改本地仓库路径：</p>
+
+<pre><code>&lt;localRepository&gt;/Users/test/app/maven3.3.9/repo&lt;/localRepository&gt;
+</code></pre>
+
+<p>关闭保存</p>
+
+<p>然后再eclipse中配置maven路径，如下图：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/maven.png" alt="image" /></p>
+
+<p>配置settings.xml文件：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/maven2.png" alt="image" /></p>
+
+<p>至此maven配置完成。</p>
+
+<h3 id="tomcat">安装tomcat</h3>
+
+<p>下载apache-tomcat-8.0.33.tar.gz安装包，解压即可使用</p>
+
+<p>打开eclipse配置：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/tomcat.png" alt="image" /></p>
+
+<p>点击finish，配置完成。</p>
+
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">12 October 2016</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2016/10/12/eclipsespirngspringmvcmavenmybatismysql" class="next" title="在Eclipse上搭建Spirng+SpringMVC+Maven+Mybatis+MySQL项目">Next Post &rarr;</a>
+  
+  
+    <a href="/2016/10/11/apacheconnection" class="prev" title="查看Apache的connection数及time_wait过多问题解决">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

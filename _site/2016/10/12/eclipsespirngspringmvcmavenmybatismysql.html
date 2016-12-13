@@ -1,0 +1,890 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>在Eclipse上搭建Spirng+SpringMVC+Maven+Mybatis+MySQL项目 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">在Eclipse上搭建Spirng+SpringMVC+Maven+Mybatis+MySQL项目</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<p>本文中所使用到的各个软件版本如下：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Software</th>
+      <th style="text-align: center">Version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">Spring</td>
+      <td style="text-align: center">3.2.9.RELEASE</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Maven</td>
+      <td style="text-align: center">3.3.9</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Mybatis</td>
+      <td style="text-align: center">3.2.1</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">MySQL</td>
+      <td style="text-align: center">5.1.49</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Java</td>
+      <td style="text-align: center">1.8.0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Eclipse</td>
+      <td style="text-align: center">Mars.2 Release (4.5.2)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Tomcat</td>
+      <td style="text-align: center">8.0.33</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>下面详细讲述使用eclipse进行Spring+SpringMVC+Maven+Mybatis+MySQL项目搭建过程，包括搭建步骤和配置步骤。</p>
+
+<h2 id="section">创建数据库和表</h2>
+
+<pre><code>CREATE TABLE `t_user` (
+  `USER_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `USER_NAME` char(30) NOT NULL,
+  `USER_PASSWORD` char(10) NOT NULL,
+  PRIMARY KEY (`USER_ID`),
+  KEY `IDX_NAME` (`USER_NAME`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8
+
+INSERT INTO t_user (USER_ID, USER_NAME, USER_PASSWORD) VALUES (1, 'test1', '123456');
+INSERT INTO t_user (USER_ID, USER_NAME, USER_PASSWORD) VALUES (2, 'test2', '123456');
+</code></pre>
+
+<h2 id="maven">创建Maven工程</h2>
+
+<ol>
+  <li>选择工程</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/1.png" alt="image" /></p>
+
+<ol>
+  <li>选择工作空间</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/2.png" alt="image" /></p>
+
+<p>不要勾选快速框架，下一步，选择webapp框架：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/0.png" alt="image" /></p>
+
+<ol>
+  <li>填写输出包名、group id、artifact id</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/3.png" alt="image" /></p>
+
+<ol>
+  <li>创建好的目录结构如下：</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/4.png" alt="image" /></p>
+
+<p>右键工程properties，左侧java build path，选择source标签，会发现src/main/java和src/test/java目录缺失：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/10.png" alt="image" /></p>
+
+<p>点击add folder,添加缺失的目录：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/11.png" alt="image" /></p>
+
+<p>完成后目录结构如下：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/12.png" alt="image" /></p>
+
+<ol>
+  <li>添加包依赖，编辑pom.xml文件</li>
+</ol>
+
+<pre><code>&lt;project xmlns="http://maven.apache.org/POM/4.0.0" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;com.test.global.mobile.tools&lt;/groupId&gt;
+  &lt;artifactId&gt;test&lt;/artifactId&gt;
+  &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+  &lt;packaging&gt;war&lt;/packaging&gt;
+  
+  &lt;properties&gt;
+      &lt;druid-version&gt;1.0.14&lt;/druid-version&gt;
+      &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+      &lt;jdk.version&gt;1.8&lt;/jdk.version&gt;
+      &lt;!-- spring版本号 --&gt;
+      &lt;spring.version&gt;3.2.9.RELEASE&lt;/spring.version&gt;
+      &lt;!-- log4j日志文件管理包版本 --&gt;
+      &lt;slf4j.version&gt;1.6.6&lt;/slf4j.version&gt;
+      &lt;log4j.version&gt;1.2.17&lt;/log4j.version&gt;
+      &lt;!-- junit版本号 --&gt;
+      &lt;junit.version&gt;4.8.2&lt;/junit.version&gt;
+      &lt;!-- mybatis版本号 --&gt;
+      &lt;mybatis.version&gt;3.2.1&lt;/mybatis.version&gt;
+   &lt;/properties&gt;
+      
+   &lt;dependencies&gt;
+      &lt;!-- spring --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-beans&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-web&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-context-support&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-aop&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-aspects&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-tx&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;!-- common --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;commons-httpclient&lt;/groupId&gt;
+          &lt;artifactId&gt;commons-httpclient&lt;/artifactId&gt;
+          &lt;version&gt;3.1&lt;/version&gt;
+      &lt;/dependency&gt;
+
+      &lt;!--mybatis依赖 --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+          &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+          &lt;version&gt;${mybatis.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+
+      &lt;!-- mybatis/spring包 --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+          &lt;artifactId&gt;mybatis-spring&lt;/artifactId&gt;
+          &lt;version&gt;1.2.0&lt;/version&gt;
+      &lt;/dependency&gt;
+
+      &lt;!-- log4j --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;log4j&lt;/groupId&gt;
+          &lt;artifactId&gt;log4j&lt;/artifactId&gt;
+          &lt;version&gt;${log4j.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;commons-lang&lt;/groupId&gt;
+          &lt;artifactId&gt;commons-lang&lt;/artifactId&gt;
+          &lt;version&gt;2.6&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;!-- slf4j --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+          &lt;artifactId&gt;slf4j-api&lt;/artifactId&gt;
+          &lt;version&gt;${slf4j.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+          &lt;artifactId&gt;slf4j-log4j12&lt;/artifactId&gt;
+          &lt;version&gt;${slf4j.version}&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;!-- gson --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;com.google.code.gson&lt;/groupId&gt;
+          &lt;artifactId&gt;gson&lt;/artifactId&gt;
+          &lt;version&gt;2.2.4&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;!-- json --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;net.sf.json-lib&lt;/groupId&gt;
+          &lt;artifactId&gt;json-lib&lt;/artifactId&gt;
+          &lt;version&gt;2.4&lt;/version&gt;
+          &lt;classifier&gt;jdk15&lt;/classifier&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.codehaus.jackson&lt;/groupId&gt;
+          &lt;artifactId&gt;jackson-mapper-asl&lt;/artifactId&gt;
+          &lt;version&gt;1.9.10&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;!-- cache --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;com.test.global.mobile.server&lt;/groupId&gt;
+          &lt;artifactId&gt;dataaccess-cache&lt;/artifactId&gt;
+          &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+      &lt;/dependency&gt;
+      
+      &lt;!-- test --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;junit&lt;/groupId&gt;
+          &lt;artifactId&gt;junit&lt;/artifactId&gt;
+          &lt;version&gt;${junit.version}&lt;/version&gt;
+          &lt;scope&gt;test&lt;/scope&gt;
+      &lt;/dependency&gt;
+
+      &lt;dependency&gt;
+          &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+          &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+          &lt;version&gt;${spring.version}&lt;/version&gt;
+          &lt;scope&gt;test&lt;/scope&gt;
+      &lt;/dependency&gt;
+
+      &lt;!-- Database --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;mysql&lt;/groupId&gt;
+          &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+          &lt;version&gt;5.1.29&lt;/version&gt;
+      &lt;/dependency&gt;
+
+      &lt;!-- Provided --&gt;
+      &lt;dependency&gt;
+          &lt;groupId&gt;javax&lt;/groupId&gt;
+          &lt;artifactId&gt;javaee-api&lt;/artifactId&gt;
+          &lt;version&gt;6.0&lt;/version&gt;
+          &lt;scope&gt;provided&lt;/scope&gt;
+      &lt;/dependency&gt;
+      
+      &lt;dependency&gt;
+          &lt;groupId&gt;javax&lt;/groupId&gt;
+          &lt;artifactId&gt;javaee-web-api&lt;/artifactId&gt;
+          &lt;version&gt;6.0&lt;/version&gt;
+          &lt;scope&gt;provided&lt;/scope&gt;
+      &lt;/dependency&gt;
+   
+  &lt;/dependencies&gt; 
+  &lt;build&gt;
+      &lt;finalName&gt;pocketbonus&lt;/finalName&gt;
+      &lt;plugins&gt;
+          &lt;plugin&gt;
+              &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+              &lt;version&gt;2.3.2&lt;/version&gt;
+              &lt;configuration&gt;
+                  &lt;source&gt;1.8&lt;/source&gt;
+                  &lt;target&gt;1.8&lt;/target&gt;
+              &lt;/configuration&gt;
+ 
+                   &lt;/plugin&gt;
+          &lt;plugin&gt;
+              &lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+              &lt;version&gt;2.4&lt;/version&gt;
+              &lt;configuration&gt;
+                  &lt;version&gt;3.0&lt;/version&gt;
+              &lt;/configuration&gt;
+          &lt;/plugin&gt;
+      &lt;/plugins&gt;
+  &lt;/build&gt;
+  
+&lt;/project&gt;
+</code></pre>
+
+<h2 id="section-1">配置文件</h2>
+
+<h3 id="mybatis">mybatis配置</h3>
+
+<p>在src/main/resources下创建mybatis目录，在目录下创建mybatis-config.xml文件：</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd"&gt;
+&lt;configuration&gt;
+&lt;/configuration&gt;
+</code></pre>
+
+<h3 id="section-2">数据源配置</h3>
+
+<p>在src/main/resources下创建properties目录，在目录下创建test_jdbc.properties文件：</p>
+
+<pre><code>jdbc_driverClassName=com.mysql.jdbc.Driver
+jdbc_url=jdbc:mysql://localhost:3306/testdb?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=round
+jdbc_username=root
+jdbc_password=123
+</code></pre>
+
+<p>其中jdbc_url中的useUnicode=true&amp;characterEncoding=utf8指定编码格式，zeroDateTimeBehavior=round会将0000-00-00 00:00:00转换为最近的日期0001-01-01，否则会报错Cannot convert value ‘0000-00-00 00:00:00’ from column 1 to TIMESTAMP。</p>
+
+<h3 id="section-3">表映射文件配置</h3>
+
+<p>在src/main/resources下创建mapper目录，在目录下创建userMapper.xml文件：</p>
+
+<pre><code>    &lt;?xml version="1.0" encoding="UTF-8"?&gt;  
+    &lt;!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;
+    &lt;mapper namespace="com.test.dao.UserDao"&gt;
+        &lt;!--设置domain类和数据库中表的字段一一对应，注意数据库字段和domain类中的字段名称不致，此处一定要！--&gt;
+        &lt;resultMap id="BaseResultMap" type="com.test.domain.User"&gt;
+            &lt;id column="USER_ID" property="userId" jdbcType="INTEGER" /&gt;
+            &lt;result column="USER_NAME" property="userName" jdbcType="CHAR" /&gt;
+            &lt;result column="USER_PASSWORD" property="userPassword" jdbcType="CHAR" /&gt;
+        &lt;/resultMap&gt;
+        &lt;!-- 查询单条记录 --&gt;
+        &lt;select id="selectUserById" parameterType="int" resultMap="BaseResultMap"&gt;
+            SELECT * FROM t_user WHERE USER_ID = #{userId}
+        &lt;/select&gt;
+    &lt;/mapper&gt;
+</code></pre>
+
+<h3 id="spring-application">Spring application文件配置</h3>
+
+<p>在src/main/resources下创建applicationContext.xml文件：</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+           http://www.springframework.org/schema/aop  
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/context  
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd"&gt;
+
+     &lt;!-- 引入jdbc配置文件 --&gt;  
+     &lt;bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"&gt;
+        &lt;property name="locations"&gt;
+            &lt;list&gt;
+               &lt;value&gt;classpath:properties/*.properties&lt;/value&gt;
+                &lt;!--要是有多个配置文件，只需在这里继续添加即可 --&gt;
+            &lt;/list&gt;
+        &lt;/property&gt;
+     &lt;/bean&gt;
+
+     &lt;!-- 配置数据源 --&gt;
+     &lt;bean id="dataSource"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource"&gt;
+        &lt;!-- 不使用properties来配置 --&gt;
+        &lt;!-- &lt;property name="driverClassName" value="com.mysql.jdbc.Driver" /&gt; 
+             &lt;property name="url" value="jdbc:mysql://localhost:3306/learning" /&gt; 
+             &lt;property name="username" value="root" /&gt; 
+             &lt;property name="password" value="christmas258@" /&gt; --&gt;
+        &lt;!-- 使用properties来配置 --&gt;
+        &lt;property name="driverClassName"&gt;
+            &lt;value&gt;${jdbc_driverClassName}&lt;/value&gt;
+        &lt;/property&gt;
+        &lt;property name="url"&gt;
+            &lt;value&gt;${jdbc_url}&lt;/value&gt;
+        &lt;/property&gt;
+        &lt;property name="username"&gt;
+            &lt;value&gt;${jdbc_username}&lt;/value&gt;
+        &lt;/property&gt;
+        &lt;property name="password"&gt;
+            &lt;value&gt;${jdbc_password}&lt;/value&gt;
+        &lt;/property&gt;
+     &lt;/bean&gt;
+
+     &lt;!-- 自动扫描了所有的XxxxMapper.xml对应的mapper接口文件，这样就不用一个一个手动配置Mpper的映射了，只要Mapper接口类和Mapper映射文件对应起来就可以了。 --&gt;
+     &lt;bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"&gt;
+        &lt;property name="basePackage"
+            value="com.luo.dao" /&gt;
+     &lt;/bean&gt;
+
+     &lt;!-- 配置Mybatis的文件 ，mapperLocations配置**Mapper.xml文件位置，configLocation配置mybatis-config文件位置--&gt;
+     &lt;bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"&gt;
+        &lt;property name="dataSource" ref="dataSource" /&gt;
+        &lt;property name="mapperLocations" value="classpath:mapper/*.xml"/&gt;  
+        &lt;property name="configLocation" value="classpath:mybatis/mybatis-config.xml" /&gt;
+        &lt;!-- &lt;property name="typeAliasesPackage" value="com.tiantian.ckeditor.model" /&gt; --&gt;
+     &lt;/bean&gt;
+
+     &lt;!-- 自动扫描注解的bean --&gt;
+     &lt;context:component-scan base-package="com.test.service" /&gt;
+&lt;/beans&gt;
+</code></pre>
+
+<h2 id="section-4">接口和类的配置</h2>
+
+<h3 id="pojo">添加POJO类</h3>
+
+<p>在src/main/java下创建package为com.test.global.mobile.tools.pb.model，在package下创建User.java类文件：</p>
+
+<pre><code>package com.test.global.mobile.tools.pb.model;
+
+public class User {
+
+    private Integer userId;  
+    private String userName;  
+    private String userPassword;  
+
+
+    public Integer getUserId() {  
+        return userId;  
+    }  
+
+    public void setUserId(Integer userId) {  
+        this.userId = userId;  
+    }  
+
+    public String getUserName() {  
+        return userName;  
+    }  
+
+    public void setUserName(String userName) {  
+        this.userName = userName;  
+    }  
+
+    public String getUserPassword() {  
+        return userPassword;  
+    }  
+
+    public void setUserPassword(String userPassword) {  
+        this.userPassword = userPassword;  
+    }  
+}
+</code></pre>
+
+<h3 id="dao">添加DAO层类文件</h3>
+
+<p>在src/main/java下创建package为com.test.global.mobile.tools.pb.dao，在package下创建UserDao.java类文件：</p>
+
+<pre><code>package com.test.global.mobile.tools.pb.dao;
+
+import com.test.global.mobile.tools.pb.model.User;
+
+public interface UserDao {
+
+    /**
+     * @param userId
+     * @return User
+     */
+    public User selectUserById(Integer userId);  
+
+}
+</code></pre>
+
+<h3 id="section-5">添加实现类和接口</h3>
+
+<p>在src/main/java下创建package为com.test.global.mobile.tools.pb.service，在package下创建UserService.java接口类和UserServiceImpl实现类：</p>
+
+<pre><code>package com.test.global.mobile.tools.pb.service;
+
+import com.test.global.mobile.tools.pb.model.User;
+
+public interface UserService {
+    User selectUserById(Integer userId);  
+}
+</code></pre>
+
+<pre><code>package com.test.global.mobile.tools.pb.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.test.global.mobile.tools.pb.dao.UserDao;
+import com.test.global.mobile.tools.pb.model.User;
+
+@Service  
+public class UserServiceImpl implements UserService {
+
+    @Autowired  
+    private UserDao userDao;  
+
+    public User selectUserById(Integer userId) {  
+        return userDao.selectUserById(userId);  
+
+    }  
+}
+</code></pre>
+
+<h2 id="section-6">单元测试</h2>
+
+<h3 id="section-7">添加测试用例类</h3>
+
+<p>在src/test/java下创建包com.test.baseTest，包下面创建测试用例类SpringTestCase.java：</p>
+
+<pre><code>package com.test.baseTest;
+
+import org.junit.runner.RunWith;  
+import org.springframework.test.context.ContextConfiguration;  
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;  
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;  
+
+//指定bean注入的配置文件  
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })  
+//使用标准的JUnit @RunWith注释来告诉JUnit使用Spring TestRunner  
+@RunWith(SpringJUnit4ClassRunner.class)  
+public class SpringTestCase extends AbstractJUnit4SpringContextTests {
+
+}
+</code></pre>
+
+<p>在src/test/java下创建包com.test.service，包下面创建测试服务类UserServiceTest.java：</p>
+
+<pre><code>package com.test.service;
+
+import org.junit.Test;  
+import org.springframework.beans.factory.annotation.Autowired;  
+import com.test.baseTest.SpringTestCase;  
+import com.test.global.mobile.tools.pd.model.User;
+
+public class UserServiceTest extends SpringTestCase {
+
+    @Autowired  
+    private UserService userService; 
+
+    @Test  
+    public void selectUserByIdTest(){  
+        User user = userService.selectUserById(1);  
+        System.out.println(user.getUserName() + ":" + user.getUserPassword());
+    }  
+}
+</code></pre>
+
+<p>运行单元测试，UserServiceTest右键Run As –&gt;Junit Test，在控制台可以看到运行结果。</p>
+
+<h2 id="springmvc">配置Springmvc</h2>
+
+<p>在src/main/resource中添加springmvc文件夹，然后添加文件spring-mvc.xml，内容如下：</p>
+
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.2.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd"&gt;
+
+   &lt;mvc:annotation-driven /&gt; 
+   &lt;!-- 扫描controller（controller层注入） --&gt;
+   &lt;context:component-scan base-package="com.test.global.mobile.tools.pd.controller"/&gt;  
+
+   &lt;!-- 对模型视图添加前后缀 --&gt;
+   &lt;bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+      p:prefix="/WEB-INF/view/" p:suffix=".jsp"/&gt;
+&lt;/beans&gt;
+</code></pre>
+
+<h2 id="webxml">配置web.xml</h2>
+
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    id="WebApp_ID" version="2.5"&gt;
+    &lt;display-name&gt;Archetype Created Web Application&lt;/display-name&gt;
+   &lt;!-- 起始欢迎界面 --&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+
+    &lt;!-- 读取spring配置文件 --&gt;
+    &lt;context-param&gt;
+        &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+        &lt;param-value&gt;classpath:application.xml&lt;/param-value&gt;
+    &lt;/context-param&gt;
+    &lt;!-- 设计路径变量值 --&gt;
+    &lt;context-param&gt;
+        &lt;param-name&gt;webAppRootKey&lt;/param-name&gt;
+        &lt;param-value&gt;springmvc.root&lt;/param-value&gt;
+    &lt;/context-param&gt;
+
+
+    &lt;!-- Spring字符集过滤器 --&gt;
+    &lt;filter&gt;
+        &lt;filter-name&gt;SpringEncodingFilter&lt;/filter-name&gt;
+        &lt;filter-class&gt;org.springframework.web.filter.CharacterEncodingFilter&lt;/filter-class&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;encoding&lt;/param-name&gt;
+            &lt;param-value&gt;UTF-8&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;forceEncoding&lt;/param-name&gt;
+            &lt;param-value&gt;true&lt;/param-value&gt;
+        &lt;/init-param&gt;
+    &lt;/filter&gt;
+    &lt;filter-mapping&gt;
+        &lt;filter-name&gt;SpringEncodingFilter&lt;/filter-name&gt;
+        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/filter-mapping&gt;
+
+    &lt;listener&gt;
+        &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
+    &lt;/listener&gt;
+
+    &lt;!-- springMVC核心配置 --&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;dispatcherServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+            &lt;!--spingMVC的配置路径  --&gt;
+            &lt;param-value&gt;classpath:springmvc/spring-mvc.xml&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
+    &lt;!-- 拦截设置 --&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;dispatcherServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+
+    &lt;!-- 错误跳转页面 --&gt;
+    &lt;error-page&gt;
+        &lt;!-- 路径不正确 --&gt;
+        &lt;error-code&gt;404&lt;/error-code&gt;
+        &lt;location&gt;/WEB-INF/errorpage/404.jsp&lt;/location&gt;
+    &lt;/error-page&gt;
+    &lt;error-page&gt;
+        &lt;!-- 没有访问权限，访问被禁止 --&gt;
+        &lt;error-code&gt;405&lt;/error-code&gt;
+        &lt;location&gt;/WEB-INF/errorpage/405.jsp&lt;/location&gt;
+    &lt;/error-page&gt;
+    &lt;error-page&gt;
+        &lt;!-- 内部错误 --&gt;
+        &lt;error-code&gt;500&lt;/error-code&gt;
+        &lt;location&gt;/WEB-INF/errorpage/500.jsp&lt;/location&gt;
+    &lt;/error-page&gt;
+&lt;/web-app&gt;
+</code></pre>
+
+<h2 id="section-8">添加控制类</h2>
+
+<p>在src/main/java下新建一个包com.test.global.mobile.tools.pd.controller.然后新建一个类UserController.java,其内容如下</p>
+
+<pre><code>package com.test.controller;
+
+import javax.annotation.Resource;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import com.test.global.mobile.tools.pd.model.User;
+import com.test.global.mobile.tools.pd.service.UserService;
+
+@Controller  
+public class UserController {  
+
+    @Resource  
+    private UserService userService;  
+
+    @RequestMapping("/")    
+    public ModelAndView getIndex(){      
+        ModelAndView mav = new ModelAndView("index");   
+        User user = userService.selectUserById(1);  
+        mav.addObject("user", user);   
+        return mav;    
+    }    
+}  
+</code></pre>
+
+<p>完成。</p>
+
+<h2 id="section-9">遇到的问题</h2>
+
+<p>解决Cannot change version of project facet Dynamic web module to 2.5：</p>
+
+<ol>
+  <li>找到 .setting文件夹内的org.eclipse.wst.common.project.facet.core.xml文件，文件格式大致如下：
+<?xml version="1.0" encoding="UTF-8"?></li>
+</ol>
+<faceted-project>
+<runtime name="Apache Tomcat v5.5" />
+<fixed facet="jst.web" />
+<fixed facet="jst.java" />
+<installed facet="jst.java" version="5.0" />
+<installed facet="jst.web" version="2.5" />
+<installed facet="wst.jsdt.web" version="1.0" />
+</faceted-project>
+<p>直接手动修改jst.web对应的version即可。最后重启tomcatX就可以正常使用了。</p>
+
+<ol>
+  <li>修改web.xml</li>
+</ol>
+
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;  
+&lt;web-app version="2.5"  
+    xmlns="http://java.sun.com/xml/ns/javaee"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee  
+    http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"&gt;  
+      
+  &lt;display-name&gt;Archetype Created Web Application&lt;/display-name&gt;  
+&lt;/web-app&gt; 
+</code></pre>
+
+<p>解决The superclass “javax.servlet.http.HttpServlet” was not found on the Java Build Path</p>
+
+<ol>
+  <li>在pom.xml添加依赖</li>
+</ol>
+
+<pre><code>&lt;dependency&gt;
+&lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+&lt;artifactId&gt;servlet-api&lt;/artifactId&gt;
+&lt;version&gt;2.5&lt;/version&gt;
+&lt;scope&gt;provided&lt;/scope&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">12 October 2016</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2016/11/03/app-http" class="next" title="移动APP http方式登录设计">Next Post &rarr;</a>
+  
+  
+    <a href="/2016/10/12/eclipsemaventomcat" class="prev" title="配置eclipse&maven&tomcat基础开发环境">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

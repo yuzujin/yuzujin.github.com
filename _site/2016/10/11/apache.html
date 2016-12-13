@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Apache的代理指令 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">Apache的代理指令</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<p>Apache代理分为正向代理和反向代理，开启apache代理模块需要在httpd.conf中配置：</p>
+
+<pre><code>LoadModule proxy_module       modules/mod_proxy.so
+LoadModule proxy_http_module  modules/mod_proxy_http.so
+LoadModule proxy_ftp_module   modules/mod_proxy_ftp.so
+LoadModule proxy_ajp_module   modules/mod_proxy_ajp.so
+LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
+LoadModule proxy_connect_module modules/mod_proxy_connect.so
+</code></pre>
+
+<h3 id="section">正向代理配置</h3>
+
+<p>需要需改的配置文件是httpd-vhosts.conf，使用的代理命令是ProxyRequests和ProxyVia。正向代理配置场景如下所示：</p>
+
+<pre><code>&lt;VirtualHost *:80&gt;
+    ServerAdmin test@gmail.com
+    DocumentRoot "D:/www/test"
+    ServerName www.test.com
+    ServerAlias test.com
+    ErrorLog "logs/test.com-error.log"
+    CustomLog "logs/test.com-access.log" common    
+    Alias /sublook "D:/www/test/look/sublook/"
+    &lt;Directory "D:/www/test"&gt;
+        Options FollowSymLinks
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+    &lt;/Directory&gt;
+    #正向代理设置
+    ProxyRequests On
+    ProxyVia On
+    #用来控制谁可以访问你的代理
+    &lt;Proxy *&gt;
+        Order deny,allow
+        Deny from all
+        Allow from 127.0.0.1
+    &lt;/Proxy&gt;
+&lt;/VirtualHost&gt;
+</code></pre>
+
+<p>下面是对正向代理那块配置的说明：</p>
+
+<p>ProxyRequests On：开启Apache正向代理</p>
+
+<p>ProxyVia On：控制位于代理服务器链中的代理请求的流向</p>
+
+<blockquote>
+  <p>如果设置为默认值Off ，将不会采取特殊的处理。如果一个请求或应答包含”Via:”头，将不进行任何修改而直接通过。</p>
+</blockquote>
+
+<blockquote>
+  <p>如果设置为On每个请求和应答都会对应当前主机得到一个”Via:”头。</p>
+</blockquote>
+
+<blockquote>
+  <p>如果设置为Full ，每个产生的”Via:”头中都会额外加入Apache服务器的版本，以”Via:”注释域出现。</p>
+</blockquote>
+
+<blockquote>
+  <p>如果设置为Block ，每个代理请求中的所有”Via:”头行都将被删除。且不会产生新的”Via:”头。</p>
+</blockquote>
+
+<h3 id="section-1">正向代理测试</h3>
+
+<p>浏览器设置（以FireFox为例）</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/proxy1.jpg" alt="image" /></p>
+
+<p>访问 www.sina.com，观察HTTP请求Response：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/proxy2.jpg" alt="image" /></p>
+
+<p>可以看到，Via：www.test.com，正向代理成功了。</p>
+
+<h3 id="section-2">反向代理配置</h3>
+
+<p>需要需改的配置文件是httpd-vhosts.conf，使用的代理命令是ProxyPass和ProxyPassReverse。正向代理配置场景如下所示：</p>
+
+<pre><code>&lt;VirtualHost *:80&gt;
+    ServerAdmin test@gmail.com
+    DocumentRoot "D:/www/test"
+    ServerName www.test.com
+    ServerAlias test.com
+    ErrorLog "logs/test.com-error.log"
+    CustomLog "logs/test.com-access.log" common    
+    Alias /sublook "D:/www/test/look/sublook/"
+    &lt;Directory "D:/www/test"&gt;
+        Options FollowSymLinks
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+    &lt;/Directory&gt;
+    #反向代理设置
+    ProxyPass /proxy http://www.proxypass.com/proxy
+    ProxyPassReverse /proxy http://www.proxypass.com/proxy
+&lt;/VirtualHost&gt;
+&lt;VirtualHost *:80&gt;
+    ServerAdmin test@gmail.com
+    DocumentRoot "D:/www/proxypass"
+    ServerName www.proxypass.com
+    ServerAlias proxypass.com
+    &lt;Directory "D:/www/proxypass"&gt;
+        Options FollowSymLinks
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+    &lt;/Directory&gt;
+&lt;/VirtualHost&gt;
+</code></pre>
+
+<p>ProxyPass /proxy http://www.proxypass.com/proxy : 将 www.test.com/proxy 域下的所有请求转发给 www.proxypass.com/proxy 代理，例如 www.test.com/proxy/login.php 会交给 www.proxypass.com/proxy/login.php 代理</p>
+
+<p>ProxyPassReverse /proxy http://www.proxypass.com/proxy ：
+　　　　　　 
+www.proxypass.com/proxy/login.php 中有如下代码：</p>
+
+<pre><code>&lt;?php
+    header('Location: http://www.proxypass.com/proxy/result.php');
+?&gt;
+</code></pre>
+
+<ol>
+  <li>
+    <p>ProxyPass：</p>
+
+    <table>
+      <tbody>
+        <tr>
+          <td>语法：ProxyPass [path] !</td>
+          <td>url</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>它主要是用作URL前缀匹配，不能有正则表达式，它里面配置的Path实际上是一个虚拟的路径，在反向代理到后端的url后，path是不会带过去的，使用示例：</p>
+
+    <pre><code>    ProxyPass /images/ !
+    这个示例表示，/images/的请求不被转发。
+    ProxyPass /mirror/foo/ http://backend.example.com/
+    我们假设当前的服务地址是http://example.com/，如果我们做下面这样的请求：
+    http://example.com/mirror/foo/bar, 那将被转成内部请求：
+    http://backend.example.com/bar
+    注：配置的时候，不需要被转发的请求，要配置在需要被转发的请求前面。
+</code></pre>
+  </li>
+  <li>
+    <p>ProxyPassReverse</p>
+
+    <p>语法：ProxyPassReverse [路径] url</p>
+
+    <p>它一般和ProxyPass指令配合使用，此指令使Apache调整HTTP重定向应答中Location,       Content-Location, URI头里的URL，这样可以避免在Apache作为反向代理使用时，。后端服务器的HTTP重定向造成的绕过反向代理的问题。参看下面的示例：</p>
+
+    <pre><code>    ProxyPass /example http://www.example.com/
+    ProxyPassReverse /example http://www.example.com/
+    ProxyPassReverse的作用就是反向代理，如果没有加这样的反向代理设置的情况下，访问   http://www.test.com/example/a，如果www.example.com对请求进行了redirect至http://www.example.com/b，那么，客户端就会绕过反向代理，进而访问http://www.test.com/example/b。如果设置了反向代理，则会在转交HTTP重定向应答到客户端之前调整它为http://www.test.com/example/a/b，即是在原请求之后追加上了redirect的路径。
+</code></pre>
+  </li>
+  <li>
+    <p>ProxyPassMatch</p>
+
+    <table>
+      <tbody>
+        <tr>
+          <td>语法：ProxyPassMatch [regex] !</td>
+          <td>url</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>这个实际上是url正则匹配，而不是简单的前缀匹配，匹配上的regex部分是会带到后端的url的，这个是与ProxyPass不同的。使用示例：</p>
+
+    <pre><code>    1、ProxyPassMatch ^/images !
+       这个示例表示对/images的请求，都不会被转发。
+    2、ProxyPassMatch ^(/.*\.gif)$ http://backend.example.com$1
+       这个示例表示对所有gif图片的请求，都被会转到后端，如此时请求http://example.com/foo/bar.gif，那内部将会转换为这样的请求http://backend.example.com/foo/bar.gif。
+</code></pre>
+  </li>
+</ol>
+
+<h3 id="section-3">反向代理测试</h3>
+
+<p>访问 www.test.com/proxy/login.php</p>
+
+<p>Apache将请求交给 www.proxypass.com/proxy/login.php 代理，HTTP请求如图：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/proxy3.jpg" alt="image" /></p>
+
+<p>可以发现其实Request中的请求还是 www.test.com 的，但是它确实是由 www.proxypass.com 来处理的</p>
+
+<p>proxypass.com/proxy/login.php 重定向到 proxypass.com/proxy/result.php</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/proxy4.jpg" alt="image" /></p>
+
+<p>也可以看到请求依然是 www.test.com/proxy/result.php</p>
+
+<p>因为配置了ProxyPassReverse后，proxypass.com/proxy/login.php 在重定向到 proxypass.com/proxy/result.php 时，Apache会将它调整回 test.com/proxy/result.php , 然后Apache再将 test.com/proxy/result.php 代理给 proxypass.com/proxy/result.php，所以说配置了 ProxyPassReverse 后，即使 proxypass.com/proxy 下的程序有重定向到其他 proxypss.com/proxy 的文件的（如 login.php 重定向到 result.php），你也不会在请求中发现 proxypass.com 的影子。</p>
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">11 October 2016</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2016/10/11/apacheconnection" class="next" title="查看Apache的connection数及time_wait过多问题解决">Next Post &rarr;</a>
+  
+  
+    <a href="/2016/10/10/cdn" class="prev" title="CDN技术原理">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

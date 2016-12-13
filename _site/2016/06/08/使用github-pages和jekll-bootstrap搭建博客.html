@@ -11,6 +11,8 @@
 
    <link rel="start" href="/" />
 
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
 	
 	
 	
@@ -64,13 +66,251 @@ git push origin master 之所以删除.git等文件，重新初始化仓库，�
 </code></pre>
 
 <h2 id="jekll">运行Jekll</h2>
-<p>访问username.github.io即可显示初始页面。</p>
+<p>等待几分钟后，访问username.github.io即可显示初始页面。</p>
+
+<p>假设你已经使用gem安装jekll在本地电脑上，否则使用以下命令安装：</p>
+
+<pre><code>    $ yum install ruby
+    $ gem install jekyll
+</code></pre>
+
+<p>那么你可以cd到本地git仓库中，运行以下命令：</p>
+
+<pre><code>    $ cd username.github.com
+    $ jekyll serve
+</code></pre>
+
+<p>然后打开浏览器，输入http://127.0.0.1:4000 就可以看到你的博客雏形。</p>
+
+<h2 id="post">新建post</h2>
+
+<p>可以使用rake命令创建post</p>
+
+<pre><code>    $ rake post title="Hello World"
+</code></pre>
+<p>rake命令会自动在_posts目录下创建一篇带有YAML段落的文章，文章名会被格式化，并带有日期。例如2016-06-12-helloworld.md</p>
+
+<p>在文章的头部有如下内容:</p>
+
+<pre><code>
+---
+layout: post
+title: "Hello World"
+date: 2016-06-08 17:00:12
+categories: [jekyll,mood]
+---
+</code></pre>
+
+<p>这段内容成为YAML Front Matter，Jekyll在处理这个文件时，会把它当成特殊文件处理，如果没有这段内容，Jekyll只会认为这个文件是一个静态文件，不会进行我们希望的markdown2html。</p>
+
+<p>layout指明这篇文章使用哪个模板，模板文件定义在_layouts文件夹下。</p>
+
+<p>categories表示这篇文章属于哪个类别，Jekyll会根据文章的类别进行归类，便于你浏览。</p>
+
+<p>其实Jekyll会为每个category创建一个文件夹，然后将生成的html文件放到对应的category下.</p>
+
+<h2 id="section">创建页面</h2>
+
+<p>依然是通过rake命令创建页面</p>
+
+<p>Create pages easily via rake task:</p>
+
+<pre><code>$ rake page name="about.md"
+</code></pre>
+
+<p>Create a nested page:</p>
+
+<pre><code>$ rake page name="pages/about.md"
+</code></pre>
+
+<p>Create a page with a “pretty” path:</p>
+
+<pre><code>$ rake page name="pages/about"
+this will create the file: ./pages/about/index.html
+
+</code></pre>
+
+<h2 id="section-1">发布</h2>
+
+<p>添加或修改完文章后，本地提交，然后推向github。</p>
+
+<pre><code>$ git add .
+$ git commit -m "Add new content"
+$ git push origin master
+</code></pre>
+
+<h2 id="section-2">个性化</h2>
+
+<hr />
+
+<h3 id="find-themes">Find Themes</h3>
+
+<p>You can find and browse the latest official themes in the <a href="http://themes.jekyllbootstrap.com/">Theme Explorer</a>. The theme explorer is still a work in progress; it shows full-website previews of all available themes.</p>
+
+<p><a href="http://themes.jekyllbootstrap.com/">Launch Theme Explorer</a></p>
+
+<p>Additionally, designers are free to publish their own themes as long as they are packaged appropriately. You can then use the same installation method outlined below to install the theme.</p>
+
+<p>Directly browse current Theme Packages on GitHub: <a href="https://github.com/jekyllbootstrap">https://github.com/jekyllbootstrap</a></p>
+
+<h3 id="install-themes">Install Themes</h3>
+
+<p>Install a theme by using the rake task and passing in the theme’s git url.</p>
+
+<pre><code>$ rake theme:install git="https://github.com/jekyllbootstrap/theme-the-program.git"
+</code></pre>
+
+<p>The installer uses git to download the Theme Package and then installs it. If you have obtained a Theme Package in another way, such as zip download, you can manually place it into your ./_theme_packages folder and then run the installer with the name of the theme.</p>
+
+<pre><code>$ rake theme:install name="THEME-NAME"
+</code></pre>
+
+<p>As a convenience, after the install is successful, the task will ask you if you’d like to switch to the newly installed theme. Type ‘y’ and enter to switch!</p>
+
+<h3 id="switch-themes">Switch Themes</h3>
+
+<p>Once your themes are installed you can switch between them via rake task:</p>
+
+<pre><code>$ rake theme:switch name="the-program"
+# for 0.1.0 users `rake switch_theme` still works.
+</code></pre>
+
+<h2 id="section-3">配置博客</h2>
+
+<p>Your Jekyll-Bootstrap blog can be configured by setting options within the <code>./_config.yml</code> file. You’ll note the extensive documentation provided within the file itself. Let’s go over some of these in detail:</p>
+
+<h3 id="blog-post-permalink-format">Blog Post Permalink Format</h3>
+
+<p>Jekyll provides extensive customization options as to how your blog post permalinks will be generated. You can consult the format table here: <a href="http://jekyllrb.com/docs/permalinks/">Jekyll Permalinks</a></p>
+
+<p>Jekyll-Bootstrap ships with the traditional default format for blogs:</p>
+
+<pre><code>permalink: /:categories/:year/:month/:day/:title/
+</code></pre>
+
+<p>Any category structure specified on a post will be included within the url, then the date, and finally the post title.</p>
+
+<p>Play around with what url configuration works best for you.</p>
+
+<h3 id="set-basepath">Set BASE_PATH</h3>
+
+<p>All post and page urls in Jekyll-Bootstrap expect to be prepended with BASE_PATH</p>
+
+<p>The BASE_PATH configuration is for special scenarios in which your blog must run from a sub-directory. The main scenario being if your blog will be hosted on a GitHub Project Page. If you are deploying this website for one of your GitHub projects you must set BASE_PATH to the name of your GitHub project.</p>
+
+<p>In any case, you can leave this blank if you have defined a CNAME for your site. More info is available at: <a href="http://pages.github.com">http://pages.github.com</a></p>
+
+<p>NOTE:</p>
+
+<p>When in localhost, your site will run from root “/” regardless of BASE_PATH.</p>
+
+<h3 id="enabling-comments">Enabling Comments</h3>
+
+<p>Jekyll-Bootstrap ships with widget codes that enable commenting for Disqus, Intense Debate, livefyre, and Facebook Comments.</p>
+
+<p>To enable commenting for your blog you will need to have setup an account with one of these providers. In the _config.yml you should see a hash named comments as shown below:</p>
+
+<pre><code># Settings for comments helper
+# Set 'provider' to the comment provider you want to use.
+# Set 'provider' to false to turn commenting off globally.
+#
+comments :
+  provider : disqus
+  disqus :
+    short_name : jekyllbootstrap
+  livefyre :
+    site_id : 123
+  intensedebate :
+    account : 123abc
+  facebook :
+    appid : 123
+    num_posts: 5
+    width: 580
+    colorscheme: light
+</code></pre>
+
+<p><strong>Choose a Provider</strong></p>
+
+<p>Set provider to the provider you intend to use. Make sure to specify your account credentials for the relevant provider within the hash named for that provider.</p>
+
+<p>In the example above, the disqus provider will be used and will be provided with jekyllbootstrap as the account short_name.</p>
+
+<p><strong>Use a Custom Provider</strong></p>
+
+<p>To use a custom provider, set <code>provider: custom</code>. Next create a file at this path:</p>
+
+<pre><code>./_includes/custom/comments
+</code></pre>
+
+<p>This file will load wherever the theme has included its comments so you can inject your own widget code via this file. If you have a provider I don’t know about, consider opening a GitHub Issue so I can include it!</p>
+
+<p><strong>Disable Comments</strong></p>
+
+<p>Set <code>provider: false</code> to disable comments globally.</p>
+
+<p>Disable comments for individual pages/posts by specifying <code>comments: false</code> in the page/post YAML Front Matter:</p>
+
+<pre><code>---
+layout: post
+category : lessons
+comments : false
+tags : [yay]
+---
+</code></pre>
+
+<h3 id="enabling-analytics">Enabling Analytics</h3>
+
+<p>Jekyll-Bootstrap ships with website analytics codes for <a href="http://google.com/analytics">Google</a>, and <a href="http://getclicky.com/">GetClicky</a>.</p>
+
+<p>To enable analytics for your blog you will need to have setup an account with one of these providers. In the <code>_config.yml</code> you should see a hash named <code>analytics</code> as shown below:</p>
+
+<pre><code># Settings for analytics helper
+# Set 'provider' to the analytics provider you want to use.
+# Set 'provider' to false to turn analytics off globally.
+#        
+analytics :
+  provider : google
+  google : 
+      tracking_id : 'UA-123-12'
+  getclicky :
+    site_id :
+</code></pre>
+
+<p><strong>Choose a Provider</strong></p>
+
+<p>Set provider to the provider you intend to use. Make sure to specify your account credentials for the relevant provider within the hash named for that provider.</p>
+
+<p>In the example above, the google provider will be used and will be provided with UA-123-12 as the account tracking_id.</p>
+
+<p><strong>Use a Custom Provider</strong></p>
+
+<p>To use a custom provider, set <code>provider: custom</code>. Next create a file at this path:</p>
+
+<pre><code>./_includes/custom/analytics
+</code></pre>
+
+<p>This file will load wherever the theme has included its analytics so you can inject your own widget code via this file. If you have a provider I don’t know about, consider opening a GitHub Issue so I can include it!</p>
+
+<p><strong>Disable Analytics</strong></p>
+
+<p>Set <code>provider: false</code> to disable analytics globally.</p>
+
+<p>Disable analytics for individual pages/posts by specifying <code>analytics: false</code> in the post/page YAML Front Matter:</p>
+
+<pre><code>---
+layout: post
+category : lessons
+analytics : false
+tags : [yay]
+---
+</code></pre>
+
 
 
 </div><!-- End Page -->
 
 
-  
+  <!--
   <div id="footer">
   	<address>
   		<span class="copyright">
@@ -84,6 +324,7 @@ git push origin master 之所以删除.git等文件，重新初始化仓库，�
   		</span>
   	</address>
   </div>
+  -->
   
 </div>
 

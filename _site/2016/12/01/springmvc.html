@@ -1,0 +1,242 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>SpringMVC框架理解 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">SpringMVC框架理解</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<p>Spring Web MVC是一种基于Java的实现了Web MVC设计模式的请求驱动类型的轻量级Web框架，即使用了MVC架构模式的思想，将web层进行职责解耦，基于请求驱动指的就是使用请求-响应模型，框架的目的就是帮助我们简化开发。</p>
+
+<p>Spring的MVC框架主要由前端控制器(DispatcherServlet)、(处理器映射)HandlerMapping、控制器(Handler或Controller)、处理器适配器(HandlerAdapter或Service)、(视图解析器)View Resolver、(视图)View组成。</p>
+
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/spring3.jpg?raw=true" alt="image" /></p>
+
+<p>运行流程：</p>
+
+<ol>
+  <li>
+    <p>客户端请求提交到DispatcherServlet</p>
+  </li>
+  <li>
+    <p>由DispatcherServlet控制器查询一个或多个HandlerMapping，找到处理请求的Controller</p>
+  </li>
+  <li>
+    <p>DispatcherServlet将请求提交到Controller</p>
+  </li>
+  <li>
+    <p>Controller调用业务逻辑处理后，返回ModelAndView</p>
+  </li>
+  <li>
+    <p>DispatcherServlet查询一个或多个ViewResoler视图解析器，找到ModelAndView指定的视图</p>
+  </li>
+  <li>
+    <p>视图负责将结果显示到客户端</p>
+  </li>
+</ol>
+
+<h2 id="springmvc">SpringMVC组件</h2>
+
+<p><strong>DispatcherServlet</strong></p>
+
+<p>DispatcherServlet是整个Spring MVC的核心。所有的请求都有经过它来统一分发。在DispatcherServlet将请求分发给Spring Controller之前，需要借助于Spring提供的HandlerMapping定位到具体的Controller。其主要工作有以下三项：</p>
+
+<ol>
+  <li>截获符合特定格式的URL请求。</li>
+  <li>初始化DispatcherServlet上下文对应的WebApplicationContext，并将其与业务层、持久化层的WebApplicationContext建立关联。</li>
+  <li>初始化Spring MVC的各个组成组件，并装配到DispatcherServlet中。</li>
+</ol>
+
+<p><strong>HandlerMapping</strong></p>
+
+<p>能够完成客户请求到Controller映射。</p>
+
+<p><strong>Controller</strong></p>
+
+<p>需要为并发用户处理上述请求，因此实现Controller接口时，必须保证线程安全并且可重用。</p>
+
+<p>Controller将处理用户请求，这和Struts Action扮演的角色是一致的。一旦Controller处理完用户请求，则返回ModelAndView对象给DispatcherServlet前端控制器，ModelAndView中包含了模型（Model）和视图（View）。</p>
+
+<p>从宏观角度考虑，DispatcherServlet是整个Web应用的控制器；从微观考虑，Controller是单个Http请求处理过程中的控制器，而ModelAndView是Http请求过程中返回的模型（Model）和视图（View）。</p>
+
+<p><strong>ViewResolver</strong></p>
+
+<p>Spring提供的视图解析器（ViewResolver）在Web应用中查找View对象，从而将相应结果渲染给客户。</p>
+
+<h2 id="springmvc-1">SpringMVC注解</h2>
+
+<ul>
+  <li>
+    <p>@Controller</p>
+
+    <p>负责注册一个bean 到spring 上下文中</p>
+  </li>
+  <li>
+    <p>@Service</p>
+
+    <p>服务层组件，用于标注业务层组件,表示定义一个bean，自动根据bean的类名实例化一个首写字母为小写的bean</p>
+  </li>
+  <li>
+    <p>@RequestMapping</p>
+  </li>
+</ul>
+
+<p>　注解为控制器指定可以处理哪些 URL 请求</p>
+
+<ul>
+  <li>@RequestBody</li>
+</ul>
+
+<p>　该注解用于读取Request请求的body部分数据，使用系统默认配置的HttpMessageConverter进行解析，然后把相应的数据绑定到要返回的对象上 ,再把HttpMessageConverter返回的对象数据绑定到 controller中方法的参数上</p>
+
+<ul>
+  <li>@ResponseBody</li>
+</ul>
+
+<p>　该注解用于将Controller的方法返回的对象，通过适当的HttpMessageConverter转换为指定格式后，写入到Response对象的body数据区</p>
+
+<ul>
+  <li>@ModelAttribute 　　　</li>
+</ul>
+
+<p>　在方法定义上使用 @ModelAttribute 注解：Spring MVC 在调用目标处理方法前，会先逐个调用在方法级上标注了@ModelAttribute 的方法</p>
+
+<p>　在方法的入参前使用 @ModelAttribute 注解：可以从隐含对象中获取隐含的模型数据中获取对象，再将请求参数 –绑定到对象中，再传入入参将方法入参对象添加到模型中</p>
+
+<ul>
+  <li>@RequestParam　</li>
+</ul>
+
+<p>　在处理方法入参处使用 @RequestParam 可以把请求参 数传递给请求方法</p>
+
+<ul>
+  <li>@PathVariable</li>
+</ul>
+
+<p>　绑定 URL 占位符到入参</p>
+
+<ul>
+  <li>@ExceptionHandler</li>
+</ul>
+
+<p>　注解到方法上，出现异常时会执行该方法</p>
+
+<ul>
+  <li>@ControllerAdvice</li>
+</ul>
+
+<p>　使一个Contoller成为全局的异常处理类，类中用@ExceptionHandler方法注解的方法可以处理所有Controller发生的异常</p>
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">01 December 2016</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2016/12/05/spring-annotation" class="next" title="Spring Annotation详解">Next Post &rarr;</a>
+  
+  
+    <a href="/2016/12/01/spring-aop" class="prev" title="Spring AOP介绍">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

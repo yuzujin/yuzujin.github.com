@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>CDN技术原理 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">CDN技术原理</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<h1 id="cdn">CDN技术原理</h1>
+
+<h2 id="section">概述</h2>
+
+<p>CDN的全称Content Delivery Network，(缩写：CDN)即内容分发网络。</p>
+
+<p>CDN是一个经策略性部署的整体系统，从技术上全面解决由于网络带宽小、用户访问量大、网点分布不均而产生的用户访问网站响应速度慢的根本原因。</p>
+
+<p>CDN目的是通过在现有的Internet中增加一层新的网络架构，将网站的内容发布到最接近用户的网络“边缘”，使用户可以就近取得所需的内容，解决Internet 网络拥塞状况，提高用户访问网站的响应速度。</p>
+
+<h2 id="cdn-1">CDN组成部分</h2>
+
+<p>CDN是一种组合技术，其中包括源站、缓存服务器、智能DNS、客户端等几个重要部分。</p>
+
+<h3 id="section-1">源站</h3>
+
+<p>源站指发布内容的原始站点。添加、删除和更改网站的文件，都是在源站上进行的；另外缓存服务器所抓取的对象也全部来自于源站。</p>
+
+<h3 id="section-2">缓存服务器</h3>
+
+<p>缓存服务器是直接提供给用户访问的站点资源，有一台或数台服务器组成；当用户发起访问时，他的访问请求被智能DNS定位到离他较近的缓存服务器。如果用户所请求的内容刚好在缓存里面，则直接把内容返还给用户；如果访问所需的内容没有被缓存，则缓存服务器向邻近的缓存服务器或直接向源站抓取内容，然后再返还给用户。</p>
+
+<h3 id="dns">智能DNS</h3>
+
+<p>智能DNS是整个CDN技术的核心，它主要根据用户的来源，将其访问请求指向离用户比较近的缓存服务器，如把广州电信的用户请求指向到广州电信IDC机房中的缓存服务器。通过智能DNS解析，让用户访问同服务商下的服务器，消除国内南北网络互相访问慢的问题，达到加速作用。智能DNS的出现，颠覆了传统的一个域名对应一个镜像的做法，让用户更加便捷的去访问网站。</p>
+
+<h3 id="section-3">客户端</h3>
+
+<p>客户端或称用户端即发起访问的普通用户，一般的访问方式是浏览器。这里就不再做详细说明。</p>
+
+<h3 id="cdn-2">CDN技术实现原理</h3>
+
+<p>下图为CDN用户访问流程：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cdn.bmp" alt="image" /></p>
+
+<ol>
+  <li>
+    <p>用户向浏览器输入www.web.com这个域名，浏览器第一次发现本地没有dns缓存，则向网站的DNS服务器请求；</p>
+  </li>
+  <li>
+    <p>网站的DNS域名解析器设置了CNAME，指向了www.web.51cdn.com,请求指向了CDN网络中的智能DNS负载均衡系统；</p>
+  </li>
+  <li>
+    <p>智能DNS负载均衡系统解析域名，把对用户响应速度最快的IP节点返回给用户；</p>
+  </li>
+  <li>
+    <p>用户向该IP节点（CDN服务器）发出请求；</p>
+  </li>
+  <li>
+    <p>由于是第一次访问，CDN服务器会向原web站点请求，并缓存内容；</p>
+  </li>
+  <li>
+    <p>请求结果发给用户。</p>
+  </li>
+</ol>
+
+<p>CDN网络是在用户和服务器之间增加Cache层，如何将用户的请求引导到Cache上获得源服务器的数据，主要是通过接管DNS实现，这就是CDN的最基本的原理，当然很多细节没有涉及到，比如第1步，首先向本地的DNS服务器请求。第5步，内容淘汰机制（根据TTL）等。但原理大体如此。</p>
+
+<p>当用户访问加入CDN服务的网站时，域名解析请求将最终交给全局负载均衡DNS进行处理。全局负载均衡DNS通过一组预先定义好的策略，将当时最接近用 户的节点地址提供给用户，使用户能够得到快速的服务。同时，它还与分布在世界各地的所有CDNC节点保持通信，搜集各节点的通信状态，确保不将用户的请求 分配到不可用的CDN节点上，实际上是通过DNS做全局负载均衡。</p>
+
+<p>对于普通的Internet用户来讲，每个CDN节点就相当于一个放置在它周围的WEB。通过全局负载均衡DNS的控制，用户的请求被透明地指向离他最近的节点，节点中CDN服务器会像网站的原始服务器一样，响应用户的请求。由于它离用户更近，因而响应时间必然更快。</p>
+
+<h3 id="cdn-3">CDN示例</h3>
+
+<p>Linux 是开放源代码的免费操作系统，已经成功应用于许多关键领域。Bind是Unix/FreeBSD/Linux等类Unix平台上非常有名DNS服务程序，Internet上超过60％的DNS运行的是bind。Bind的最新版本是9.x，用的比较多的是8.x，bind 9有很多新特性，其中一项是根据用户端源地址对同一域名解析不同的IP地址，有了这种特性，能把用户对同一域名的访问，引导到不同地域节点的服务器上去访问。Squid是Linux等操作系统上有名的Cache引擎，与商业Cache引擎相比，Squid的性能比较低，基本功能工作原理与商业Cache产品是一致的，作为试验，是非常容易配置运行起来。以下简要介绍CDN的配置流程。</p>
+
+<ol>
+  <li>
+    <p>要加入CDN服务的网站，需要域名(如www.linuxaid.com.cn, 地址202.99.11.120)解析权提供给CDN运营商，Linuxaid的域名解析记录只要把www主机的A记录改为CNAME并指向cache.cdn.com即可。cache.cdn.com是CDN网络自定义的缓存服务器的标识。在/var/named/linuxaid.com.cn域名解析记录中，由：</p>
+
+    <pre><code>
+    www             IN      A       202.99.11.120
+    改为
+    www             IN      CNAME   cache.cdn.com.
+
+</code></pre>
+  </li>
+  <li>
+    <p>CDN运营商得到域名解析权以后，得到域名的CNAME记录，指向CDN网络属下缓存服务器的域名，如cache.cdn.com，CDN网络的全局负载均衡DNS，需要把CNAME记录根据策略解析出IP地址，一般是给出就近访问的Cache地址。Bind 9的基本功能可以根据不同的源IP地址段解析对应的IP，实现根据地域就近访问的负载均衡，一般可以通过Bind 9的sortlist选项实现根据用户端IP地址返回最近的节点IP地址，具体的过程为cache.cdn.com设置多个A记录，/var/named/cdn.com 的内容如下：</p>
+
+    <pre><code>    cache   IN      A               202.93.22.13    ;有多少个CACHE地址
+    cache   IN      A               210.21.30.90    ;就有多少个CACHE的A记录
+    cache   IN      A               211.99.13.47
+</code></pre>
+  </li>
+</ol>
+
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">10 October 2016</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2016/10/11/apache" class="next" title="Apache的代理指令">Next Post &rarr;</a>
+  
+  
+    <a href="/2016/10/09/aws-ec2shadowsocks" class="prev" title="在aws ec2实例上搭建shadowsocks服务">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

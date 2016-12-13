@@ -547,3 +547,13 @@ img.maruku-png { }
 	color:#FFF;
 }
 
+table {
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+}
+table td {
+    border: 1px solid #ccc;
+}
+table th {
+    border: 1px solid #ccc;
+}
