@@ -36,7 +36,7 @@ permanent  #返回301永久重定向 地址栏会显示跳转后的地址
 rewrite ^/b/(.*)\.html /play.php?video=$1 break;
 如果加上if语句，示例如下： 
 if (!-f $request_filename)
-{ rewrite ^/img/(.*)$ /site/$host/images/$1 last;      }
+{ rewrite ^/img/(.*)$ /site/$host/_images/$1 last;      }
 ```
 
 **Nginx rewrite模块环境变量**

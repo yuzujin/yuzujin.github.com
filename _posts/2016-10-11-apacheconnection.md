@@ -46,7 +46,7 @@ LAST_ACK 5            #关闭一个TCP连接需要从两个方向上分别进行
 
 ESTABLISHED 表示正在通信，TIME_WAIT 表示主动关闭，CLOSE_WAIT 表示被动关闭
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/connection.gif)
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/connection.gif)
 
 一般不到万不得已的情况也不会去查看网络状态，如果服务器出了异常，百分之八九十都是下面两种情况：
 

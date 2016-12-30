@@ -11,7 +11,7 @@ Spring Web MVC是一种基于Java的实现了Web MVC设计模式的请求驱动�
 
 Spring的MVC框架主要由前端控制器(DispatcherServlet)、(处理器映射)HandlerMapping、控制器(Handler或Controller)、处理器适配器(HandlerAdapter或Service)、(视图解析器)View Resolver、(视图)View组成。
 
-![image](https://github.com/yuzujin/yuzujin.github.com/blob/master/images/spring3.jpg?raw=true)
+![image](https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/spring3.jpg?raw=true)
 
 运行流程：
 

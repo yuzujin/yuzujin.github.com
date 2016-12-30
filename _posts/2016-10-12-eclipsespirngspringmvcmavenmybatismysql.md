@@ -42,36 +42,36 @@ INSERT INTO t_user (USER_ID, USER_NAME, USER_PASSWORD) VALUES (2, 'test2', '1234
 
 1. 选择工程
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/1.png)
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/1.png)
 
 2. 选择工作空间
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/2.png)
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/2.png)
 
 不要勾选快速框架，下一步，选择webapp框架：
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/0.png)
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/0.png)
    
 3. 填写输出包名、group id、artifact id
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/3.png)
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/3.png)
 
 
 4. 创建好的目录结构如下：
 
-![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/4.png)
+![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/4.png)
 
    右键工程properties，左侧java build path，选择source标签，会发现src/main/java和src/test/java目录缺失：
    
-   ![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/10.png)
+   ![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/10.png)
    
    点击add folder,添加缺失的目录：
    
-   ![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/11.png)
+   ![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/11.png)
    
    完成后目录结构如下：
    
-   ![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/12.png)
+   ![image](https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/12.png)
 
 5. 添加包依赖，编辑pom.xml文件
 

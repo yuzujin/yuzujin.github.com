@@ -303,7 +303,7 @@ you are better off sticking with ruby. Toward that end I've built [Mustache-with
 Static assets are any file in the root or non-underscored subfolders that are not pages.
 That is they have no valid YAML Front Matter and are thus not treated as Jekyll Pages.
 
-Static assets should be used for images, css, and javascript files.
+Static assets should be used for _images, css, and javascript files.
 
 
 
