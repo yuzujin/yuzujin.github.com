@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>MongoDB集群分片 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">MongoDB集群分片</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<p>MongoDB副本集有两个问题没有解决：从节点每个上面的数据都是对数据库全量拷贝，从节点压力会不会过大；数据压力大到机器支撑不了的时候不能做到自动扩展。</p>
+
+<p>处理海量数据时，传统数据库是在数据库层之上增加一个数据访问层组件，它主要的作用是SQL解析、路由处理。根据应用的请求的功能解析当前访问的sql判断是在哪个业务数据库、哪个表访问查询并返回数据结果。数据库的增加、删除、备份需要程序去控制。</p>
+
+<p>MongoDB所有的这一切通过他自己的内部机制就可以搞定：</p>
+
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo15.jpg?raw=true" alt="mongo15" title="Title&quot; &quot;Title" /></p>
+
+<p>从图中可以看到有四个组件：mongos、config server、shard、replica set。</p>
+
+<ul>
+  <li>
+    <p><code>mongos</code>，数据库集群请求的入口，所有的请求都通过mongos进行协调，不需要在应用程序添加一个路由选择器，mongos自己就是一个请求分发中心，它负责把对应的数据请求请求转发到对应的shard服务器上。在生产环境通常有多mongos作为请求的入口，防止其中一个挂掉所有的mongodb请求都没有办法操作。</p>
+  </li>
+  <li>
+    <p><code>config server</code>，顾名思义为配置服务器，存储所有数据库元信息（路由、分片）的配置。mongos本身没有物理存储分片服务器和数据路由信息，只是缓存在内存里，配置服务器则实际存储这些数据。mongos第一次启动或者关掉重启就会从 config server 加载配置信息，以后如果配置服务器信息变化会通知到所有的 mongos 更新自己的状态，这样 mongos 就能继续准确路由。在生产环境通常有多个 config server 配置服务器，因为它存储了分片路由的元数据，这个可不能丢失！就算挂掉其中一台，只要还有存货， mongodb集群就不会挂掉。</p>
+  </li>
+  <li>
+    <p><code>shard</code>，这就是传说中的分片了。上面提到一个机器就算能力再大也有天花板，一台普通的机器做不了的多台机器来做，一台机器的一个数据表 Collection1 存储了 1T 数据，压力太大了！在分给4个机器后，每个机器都是256G，则分摊了集中在一台机器的压力。也许有人问一台机器硬盘加大一点不就可以了，为什么要分给四台机器呢？不要光想到存储空间，实际运行的数据库还有硬盘的读写、网络的IO、CPU和内存的瓶颈。在mongodb集群只要设置好了分片规则，通过mongos操作数据库就能自动把对应的数据操作请求转发到对应的分片机器上。在生产环境中分片的片键可要好好设置，这个影响到了怎么把数据均匀分到多个分片机器上，不要出现其中一台机器分了1T，其他机器没有分到的情况，如下图：</p>
+  </li>
+</ul>
+
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo16.jpg?raw=true" alt="mongo16" title="Title&quot; &quot;Title" /></p>
+
+<ul>
+  <li><code>replica set</code>，其实上图4个分片如果没有 replica set 是个不完整架构，假设其中的一个分片挂掉那四分之一的数据就丢失了，所以在高可用性的分片架构还需要对于每一个分片构建 replica set 副本集保证分片的可靠性。生产环境通常是 2个副本 + 1个仲裁。</li>
+</ul>
+
+<p><strong>如何搭建高可用的mongodb集群</strong></p>
+
+<hr />
+
+<p>首先确定各个组件的数量，mongos 3个， config server 3个，数据分3片 shard server 3个，每个shard 有一个副本一个仲裁也就是 3 * 2 = 6 个，总共需要部署15个实例。这些实例可以部署在独立机器也可以部署在一台机器，我们这里测试资源有限，只准备了3台机器，在同一台机器只要端口不同就可以，看一下物理部署图：</p>
+
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo17.jpg?raw=true" alt="mongo17" title="Title&quot; &quot;Title" /></p>
+
+<p>1.准备机器，IP分别设置为： 192.168.0.1、192.168.0.2、192.168.0.3。</p>
+
+<p>2.分别在每台机器建立mongos 、config 、 shard1 、shard2、shard3 五个目录。 因为mongos不存储数据，只需要建立日志文件目录即可。</p>
+
+<pre><code># 建立mongos目录
+$ mkdir -p ~/mongodbtest/mongos/log
+
+# 建立config server数据文件存放目录
+$ mkdir -p ~/mongodbtest/config/data
+
+# 建立config server日志文件存放目录
+$ mkdir -p ~/mongodbtest/config/log
+
+# 建立shard1数据文件存放目录
+$ mkdir -p ~/mongodbtest/shard1/data
+
+# 建立shard1日志文件存放目录
+$ mkdir -p ~/mongodbtest/shard1/log
+
+# 建立shard2数据文件存放目录
+$ mkdir -p ~/mongodbtest/shard2/data
+
+# 建立shard2日志文件存放目录
+$ mkdir -p ~/mongodbtest/shard2/log
+
+# 建立shard3数据文件存放目录
+$ mkdir -p ~/mongodbtest/shard3/data
+
+# 建立shard3日志文件存放目录
+$ mkdir -p ~/mongodbtest/shard3/log
+</code></pre>
+
+<p>3.规划5个组件对应的端口号，由于一个机器需要同时部署 mongos、config server、shard1、shard2、shard3，所以需要用端口进行区分。这个端口可以自由定义，在本文 mongos为 20000，config server 为 21000， shard1为 22001，shard2为22002，shard3为22003.</p>
+
+<p>4.在每一台服务器分别启动配置服务器</p>
+
+<pre><code>$ ./mongod --configsvr --dbpath ~/mongodbtest/config/data --port 21000 --logpath 
+~/mongodbtest/config/log/config.log --fork
+</code></pre>
+
+<p>5.在每一台服务器分别启动mongos服务器</p>
+
+<pre><code>$ ./mongos --configdb 192.168.0.1:21000, 192.168.0.2:21000, 192.168.0.3:21000 
+--port 20000 --logpath ~/mongodbtest/mongos/log/mongos.log --fork
+</code></pre>
+
+<p>6.配置各个分片的副本集</p>
+
+<p>为了快速启动并节约测试环境存储空间，这里加上 nojournal 是为了关闭日志信息，在我们的测试环境不需要初始化这么大的redo日志。同样设置 oplogsize是为了降低 local 文件的大小，oplog是一个固定长度的 capped collection,它存在于”local”数据库中,用于记录Replica Sets操作日志。</p>
+
+<pre><code># 在每个机器里分别设置分片1服务及副本集shard1
+$ ./mongod --shardsvr --replSet shard1 --port 22001 --dbpath ~/mongdbtest/shard1/data 
+--logpath ~/mongdbtest/shard1/log/shard1.log --fork --nojournal --oplogSize 10
+
+# 在每个机器里分别设置分片2服务及副本集shard2
+$ ./mongod --shardsvr --replSet shard2 --port 22002 --dbpath ~/mongdbtest/shard2/data 
+--logpath ~/mongdbtest/shard2/log/shard2.log --fork --nojournal --oplogSize 10
+
+ # 在每个机器里分别设置分片3服务及副本集shard3
+$ ./mongod --shardsvr --replSet shard3 --port 22003 --dbpath ~/mongdbtest/shard3/data 
+--logpath ~/mongdbtest/shard3/log/shard3.log --fork --nojournal --oplogSize 10
+</code></pre>
+
+<p>分别对每个分片配置副本集，任意登陆一个机器，比如登陆192.168.0.1，连接MongoDB</p>
+
+<pre><code># 设置第一个分片副本集
+$ ./mongo 192.168.0.1:22001
+&gt; use admin;
+&gt; config={_id:"shard1", members:[{_id:0, host:"192.168.0.1:22001"},
+{_id:1, host:"192.168.0.2:22001"},
+{_id:2, host:"192.168.0.3:22001",arbiterOnly:true}]}
+&gt; rs.initiate(config);
+
+# 设置第二个分片副本集
+$ ./mongo 192.168.0.1:22002
+&gt; use admin;
+&gt; config={_id:"shard2", members:[{_id:0, host:"192.168.0.1:22002"},
+{_id:1, host:"192.168.0.2:22002"},
+{_id:2, host:"192.168.0.3:22002",arbiterOnly:true}]}
+&gt; rs.initiate(config);
+
+# 设置第三个分片副本集
+$ ./mongo 192.168.0.1:22003
+&gt; use admin;
+&gt; config={_id:"shard3", members:[{_id:0, host:"192.168.0.1:22003"},
+{_id:1, host:"192.168.0.2:22003"},
+{_id:2, host:"192.168.0.3:22003",arbiterOnly:true}]}
+&gt; rs.initiate(config);
+</code></pre>
+
+<p>7.目前搭建了mongodb配置服务器、路由服务器，各个分片服务器，不过应用程序连接到 mongos 路由服务器并不能使用分片机制，还需要在程序里设置分片配置，让分片生效。</p>
+
+<pre><code>$ ./mongo 192.168.0.1:20000
+&gt; use admin;
+# 串联路由服务器和分片副本集1
+&gt; db.runCommand({addshard:"shard1/192.168.0.1:22001,192.168.0.2:22001,
+192.168.0.3:22001"});
+# 串联路由服务器和分片副本集2
+&gt; db.runCommand({addshard:"shard2/192.168.0.1:22002,192.168.0.2:22002,
+192.168.0.3:22002"});
+# 串联路由服务器和分片副本集3
+&gt; db.runCommand({addshard:"shard3/192.168.0.1:22003,192.168.0.2:22003,
+192.168.0.3:22003"}); 
+
+# 查看分片服务器的配置
+&gt; db.runCommand({listshards: 1});
+   
+{
+    "shards" : [
+        {
+            "_id": "shard1",
+            "host": "shard1/192.168.0.1:22001,192.168.0.2:22001,192.168.0.3:22001"
+        },
+        {
+            "_id": "shard2",
+            "host": "shard2/192.168.0.1:22002,192.168.0.2:22002,192.168.0.3:22002"
+        },
+        {
+            "_id": "shard3",
+            "host": "shard3/192.168.0.1:22003,192.168.0.2:22003,192.168.0.3:22003"
+        }
+    ],
+    "ok":1
+}
+因为192.168.0.3是每个分片副本集的仲裁节点，所以在上面结果没有列出来。
+</code></pre>
+
+<p>8.连接在mongos上，准备让指定的数据库、指定的集合分片生效。</p>
+
+<pre><code># 指定testdb分片生效
+
+&gt; db.runCommand({enablesharding:"testdb"})
+
+# 指定数据里需要分片的集合和片键
+
+&gt; db.runCommand({shardcollection:"testdb.table1", key:{id:1}})
+#设置testdb的 table1 表需要分片，根据 id 自动分片到 shard1，shard2，shard3 上面去。
+要这样设置是因为不是所有mongodb 的数据库和表都需要分片
+</code></pre>
+
+<p>9.测试分片结果</p>
+
+<pre><code># 连接mongos服务器
+$ ./mongos 192.168.0.1:20000
+&gt; use testdb;
+&gt; for (var i =1; i&lt;10000; i++) db.table1.save({id:i,"test1":"testval1"})
+# 查看分片情况
+&gt; db.table1.stats()
+</code></pre>
+
+<p>10.优化</p>
+
+<p>比如我们把所有的仲裁节点放在一台机器，其余两台机器承担了全部读写操作，但是作为仲裁的192.168.0.3相当空闲。让机器192.168.0.3多分担点责任吧！架构可以这样调整，把机器的负载分的更加均衡一点，每个机器既可以作为主节点、副本节点、仲裁节点，这样压力就会均衡很多了，如图：</p>
+
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo18.jpg?raw=true" alt="mongo18" title="Title&quot; &quot;Title" /></p>
+
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">06 January 2017</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2017/01/08/cgi" class="next" title="CGI的前世今生">Next Post &rarr;</a>
+  
+  
+    <a href="/2017/01/05/mongodb" class="prev" title="MongoDB副本集">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

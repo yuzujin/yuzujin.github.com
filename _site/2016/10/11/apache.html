@@ -129,11 +129,11 @@ LoadModule proxy_connect_module modules/mod_proxy_connect.so
 
 <p>浏览器设置（以FireFox为例）</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/proxy1.jpg" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/proxy1.jpg" alt="image" /></p>
 
 <p>访问 www.sina.com，观察HTTP请求Response：</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/proxy2.jpg" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/proxy2.jpg" alt="image" /></p>
 
 <p>可以看到，Via：www.test.com，正向代理成功了。</p>
 
@@ -199,8 +199,8 @@ www.proxypass.com/proxy/login.php 中有如下代码：</p>
 
     <p>它主要是用作URL前缀匹配，不能有正则表达式，它里面配置的Path实际上是一个虚拟的路径，在反向代理到后端的url后，path是不会带过去的，使用示例：</p>
 
-    <pre><code>    ProxyPass /images/ !
-    这个示例表示，/images/的请求不被转发。
+    <pre><code>    ProxyPass /_images/ !
+    这个示例表示，/_images/的请求不被转发。
     ProxyPass /mirror/foo/ http://backend.example.com/
     我们假设当前的服务地址是http://example.com/，如果我们做下面这样的请求：
     http://example.com/mirror/foo/bar, 那将被转成内部请求：
@@ -234,8 +234,8 @@ www.proxypass.com/proxy/login.php 中有如下代码：</p>
 
     <p>这个实际上是url正则匹配，而不是简单的前缀匹配，匹配上的regex部分是会带到后端的url的，这个是与ProxyPass不同的。使用示例：</p>
 
-    <pre><code>    1、ProxyPassMatch ^/images !
-       这个示例表示对/images的请求，都不会被转发。
+    <pre><code>    1、ProxyPassMatch ^/_images !
+       这个示例表示对/_images的请求，都不会被转发。
     2、ProxyPassMatch ^(/.*\.gif)$ http://backend.example.com$1
        这个示例表示对所有gif图片的请求，都被会转到后端，如此时请求http://example.com/foo/bar.gif，那内部将会转换为这样的请求http://backend.example.com/foo/bar.gif。
 </code></pre>
@@ -248,13 +248,13 @@ www.proxypass.com/proxy/login.php 中有如下代码：</p>
 
 <p>Apache将请求交给 www.proxypass.com/proxy/login.php 代理，HTTP请求如图：</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/proxy3.jpg" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/proxy3.jpg" alt="image" /></p>
 
 <p>可以发现其实Request中的请求还是 www.test.com 的，但是它确实是由 www.proxypass.com 来处理的</p>
 
 <p>proxypass.com/proxy/login.php 重定向到 proxypass.com/proxy/result.php</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/proxy4.jpg" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/proxy4.jpg" alt="image" /></p>
 
 <p>也可以看到请求依然是 www.test.com/proxy/result.php</p>
 

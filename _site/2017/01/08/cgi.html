@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>CGI的前世今生 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">CGI的前世今生</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<p><strong>CGI</strong></p>
+
+<hr />
+
+<p>CGI (Common Gateway Interface) 是外部应用程序（CGI程序）与 WEB 服务器之间的接口标准（协议），是在CGI程序和Web服务器之间传递信息的过程。CGI规范允许Web服务器执行外部程序，并将它们的输出发送给Web浏览器，CGI 将 Web 的一组简单的静态超媒体文档变成一个完整的新的交互式媒体。</p>
+
+<p>最初，CGI 是在 1993 年由美国国家超级电脑应用中心（NCSA）为 NCSA HTTPd Web 服务器开发的。</p>
+
+<p>这个 Web 服务器使用了 UNIX shell 环境变量来保存从 Web 服务器传递出去的参数，然后生成一个运行 CGI 的独立进程。CGI的第一个实现是 Perl 写的。</p>
+
+<p>对一个 CGI 程序，做的工作其实只有：从环境变量(environment variables)和标准输入(standard input)中读取数据、处理数据、向标准输出(standard output)输出数据。</p>
+
+<p>环境变量中存储的叫 Request Meta-Variables，也就是诸如 QUERY_STRING、PATH_INFO 之类的东西，这些是由 Web Server 通过环境变量传递给 CGI 程序的，CGI 程序也是从环境变量中读取的。标准输入中存放的往往是用户通过 PUTS 或者 POST 提交的数据，这些数据也是由 Web Server 传过来的。</p>
+
+<p>环境变量列表：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">变量</th>
+      <th style="text-align: center">解释</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">SERVER_NAME</td>
+      <td style="text-align: center">运行CGI序为机器名或IP地址。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">SERVER_INTERFACE</td>
+      <td style="text-align: center">WWW服务器的类型，如：CERN型或NCSA型。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">SERVER_PROTOCOL</td>
+      <td style="text-align: center">通信协议，应当是HTTP/1.0。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">SERVER_PORT</td>
+      <td style="text-align: center">TCP端口，一般说来web端口是80。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">HTTP_ACCEPT</td>
+      <td style="text-align: center">HTTP定义的浏览器能够接受的数据类型。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">HTTP_REFERER</td>
+      <td style="text-align: center">发送表单的文件URL。（并非所有的浏览器都传送这一变量）</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">HTTP_USER-AGENT</td>
+      <td style="text-align: center">发送表单的浏览的有关信息。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">GETWAY_INTERFACE</td>
+      <td style="text-align: center">CGI程序的版本，在UNIX下为 CGI/1.1。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">PATH_TRANSLATED</td>
+      <td style="text-align: center">PATH_INFO中包含的实际路径名。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">PATH_INFO</td>
+      <td style="text-align: center">浏览器用GET方式发送数据时的附加路径。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">SCRIPT_NAME</td>
+      <td style="text-align: center">CGI程序的路径名。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">QUERY_STRING</td>
+      <td style="text-align: center">表单输入的数据，URL中问号后的内容。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">REMOTE_HOST</td>
+      <td style="text-align: center">发送程序的主机名，不能确定该值。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">REMOTE_ADDR</td>
+      <td style="text-align: center">发送程序的机器的IP地址。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">REMOTE_USER</td>
+      <td style="text-align: center">发送程序的人名。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">CONTENT_TYPE</td>
+      <td style="text-align: center">POST发送，一般为application/xwww-form-urlencoded。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">CONTENT_LENGTH</td>
+      <td style="text-align: center">POST方法输入的数据的字节数。</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>CGI 的缺点：</p>
+
+<ul>
+  <li>效率低下：每一个连接 fork 一个进程处理。</li>
+  <li>功能十分有限：CGI只能收到一个请求，输出一个响应。很难在 CGI 体系去对Web请求的控制，例如：用户认证等。</li>
+</ul>
+
+<p><strong>FastCGI</strong></p>
+
+<hr />
+
+<p>FastCGI (Fast Common Gateway Interface) 是一种让交互程序与 Web Server 通信的协议。FastCGI 是 CGI 的增强版本。 FastCGI 致力于减少 WebServer 与 CGI 程序之间互动的开销，从而使 Web Server 可以同时处理更多的请求。</p>
+
+<p>不同于 CGI 为每一个请求创建一个进程，FastCGI 维护一个进程池用来处理持续不断的请求，这些进程是由FastCGI 管理，而不是Web Server。Fastcgi 先fork一个master，解析配置文件，初始化执行环境，然后再fork多个worker。当请求过来时，master会传递给一个worker，然后立即可以接受下一个请求。这样就避免了重复的劳动，效率自然是高。而且当worker不够用时，master可以根据配置预先启动几个worker等着；当然空闲worker太多时，也会停掉一些，这样就提高了性能，也节约了资源。这就是Fastcgi的对进程的管理。</p>
+
+<p>Web Server 是通过 Unix domain socket、命名管道(Name pipe)或者 TCP 链接来向一个FastCGI 进程发送环境变量信息和请求本身的。请求的响应内容以同样的方式返回给 Web Server，Web Server 随后将响应发给客户端。这个链接在响应完成后可能会被关闭，但是web server 和 FastCGI 进程都会被保留。</p>
+
+<p>使用FastCGI 的 Web Server</p>
+
+<ul>
+  <li>
+    <p>Apache HTTP Server (部分)</p>
+
+    <p>通过mod_fcgid模块实现，这个模块曾属于第三方，后来成为Apache的一个子项目，这个模块仅支持Unix 套接字，不支持TCP套接字。</p>
+
+    <p>一个较早的第三方模块mod_fcgi也还在用。
+从Apache 2.4开始，mod_proxy_fcgi被加进来，为了支持TCP FastCGI servers。</p>
+  </li>
+  <li>Cherokee HTTP Server</li>
+  <li>
+    <p>Hiawatha Webserver（英语：Hiawatha_(web_server)）</p>
+
+    <p>支持FastCGI的負載平衡</p>
+
+    <p>支持chrooted FastCGI 伺服器</p>
+  </li>
+  <li>Lighttpd</li>
+  <li>Nginx</li>
+  <li>LiteSpeed Web Server</li>
+  <li>Microsoft IIS</li>
+</ul>
+
+<p><strong>PHP-CGI</strong></p>
+
+<hr />
+
+<p>php-cgi 是一种CGI 协议的实现。</p>
+
+<ul>
+  <li>php-cgi 其实就是PHP 解析器。</li>
+  <li>在CGI 模式时，当Web Server 收到 xx/index.php 请求时，会启动php-cgi，php-cgi 会解析php.ini 文件，初始化环境，然后根据请求参数进行处理，再返回处理后的结果。(都是以CGI 协议规范来进行)</li>
+  <li>php-cgi 在每个请求时都会启动一个进程，然后读取php.ini 进行解析，可想而知效率相对比较低。</li>
+  <li>php-cgi 无法实现平滑重启。修改php.ini 配置后，后面启动的php-cgi 程序还是不会感知。</li>
+</ul>
+
+<p><strong>PHP-FPM</strong></p>
+
+<hr />
+<p>FastCGI Process Management，是一种FastCGI 协议的实现。</p>
+
+<ul>
+  <li>当请求到来时，php-fpm 启动并读取php.ini 文件完成初始化环境，然后启动一个master，再启动多个worker。当请求过来时，master 会传递给一个worker，然后等待下一个请求。php-fpm 会动态配置worker 的数量。</li>
+  <li>一个php-fpm 进程可以处理多个请求，会启动多个php-cgi 程序。</li>
+  <li>php-fpm 可以实现平衡重启。修改php.ini 后，当启用新的worker 会使用新的配置。</li>
+</ul>
+
+<p><strong>spawn-fcgi</strong></p>
+
+<hr />
+
+<p>Spawn-FCGI是一个通用的FastCGI管理服务器，它是lighttpd中的一部份，很多人都用Lighttpd的Spawn-FCGI进行 FastCGI模式下的管理工作，不过有不少缺点。而PHP-FPM的出现多少缓解了一些问题，但PHP-FPM有个缺点就是要重新编译，这对于一些已经运行的环境可能有不小的风险(refer)，在php5.3.3中可以直接使用PHP-FPM了。</p>
+
+<p>Spawn-FCGI目前已经独成为一个项目，更加稳定一些，也给很多Web站点的配置带来便利。已经有不少站点将它与nginx搭配来解决动态网页。</p>
+
+<pre><code>spawn-fcgi -a 127.0.0.1 -p9000 -C5 -u www-data -g www-data -f /usr/bin/php-CGI
+</code></pre>
+
+<p>参数含义如下:</p>
+
+<ul>
+  <li>-f 指定调用FastCGI的进程的执行程序位置，根据系统上所装的PHP的情况具体设置</li>
+  <li>-a 绑定到地址addr</li>
+  <li>-p 绑定到端口port</li>
+  <li>-s 绑定到unix socket的路径path</li>
+  <li>-C 指定产生的FastCGI的进程数，默认为5(仅用于PHP)</li>
+  <li>-P 指定产生的进程的PID文件路径</li>
+  <li>-u和-g FastCGI使用什么身份(-u 用户 -g用户组)运行，Ubuntu下可以使用www-data，其他的根据情况配置，如nobody、apache等</li>
+</ul>
+
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">08 January 2017</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2017/01/10/wsgi" class="next" title="WSGI理解">Next Post &rarr;</a>
+  
+  
+    <a href="/2017/01/06/mongodb" class="prev" title="MongoDB集群分片">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

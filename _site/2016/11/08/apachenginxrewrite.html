@@ -90,7 +90,7 @@
 <pre><code>rewrite ^/b/(.*)\.html /play.php?video=$1 break;
 如果加上if语句，示例如下： 
 if (!-f $request_filename)
-{ rewrite ^/img/(.*)$ /site/$host/images/$1 last;      }
+{ rewrite ^/img/(.*)$ /site/$host/_images/$1 last;      }
 </code></pre>
 
 <p><strong>Nginx rewrite模块环境变量</strong></p>

@@ -1,0 +1,791 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>WSGI理解 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">WSGI理解</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<p><strong>What’s WSGI</strong></p>
+
+<hr />
+
+<p>WSGI (Web Server Gateway Interface) 不是服务器、python模块、框架、API或任何类型的软件，而是描述 Web 服务器如何与 Web 应用程序通信以及 Web 应用程序如何链接在一起以处理一个请求的规范。</p>
+
+<p>WSGI 是一个 Python 标准，在<a href="https://www.python.org/dev/peps/pep-3333/">PEP 3333</a>中有关于服务器端和应用程序接口端规范的详细描述。如果应用程序（或框架或工具包）依据WSGI规范开发，那么它将可以在任何依据WSGI规范开发的服务器上运行。</p>
+
+<p>WSGI应用程序可以堆叠。 那些在堆栈中间的WSGI应用程序被称为中间件，它必须实现WSGI接口的两侧：应用程序和服务器，堆栈顶部的WSGI应用程序作为服务器，堆栈底部的WSGI应用程序作为应用程序。</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/wsgi.jpg" alt="wsgi" /></p>
+
+<p>WSGI服务器仅从客户端接收请求，将其传递给应用程序，然后将应用程序返回的响应发送到客户端，它只做这些，其他所有的细节工作必须由应用程序或中间件完成。</p>
+
+<p>Python 2.5和更高版本带有一个WSGI服务器: wsgiref。</p>
+
+<p><strong>Application Interface</strong></p>
+
+<hr />
+
+<p>WSGI应用程序接口被实现为callable对象：一个函数、一个方法、一个类或者一个实现了object.<strong>call</strong>()方法的实例，这个callable对象必须能够：</p>
+
+<p>1.接受两个参数</p>
+
+<ul>
+  <li>一个包含类CGI变量的字典 environ</li>
+  <li>一个被应用用来发送HTTP状态码/信息和HTTP头部信息给服务器的回调函数 start_response</li>
+</ul>
+
+<p>2.将响应内容以字符串迭代器的形式发给服务器</p>
+
+<p>应用程序的框架如下：</p>
+
+<pre><code># The application interface is a callable object
+
+# It accepts two arguments:
+# environ points to a dictionary containing CGI like environment
+# variables which is populated by the server for each
+# received request from the client；
+# start_response is a callback function supplied by the server
+# which takes the HTTP status and headers as arguments
+def application ( environ, start_response ):
+    # Build the response body possibly
+    # using the supplied environ dictionary
+    response_body = 'Request method: %s' % environ['REQUEST_METHOD']
+
+    # HTTP response code and message
+    status = '200 OK'
+
+    # HTTP headers expected by the client
+    # They must be wrapped as a list of tupled pairs:
+    # [(Header name, Header value)].
+    response_headers = [
+        ('Content-Type', 'text/plain'),
+        ('Content-Length', str(len(response_body)))
+    ]
+  
+    # Send them to the server using the supplied function
+    start_response(status, response_headers)
+
+    # Return the response body. Notice it is wrapped
+    # in a list although it could be any iterable.
+    return [response_body]
+</code></pre>
+
+<p><strong>Enviroment Dict</strong></p>
+
+<hr />
+
+<p>服务器将来自客户端请求中的类似CGI的变量填充到环境变量字典中，下面脚本将输出整个字典：</p>
+
+<pre><code>#! /usr/bin/env python
+
+# Python's bundled WSGI server
+from wsgiref.simple_server import make_server
+
+def application (environ, start_response):
+
+    # Sorting and stringifying the environment key, value pairs
+    response_body = [
+        '%s: %s' % (key, value) for key, value in sorted(environ.items())
+    ]
+    response_body = '\n'.join(response_body)
+
+    status = '200 OK'
+    response_headers = [
+        ('Content-Type', 'text/plain'),
+        ('Content-Length', str(len(response_body)))
+    ]
+    start_response(status, response_headers)
+
+    return [response_body]
+
+# Instantiate the server
+httpd = make_server (
+    'localhost', # The host name
+    8051, # A port number where to wait for the request
+    application # The application object name, in this case a function
+)
+
+# Wait for a single request, serve it and quit
+httpd.handle_request()
+</code></pre>
+
+<p>将上面程序片段保存为environment.py，在终端用运行：python environment.py，服务器将监听8051端口，打开浏览器输入：http://localhost:8051</p>
+
+<pre><code>Apple_PubSub_Socket_Render: /private/tmp/com.apple.launchd.omVjTfSPWb/Render
+COLORFGBG: 7;0
+CONTENT_LENGTH: 
+CONTENT_TYPE: text/plain
+GATEWAY_INTERFACE: CGI/1.1
+HOME: /Users/yuzujin
+HTTP_ACCEPT: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+HTTP_ACCEPT_ENCODING: gzip, deflate, sdch, br
+HTTP_ACCEPT_LANGUAGE: zh-CN,zh;q=0.8,en;q=0.6,pt;q=0.4,th;q=0.2,ar;q=0.2,ja;q=0.2
+HTTP_CONNECTION: keep-alive
+HTTP_HOST: localhost:8051
+HTTP_UPGRADE_INSECURE_REQUESTS: 1
+HTTP_USER_AGENT: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36
+ITERM_PROFILE: Default
+ITERM_SESSION_ID: w0t4p0:B9A76F07-EEF7-495A-8CC6-ECAA412ADBB0
+LANG: zh_CN.UTF-8
+LC_CTYPE: zh_CN.UTF-8
+LESS: -R
+LOGNAME: yuzujin
+LSCOLORS: Gxfxcxdxbxegedabagaacd
+OLDPWD: /Users/yuzujin/app/test/static/font
+PAGER: less
+PATH: /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+PATH_INFO: /
+PWD: /Users/yuzujin/app
+QUERY_STRING: 
+REMOTE_ADDR: 127.0.0.1
+REMOTE_HOST: 1.0.0.127.in-addr.arpa
+REQUEST_METHOD: GET
+SCRIPT_NAME: 
+SERVER_NAME: 1.0.0.127.in-addr.arpa
+SERVER_PORT: 8051
+SERVER_PROTOCOL: HTTP/1.1
+SERVER_SOFTWARE: WSGIServer/0.1 Python/2.7.6
+SHELL: /bin/zsh
+SHLVL: 1
+SSH_AUTH_SOCK: /private/tmp/com.apple.launchd.itL8Kal1Y1/Listeners
+TERM: xterm-256color
+TERM_PROGRAM: iTerm.app
+TERM_PROGRAM_VERSION: 3.0.12
+TERM_SESSION_ID: w0t4p0:B9A76F07-EEF7-495A-8CC6-ECAA412ADBB0
+TMPDIR: /var/folders/2k/yqr8f64n66j1q_ydgf6phb9h0000gn/T/
+USER: yuzujin
+VERSIONER_PYTHON_PREFER_32_BIT: no
+VERSIONER_PYTHON_VERSION: 2.7
+XPC_FLAGS: 0x0
+XPC_SERVICE_NAME: 0
+ZSH: /Users/yuzujin/.oh-my-zsh
+_: /usr/bin/python
+__CF_USER_TEXT_ENCODING: 0x1F5:0x19:0x34
+wsgi.errors: &lt;open file '&lt;stderr&gt;', mode 'w' at 0x106c721e0&gt;
+wsgi.file_wrapper: wsgiref.util.FileWrapper
+wsgi.input: &lt;socket._fileobject object at 0x106d7a450&gt;
+wsgi.multiprocess: False
+wsgi.multithread: True
+wsgi.run_once: False
+wsgi.url_scheme: http
+wsgi.version: (1, 0)
+</code></pre>
+
+<p><strong>Response Iterable</strong></p>
+
+<hr />
+
+<p>WSGI 应用的返回是return [response_body]，如果换成return response_body，会发生什么呢？
+服务器将生成一个字节迭代器，一次向客户端只发送一个字节，这样速度很慢，而return [response_body]是生成一个字符串迭代器，效率高很多。</p>
+
+<p>如果迭代器yield多个字符串，则响应主体的长度将是所有字符串长度之和，如下：</p>
+
+<pre><code>#! /usr/bin/env python
+
+from wsgiref.simple_server import make_server
+
+def application(environ, start_response):
+
+    response_body = [
+        '%s: %s' % (key, value) for key, value in sorted(environ.items())
+    ]
+    response_body = '\n'.join(response_body)
+
+    # Adding strings to the response body
+    response_body = [
+        'The Beggining\n',
+        '*' * 30 + '\n',
+        response_body,
+        '\n' + '*' * 30 ,
+        '\nThe End'
+    ]
+
+    # So the content-lenght is the sum of all string's lengths
+    content_length = sum([len(s) for s in response_body])
+
+    status = '200 OK'
+    response_headers = [
+        ('Content-Type', 'text/plain'),
+        ('Content-Length', str(content_length))
+    ]
+
+    start_response(status, response_headers)
+    return response_body
+
+httpd = make_server('localhost', 8051, application)
+httpd.handle_request()
+</code></pre>
+
+<p><strong>WSGI 的GET和POST请求解析</strong></p>
+
+<hr />
+
+<p>1.GET方式</p>
+
+<p>GET方式下，query string就是?之后的所有内容。</p>
+
+<p>例如请求为：http://localhost:8051/?age=10&amp;hobbies=software&amp;hobbies=tunning</p>
+
+<pre><code>#!/usr/bin/env python
+
+from wsgiref.simple_server import make_server
+from cgi import parse_qs, escape
+
+html = """
+&lt;html&gt;
+&lt;body&gt;
+   &lt;form method="get" action=""&gt;
+        &lt;p&gt;
+           Age: &lt;input type="text" name="age" value="%(age)s"&gt;
+        &lt;/p&gt;
+        &lt;p&gt;
+            Hobbies:
+            &lt;input
+                name="hobbies" type="checkbox" value="software"
+                %(checked-software)s
+            &gt; Software
+            &lt;input
+                name="hobbies" type="checkbox" value="tunning"
+                %(checked-tunning)s
+            &gt; Auto Tunning
+        &lt;/p&gt;
+        &lt;p&gt;
+            &lt;input type="submit" value="Submit"&gt;
+        &lt;/p&gt;
+    &lt;/form&gt;
+    &lt;p&gt;
+        Age: %(age)s&lt;br&gt;
+        Hobbies: %(hobbies)s
+    &lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"""
+
+def application (environ, start_response):
+
+    # Returns a dictionary in which the values are lists
+    d = parse_qs(environ['QUERY_STRING'])
+
+    # As there can be more than one value for a variable then
+    # a list is provided as a default value.
+    age = d.get('age', [''])[0] # Returns the first age value
+    hobbies = d.get('hobbies', []) # Returns a list of hobbies
+
+    # Always escape user input to avoid script injection
+    age = escape(age)
+    hobbies = [escape(hobby) for hobby in hobbies]
+
+    response_body = html % { # Fill the above html template in
+        'checked-software': ('', 'checked')['software' in hobbies],
+        'checked-tunning': ('', 'checked')['tunning' in hobbies],
+        'age': age or 'Empty',
+        'hobbies': ', '.join(hobbies or ['No Hobbies?'])
+    }
+
+    status = '200 OK'
+
+    # Now content type is text/html
+    response_headers = [
+        ('Content-Type', 'text/html'),
+        ('Content-Length', str(len(response_body)))
+    ]
+
+    start_response(status, response_headers)
+    return [response_body]
+
+httpd = make_server('localhost', 8051, application)
+
+# Now it is serve_forever() in instead of handle_request()
+httpd.serve_forever()
+</code></pre>
+
+<p>2.POST方式</p>
+
+<p>POST方式下，query string不是在url中传递的，而是在HTTP请求体中，WSGI server提供了wsgi.input文件获取环境变量。</p>
+
+<pre><code>#!/usr/bin/env python
+
+from wsgiref.simple_server import make_server
+from cgi import parse_qs, escape
+
+html = """
+&lt;html&gt;
+&lt;body&gt;
+   &lt;form method="post" action=""&gt;
+        &lt;p&gt;
+           Age: &lt;input type="text" name="age" value="%(age)s"&gt;
+        &lt;/p&gt;
+        &lt;p&gt;
+            Hobbies:
+            &lt;input
+                name="hobbies" type="checkbox" value="software"
+                %(checked-software)s
+            &gt; Software
+            &lt;input
+                name="hobbies" type="checkbox" value="tunning"
+                %(checked-tunning)s
+            &gt; Auto Tunning
+        &lt;/p&gt;
+        &lt;p&gt;
+            &lt;input type="submit" value="Submit"&gt;
+        &lt;/p&gt;
+    &lt;/form&gt;
+    &lt;p&gt;
+        Age: %(age)s&lt;br&gt;
+        Hobbies: %(hobbies)s
+    &lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"""
+
+def application(environ, start_response):
+
+    # the environment variable CONTENT_LENGTH may be empty or missing
+    try:
+        request_body_size = int(environ.get('CONTENT_LENGTH', 0))
+    except (ValueError):
+        request_body_size = 0
+
+    # When the method is POST the variable will be sent
+    # in the HTTP request body which is passed by the WSGI server
+    # in the file like wsgi.input environment variable.
+    request_body = environ['wsgi.input'].read(request_body_size)
+    d = parse_qs(request_body)
+
+    age = d.get('age', [''])[0] # Returns the first age value.
+    hobbies = d.get('hobbies', []) # Returns a list of hobbies.
+
+    # Always escape user input to avoid script injection
+    age = escape(age)
+    hobbies = [escape(hobby) for hobby in hobbies]
+
+    response_body = html % { # Fill the above html template in
+        'checked-software': ('', 'checked')['software' in hobbies],
+        'checked-tunning': ('', 'checked')['tunning' in hobbies],
+        'age': age or 'Empty',
+        'hobbies': ', '.join(hobbies or ['No Hobbies?'])
+    }
+
+    status = '200 OK'
+
+    response_headers = [
+        ('Content-Type', 'text/html'),
+        ('Content-Length', str(len(response_body)))
+    ]
+
+    start_response(status, response_headers)
+    return [response_body]
+
+httpd = make_server('localhost', 8051, application)
+httpd.serve_forever()
+</code></pre>
+
+<p>WSGI 应用框架</p>
+
+<hr />
+
+<ul>
+  <li>appier</li>
+</ul>
+
+<p>Appier is an object-oriented Python web framework built for super fast app development. It’s as lightweight as possible, but not too lightweight. It gives you the power of bigger frameworks, without their complexity.</p>
+
+<ul>
+  <li>bobo</li>
+</ul>
+
+<p>Bobo is a light-weight framework. Its goal is to be easy to use and remember.</p>
+
+<ul>
+  <li>Bottle</li>
+</ul>
+
+<p>Bottle is a fast and simple micro-framework for small web-applications. It offers request dispatching (Routes) with url parameter support, Templates, key/value Databases, a build-in HTTP Server and adapters for many third party WSGI/HTTP-server and template engines. All in a single file and with no dependencies other than the Python Standard Library.</p>
+
+<ul>
+  <li>CherryPy</li>
+</ul>
+
+<p>CherryPy is a pythonic, object-oriented web development framework. Includes support for WSGI servers. CherryPy 3 includes better support for living alongside other WSGI frameworks, applications, and middleware.</p>
+
+<ul>
+  <li>Django</li>
+</ul>
+
+<p>Includes support for WSGI servers</p>
+
+<ul>
+  <li>Falcon</li>
+</ul>
+
+<p>Falcon is a high-performance Python framework for building cloud APIs. It encourages the REST architectural style, and tries to do as little as possible while remaining highly effective.</p>
+
+<ul>
+  <li>Flask</li>
+</ul>
+
+<p>Flask is a microframework for Python based on Werkzeug, Jinja 2 and good intentions.</p>
+
+<p>It inherits its high WSGI usage and compliance from Werkzeug.</p>
+
+<ul>
+  <li>notmm</li>
+</ul>
+
+<p>The notmm toolkit is a fork of Django that doesn’t get in your way. Features includes improved WSGI support (Paste), SQLAlchemy, and very few developers! ;-)</p>
+
+<ul>
+  <li>PoorWSGI</li>
+</ul>
+
+<p>Poor WSGI for Python is light WGI connector with uri routing between WSGI server and your application. It have mod_python compatible request object, which is post to all uri or http state handler.</p>
+
+<ul>
+  <li>Pycnic</li>
+</ul>
+
+<p>Pycnic is a mimimalist JSON API oriented framework for Python 2.7 and 3.x. It provides routing, cookies, and JSON error handling, while maintaining a small codebase.</p>
+
+<ul>
+  <li>Pyramid</li>
+</ul>
+
+<p>Merger of the Pylons and repoze.bfg projects, Pyramid is a minimalist web framework aiming at composability and making developers paying only for what they use.</p>
+
+<ul>
+  <li>QWeb</li>
+</ul>
+
+<p>Another WSGI framework (not sure what the distinguishing features are)
+repoze.zope2
+A module that implements an analogue of the Zope 2 ZPublisher, with some major simplifications and cleanups. Its core mission is to allow publishing existing Zope2 applications in a WSGI environment that externalizes some of the features of “classic” Zope2 into middleware.</p>
+
+<ul>
+  <li>TurboGears</li>
+</ul>
+
+<p>Database-driven app in minutes; inherits its WSGI support from CherryPy.</p>
+
+<ul>
+  <li>web.py</li>
+</ul>
+
+<p>Makes web apps. A small RESTful library.</p>
+
+<ul>
+  <li>web2py</li>
+</ul>
+
+<p>A full stack framework includes its own Database Abstraction Layer (with support for SQLite, MySQL, PostgreSQL, MSSQL, DB2, Informix, Oracle, FireBase, Ingres and Google App Engine), its own template laguage, and a web based IDE. web2py itself is a WSGI app. Not related to web.py.</p>
+
+<ul>
+  <li>WebCore</li>
+</ul>
+
+<p>A nanoframework (only a few hundred lines of code) offering an entry_points-based dependency graphing extension system, MVC separation, reusable namespaces, and universal URL dispatch protocol with tight WebOb integration and natural Python semantics.</p>
+
+<ul>
+  <li>weblayer</li>
+</ul>
+
+<p>weblayer is a lightweight, componentised package for writing WSGI applications.</p>
+
+<ul>
+  <li>Zope 3</li>
+</ul>
+
+<p>The venerable Python web framework, recreated anew in Zope 3, and now a WSGI application. It seems to have some WSGI bits deep inside the publisher, but they aren’t really documented at this time.</p>
+
+<p><strong>WSGI 服务器</strong></p>
+
+<hr />
+
+<ul>
+  <li>ajp-wsgi</li>
+</ul>
+
+<p>A threaded/forking WSGI server implemented in C (it embeds a Python interpreter to run the actual application). It communicates with the web server via AJP, and is known to work with mod_jk and mod_proxy_ajp. Also available in an SCGI flavor.</p>
+
+<ul>
+  <li>Aspen</li>
+</ul>
+
+<p>A pure-Python web server (using the CherryPy module mentioned next) with three hooks to hang your WSGI on.</p>
+
+<ul>
+  <li>cherrypy.wsgiserver</li>
+</ul>
+
+<p>CherryPy’s “high-speed, production ready, thread pooled, generic WSGI server.” Includes SSL support. Supports Transfer-Encoding: chunked. For details on running foreign (non-CherryPy) applications under the CherryPy WSGI server, see WSGI Support. See also the CherryPy wiki ModWSGI page.</p>
+
+<ul>
+  <li>chiral.web.httpd</li>
+</ul>
+
+<p>A fast HTTP server supporting WSGI, with extensions for Coroutine-based pages with deeply-integrated COMET support.</p>
+
+<ul>
+  <li>cogen.web.wsgi</li>
+</ul>
+
+<p>WSGI server with extensions for coroutine oriented programming.</p>
+
+<ul>
+  <li>FAPWS</li>
+</ul>
+
+<p>Fapws is a WSGI binding between Python and libev.</p>
+
+<p>See also: author’s block, GoogleGroup.</p>
+
+<ul>
+  <li>fcgiapp</li>
+</ul>
+
+<p>fcgiapp is a Python wrapper for the C FastCGI SDK. It’s used by PEAK’s FastCGI servers to provide WSGI-over-FastCGI.</p>
+
+<ul>
+  <li>flup</li>
+</ul>
+
+<p>Includes threaded and forking versions of servers that support FastCGI, SCGI, and AJP protocols.</p>
+
+<ul>
+  <li>gevent-fastcgi</li>
+</ul>
+
+<p>WSGI-over-FastCGI server implemented using gevent coroutine-based networking library. Supports FastCGI connection multiplexing. Includes adapters for Django and other frameworks that use PasteDeploy.</p>
+
+<ul>
+  <li>Gunicorn</li>
+</ul>
+
+<p>WSGI HTTP Server for UNIX, fast clients and nothing else. This is a port of Unicorn to Python and WSGI.</p>
+
+<ul>
+  <li>ISAPI-WSGI</li>
+</ul>
+
+<p>An implementation of WSGI for running as a ISAPI extension under IIS.</p>
+
+<ul>
+  <li>James</li>
+</ul>
+
+<p>James provides a very simple multi-threaded WSGI server implementation based on the HTTPServer from Python’s standard library. (unmaintained)</p>
+
+<ul>
+  <li>Julep</li>
+</ul>
+
+<p>A WSGI Server inspired by Unicorn, written in pure Python.</p>
+
+<ul>
+  <li>m2twisted</li>
+</ul>
+
+<p>WSGI server built with M2Crypto and twisted.web2 with some SSL related tricks. Used with client side smart cards and it is also possible to run the HTTPS server with a key in a HSM (like a crypto token)</p>
+
+<ul>
+  <li>modjy</li>
+</ul>
+
+<p>Modjy is a java servlets to WSGI gateway that enables the running of jython WSGI applications inside java servlet containers.</p>
+
+<ul>
+  <li>mod_wsgi</li>
+</ul>
+
+<p>Python WSGI adapter module for Apache</p>
+
+<ul>
+  <li>NWSGI</li>
+</ul>
+
+<p>NWSGI is a .NET implementation of the Python WSGI specification for IronPython and IIS. This makes it easy to run Python web applications on Windows Server. This is a potential alternative to ISAPI + ISAPI_WSGI modules.</p>
+
+<ul>
+  <li>netius</li>
+</ul>
+
+<p>Netius is a Python network library that can be used for the rapid creation of asynchronous non-blocking servers and clients. It has no dependencies, it’s cross-platform, and brings some sample netius-powered servers out of the box, namely a production-ready WSGI server.</p>
+
+<ul>
+  <li>paste.httpserver</li>
+</ul>
+
+<p>Minimalistic threaded WSGI server built on BaseHTTPServer. Doesn’t support Transfer-Encoding: chunked.</p>
+
+<ul>
+  <li>phusion passenger</li>
+</ul>
+
+<p>“proof of concept” WSGI since 2008 (1.x), support upgraded to “beta” in version 3 (with limitations e.g. requires Ruby even when unused) and first-class in Passenger 4.</p>
+
+<ul>
+  <li>python-fastcgi</li>
+</ul>
+
+<p>python-fastcgi is a lightweight wrapper around the Open Market FastCGI C Library/SDK. It includes threaded and forking WSGI server implementations.</p>
+
+<ul>
+  <li>
+    <p>Spawning</p>
+  </li>
+  <li>
+    <p>twisted.web</p>
+  </li>
+</ul>
+
+<p>A WSGI server based on Twisted Web’s HTTP server (requires Twisted 8.2 or later).</p>
+
+<ul>
+  <li>uWSGI</li>
+</ul>
+
+<p>Fast, self-healing, developer-friendly WSGI server, meant for professional deployment and development of Python Web applications.</p>
+
+<ul>
+  <li>werkzeug.serving</li>
+</ul>
+
+<p>Werkzeug’s multithreaded and multiprocessed development server. Wraps wsgiref to add a reloader, multiprocessing, static files handling and SSL.</p>
+
+<ul>
+  <li>wsgid</li>
+</ul>
+
+<p>Wsgid is a generic WSGI handler for mongrel2 webserver. Wsgid offers a complete daemon environment (start/stop/restart) to your app workers, including automatically re-spawning of processes.</p>
+
+<ul>
+  <li>WSGIserver</li>
+</ul>
+
+<p>WSGIserver is a high-speed, production ready, thread pooled, generic WSGI server with SSL support for both Python 2 (2.6 and above) and Python 3 (3.1 and above). WSGIserver is a one file project with no dependency.</p>
+
+<ul>
+  <li>WSGIUtils</li>
+</ul>
+
+<p>Includes a threaded HTTP server.</p>
+
+<ul>
+  <li>wsgiref (Python 3)</li>
+</ul>
+
+<p>Included as part of thef standard library since Python 2.5; it includes a threaded HTTP server, a CGI server (for running any WSGI application as a CGI script), and a framework for building other servers.</p>
+
+<p>For versions prior to Python 2.5, see wsgiref’s original home.</p>
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">10 January 2017</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+  
+    <a href="/2017/01/08/cgi" class="prev" title="CGI的前世今生">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

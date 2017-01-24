@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>MongoDB介绍及配置 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">MongoDB介绍及配置</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<h2 id="whats-nosql">What’s NoSQL?</h2>
+
+<hr />
+
+<p>NoSQL，指的是非关系型的数据库。NoSQL有时也称作Not Only SQL的缩写，是对不同于传统的关系型数据库的数据库管理系统的统称。</p>
+
+<p>NoSQL用于超大规模数据的存储。（例如谷歌或Facebook每天为他们的用户收集万亿比特的数据）。这些类型的数据存储不需要固定的模式，无需多余操作就可以横向扩展。</p>
+
+<h2 id="why-nosql-">Why NoSQL ?</h2>
+
+<hr />
+
+<p>今天我们可以通过第三方平台（如：Google,Facebook等）可以很容易的访问和抓取数据。用户的个人信息，社交网络，地理位置，用户生成的数据和用户操作日志已经成倍的增加。我们如果要对这些用户数据进行挖掘，那SQL数据库已经不适合这些应用了, NoSQL数据库的发展也却能很好的处理这些大的数据。</p>
+
+<h2 id="rdbms-vs-nosql">RDBMS vs NoSQL</h2>
+
+<hr />
+
+<p>RDBMS</p>
+
+<ul>
+  <li>高度组织化结构化数据</li>
+  <li>结构化查询语言（SQL） (SQL)</li>
+  <li>数据和关系都存储在单独的表中。</li>
+  <li>数据操纵语言，数据定义语言</li>
+  <li>严格的一致性</li>
+  <li>基础事务</li>
+</ul>
+
+<p>NoSQL</p>
+
+<ul>
+  <li>代表着不仅仅是SQL</li>
+  <li>没有声明性查询语言</li>
+  <li>没有预定义的模式</li>
+  <li>键 - 值对存储，列存储，文档存储，图形数据库</li>
+  <li>最终一致性，而非ACID属性</li>
+  <li>非结构化和不可预知的数据</li>
+  <li>CAP定理</li>
+  <li>高性能，高可用性和可伸缩性</li>
+</ul>
+
+<h2 id="nosql-">NoSQL 数据库分类</h2>
+
+<hr />
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">类型</th>
+      <th style="text-align: center">部分代表</th>
+      <th style="text-align: center">特点</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">列存储</td>
+      <td style="text-align: center">Hbase<br />Cassandra<br />Hypertable</td>
+      <td style="text-align: center">是按列存储数据的。<br />最大的特点是方便存储结构化和半结构化数据，方便做数据压缩，<br />对针对某一列或者某几列的查询有非常大的IO优势。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">文档存储</td>
+      <td style="text-align: center">MongoDB<br />CouchDB</td>
+      <td style="text-align: center">文档存储一般用类似json的格式存储，存储的内容是文档型的。<br />这样也就有有机会对某些字段建立索引，实现关系数据库的某些功能。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">key-value存储</td>
+      <td style="text-align: center">Tokyo Cabinet / Tyrant<br />Berkeley DB<br />MemcacheDB<br />Redis</td>
+      <td style="text-align: center">可以通过key快速查询到其value。<br />一般来说，存储不管value的格式，照单全收。（Redis包含了其他功能）</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">图存储</td>
+      <td style="text-align: center">Neo4J<br />FlockDB</td>
+      <td style="text-align: center">图形关系的最佳存储。使用传统关系数据库来解决的话性能低下，而且设计使用不方便。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">对象存储</td>
+      <td style="text-align: center">db4o<br />Versant</td>
+      <td style="text-align: center">通过类似面向对象语言的语法操作数据库，通过对象的方式存取数据。</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">xml数据库</td>
+      <td style="text-align: center">Berkeley DB XML<br />BaseX</td>
+      <td style="text-align: center">高效的存储XML数据，并支持XML的内部查询语法，比如XQuery,Xpath。</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="whats-mongodb">What’s MongoDB</h2>
+
+<hr />
+
+<p>MongoDB 是一个基于分布式文件存储的数据库。由 C++ 语言编写。旨在为 WEB 应用提供可扩展的高性能数据存储解决方案。</p>
+
+<p>MongoDB 是一个介于关系数据库和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的。支持类似于面向对象的查询语言，几乎可以实现类似关系数据库单表查询的绝大部分功能，而且还支持对数据建立索引。可以用sql操作MongoDB，从关系型数据库迁移过来，开发人员学习成本会大大减少。如果再对底层的sql API做一层封装，开发基本可以感觉不到mongodb和关系型数据库的区别。</p>
+
+<h2 id="how-use-mongodb">How use MongoDB</h2>
+
+<hr />
+
+<p>MongoDb的简单使用有以下两种方式：</p>
+
+<p><strong>单实例配置</strong></p>
+
+<p>这种配置只适合简易开发时使用，生产使用不行，因为单节点挂掉整个数据业务全挂，结构如下图所示：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo1.jpg" alt="image" /></p>
+
+<p>下载&amp;启动</p>
+
+<pre><code>$ mkdir -p mongodbtest/single 
+$ mkdir -p mongodbtest/single/data
+$ cd mongodbtest/single
+$ wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1204-3.4.1.tgz
+$ tar xzvf mongodb-linux-x86_64-ubuntu1204-3.4.1.tgz
+$ cd mongodb-linux-x86_64-ubuntu1204-3.4.1/bin
+$ ./mongod --dpath ~/mongodbtest/single/data
+</code></pre>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo2.png" alt="image" /></p>
+
+<p>使用ip+port访问：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo3.png" alt="image" /></p>
+
+<p><strong>主从模式</strong></p>
+
+<p>单实例模式的缺点就是单节点挂掉后，整个数据业务全挂，主从模式采用双机备份后主节点挂掉了后从节点可以接替主机继续服务。所以这种模式比单节点的高可用性要好很多。</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo4.jpg" alt="image" /></p>
+
+<p>下面看一下怎么一步步搭建一个mongodb的主从复制节点：</p>
+
+<p>1.准备一台机器，既当作主节点，又作为从节点。</p>
+
+<p>2.建立文件夹 ~/mongodbtest/master 和 ~/mongodbtest/slave。</p>
+
+<p>3.启动mongodb主节点程序。注意后面的这个 “ –master ”参数，标示主节点。</p>
+
+<pre><code>mongod –dbpath ~/mongodbtest/master –master
+
+# 输出日志如下，成功！
+[initandlisten] MongoDB starting: pid=18285 port=27017 dbpath=~/mongodbtest/master master=1
+#日志显示主节点参数
+[initandlisten] options: { dbpath: “~/mongodbtest/master”, master: true }
+[initandlisten] waiting for connections on port 27017
+</code></pre>
+
+<p>4.启动mongodb从节点程序。指定主节点ip地址和端口 –source 127.0.0.1:27017 和 标示从节点 –source 参数、端口号（区别于主节点）-port 27018。</p>
+
+<pre><code>mongod –dbpath ~/mongodbtest/slave –slave –source 192.168.0.1:27017 -port 27018
+
+# 输出日志如下，成功！
+[initandlisten] MongoDB starting : pid=17888 port=27018 dbpath=~/mongodbtest/slave slave=1
+#日志显示从节点参数
+[initandlisten] options: { dbpath: “~/mongodbtest/slave”, slave: true, source: “127.0.0.1:27018" }
+[initandlisten] waiting for connections on port 27018
+#日志显示从节点 从主节点同步复制数据
+[replslave] syncing from host:127.0.0.1:27018
+</code></pre>
+
+<p>5.该模式的缺点是：从服务器不可写，当master挂掉后，从服务器不会自动替代主服务器的功能，需要手工启动从服务器为master。</p>
+
+<pre><code>mongod –dbpath ~/mongodbtest/slave –master
+</code></pre>
+
+<p>6.测试主从复制</p>
+
+<pre><code>主节点：
+# 连接
+$ ./mongo 127.0.0.1:27017
+# 建立test数据库
+&gt; use test;
+# 往testdb表插入数据
+&gt; db.testdb.insert({"test1":"testval1"});
+# 查询
+&gt; db.testdb.find()
+{"_id": ObjectId("5284e6268ed115d6238bdb39"), "test1" : "testval1"}
+	
+从节点：
+# 连接
+$ ./mongo 127.0.0.1:27018
+# 查询数据库（会报错）
+&gt; show dbs;
+{ 
+	"ok": 0,
+	"errmsg": "not master and slaveOk=false"
+}
+# 需要先设置slaveOk
+&gt; db.getMongo().setSlaveOk();
+&gt; db.testdb.find()
+{"_id": ObjectId("5284e6268ed115d6238bdb39"), "test1" : "testval1"}
+</code></pre>
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">30 December 2016</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2017/01/05/mongodb" class="next" title="MongoDB副本集">Next Post &rarr;</a>
+  
+  
+    <a href="/2016/12/14/mysql" class="prev" title="MySQL事务入门">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+
