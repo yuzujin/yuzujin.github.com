@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-   <title>在aws ec2实例上搭建shadowsocks服务 &larr; </title>
+   <title>Spring Boot入门 &larr; </title>
    <meta name="author" content="Zujin" />
 
    <link rel="start" href="/" />
@@ -48,7 +48,7 @@
 
 <div id="page">
 	
-  <h1 class="emphnext">在aws ec2实例上搭建shadowsocks服务</h1>
+  <h1 class="emphnext">Spring Boot入门</h1>
   <ul class="tag_box inline">
   
   
@@ -63,108 +63,18 @@
   </ul>
 
   
-<p><strong>Shadowsocks</strong>一个可穿透防火墙的快速代理。</p>
-
-<p>github地址：https://github.com/shadowsocks/shadowsocks</p>
-
-<hr />
-
-<h2 id="aws-ec2">创建aws ec2实例</h2>
-
-<ol>
-  <li>
-    <p>选择t2.micro实例（可以免费使用一年，当然首先你得需要一个aws账号和信用卡信息），镜像选择AMI（实际上是centos系统）</p>
-  </li>
-  <li>
-    <p>安全策略中打开tcp端口（ssh:22、shadowsocks:8388）</p>
-  </li>
-</ol>
-
-<h2 id="section">服务端安装&amp;配置&amp;启动</h2>
-
-<ol>
-  <li>
-    <p>安装</p>
-
-    <pre><code>yum install -y python-setuptools
-easy_install pip
-pip install shadowsocks
-</code></pre>
-  </li>
-  <li>
-    <p>配置</p>
-
-    <p>创建配置文件 vi /etc/shadowsocks/config.json</p>
-
-    <pre><code>{
-	"server":"0.0.0.0",
-	"server_port":8388,
-	"local_address":"127.0.0.1",
-	"local_port":1080,
-	"password":"123",
-	"timeout":300,
-	"method":"aes-256-cfb",
-	"fast_open":false,
-	"workers": 1
-}
-</code></pre>
-    <p>各个字段代表的含义如下：</p>
-
-    <pre><code>server: 服务器监听地址
-server_port: 服务器端口
-local_address: 本地监听地址
-local_port: 本地端口
-password: 密码
-timeout: 超时时间
-method: 加密算法
-fast_open: 使用TCP_FASTOPEN，true/false
-workers: 工作线程数，Unix/Linux可用
-</code></pre>
-  </li>
-  <li>
-    <p>启动
-<code>ssserver -c /etc/shadowsocks.json -d start</code></p>
-  </li>
-</ol>
-
-<h2 id="section-1">客户端安装配置</h2>
-<ol>
-  <li>
-    <p>windows安装shadowsocks客户端</p>
-
-    <p>-<strong>下载地址</strong>：https://github.com/shadowsocks/shadowsocks-windows/releases</p>
-
-    <p>-<strong>服务器地址</strong>：aws 实例公用ip</p>
-
-    <p>-<strong>服务器端口</strong>：ssserver启动的端口</p>
-
-    <p>-<strong>密码</strong>：shadowsocks配置的密码(123)</p>
-  </li>
-  <li>
-    <p>chrome安装switchysharp插件</p>
-
-    <p>代理协议：socks5 代理服务器：127.0.0.1 代理端口：1080</p>
-  </li>
-</ol>
-
-<h2 id="youtube">访问youtube</h2>
-<p>www.youtube.com 成功。</p>
-
-<p>参考链接：http://www.cnblogs.com/wwlzz/p/4321998.html</p>
 
 
   <address class="signature">
     <a class="author" href="/">Zujin</a> 
-    <span class="date">09 October 2016</span>
+    <span class="date">13 January 2017</span>
     <span class="location"></span>
   </address>
   
   <div class="prev-next">
   
-    <a href="/2016/10/10/cdn" class="next" title="CDN技术原理">Next Post &rarr;</a>
   
-  
-    <a href="/2016/06/12/apache" class="prev" title="Apache MPM模块详解">&larr; Earlier Post</a>
+    <a href="/2017/01/10/wsgi" class="prev" title="WSGI理解">&larr; Earlier Post</a>
   
   </div>
   

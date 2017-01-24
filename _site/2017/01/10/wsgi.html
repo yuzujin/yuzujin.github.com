@@ -11,7 +11,7 @@
 
    <link rel="start" href="/" />
 
-   <link rel="shortcut icon" href="/images/favicon.ico">
+   <link rel="shortcut icon" href="/_images/favicon.ico">
 
 	
 	
@@ -67,17 +67,64 @@
 
 <hr />
 
-<p>WSGI (Web Server Gateway Interface) 不是服务器、python模块、框架、API或任何类型的软件，而是描述 Web 服务器如何与 Web 应用程序通信以及 Web 应用程序如何链接在一起以处理一个请求的规范。</p>
+<p>Web服务器网关接口(Python Web Server Gateway Interface，缩写为WSGI)是为Python语言定义的Web服务器和Web应用程序或框架之间的一种简单而通用的接口。自从WSGI被开发出来以后，许多其它语言中也出现了类似接口。WSGI是作为Web服务器与Web应用程序或应用框架之间的一种低级别的接口，以提升可移植Web应用开发的共同点。WSGI是基于现存的CGI标准而设计的。</p>
 
-<p>WSGI 是一个 Python 标准，在<a href="https://www.python.org/dev/peps/pep-3333/">PEP 3333</a>中有关于服务器端和应用程序接口端规范的详细描述。如果应用程序（或框架或工具包）依据WSGI规范开发，那么它将可以在任何依据WSGI规范开发的服务器上运行。</p>
+<p>WSGI区分为两个部份：一为“服务器”或“网关”，另一为“应用程序”或“应用框架”。在处理一个WSGI请求时，服务器会为应用程序提供环境资讯及一个回呼函数(Callback Function)。当应用程序完成处理请求后，透过前述的回呼函数，将结果回传给服务器。所谓的 WSGI 中间件同时实现了API的两方，因此可以在WSGI服务和WSGI应用之间起调解作用：从WSGI服务器的角度来说，中间件扮演应用程序，而从应用程序的角度来说，中间件扮演服务器。“中间件”组件可以执行以下功能：</p>
 
-<p>WSGI应用程序可以堆叠。 那些在堆栈中间的WSGI应用程序被称为中间件，它必须实现WSGI接口的两侧：应用程序和服务器，堆栈顶部的WSGI应用程序作为服务器，堆栈底部的WSGI应用程序作为应用程序。</p>
+<ul>
+  <li>
+    <p>重写环境变量后，根据目标URL，将请求消息路由到不同的应用对象。</p>
+  </li>
+  <li>
+    <p>允许在一个进程中同时运行多个应用程序或应用框架。</p>
+  </li>
+  <li>
+    <p>负载均衡和远程处理，通过在网络上转发请求和响应消息。</p>
+  </li>
+  <li>
+    <p>进行内容后处理，例如应用XSLT样式表。</p>
+  </li>
+</ul>
+
+<p>WSGI没有官方的实现, 因为WSGI更像一个协议。只要遵照这些协议,WSGI应用(Application)都可以在任何服务器(Server)上运行, 反之亦然。WSGI就是Python的CGI包装，相对于Fastcgi是PHP的CGI包装。</p>
+
+<p>WSGI将 web 组件分为三类： web服务器，web中间件,web应用程序， wsgi基本处理模式为 ： WSGI Server -&gt; (WSGI Middleware)* -&gt; WSGI Application 。</p>
 
 <p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/wsgi.jpg" alt="wsgi" /></p>
 
-<p>WSGI服务器仅从客户端接收请求，将其传递给应用程序，然后将应用程序返回的响应发送到客户端，它只做这些，其他所有的细节工作必须由应用程序或中间件完成。</p>
+<p><strong>WSGI Server/gateway</strong></p>
+
+<hr />
+
+<p>wsgi server可以理解为一个符合wsgi规范的web server，接收request请求，封装一系列环境变量，按照wsgi规范调用注册的wsgi app，最后将response返回给客户端。文字很难解释清楚wsgi server到底是什么东西，以及做些什么事情，最直观的方式还是看wsgi server的实现代码。以python自带的wsgiref为例，wsgiref是按照wsgi规范实现的一个简单wsgi server。</p>
 
 <p>Python 2.5和更高版本带有一个WSGI服务器: wsgiref。</p>
+
+<p>大致流程如下：</p>
+
+<ul>
+  <li>
+    <p>服务器创建socket，监听端口，等待客户端连接。</p>
+  </li>
+  <li>
+    <p>当有请求来时，服务器解析客户端信息放到环境变量environ中，并调用绑定的handler来处理请求。</p>
+  </li>
+  <li>
+    <p>handler解析这个http请求，将请求信息例如method，path等放到environ中。</p>
+  </li>
+  <li>
+    <p>wsgi handler再将一些服务器端信息也放到environ中，最后服务器信息，客户端信息，本次请求信息全部都保存到了环境变量environ中。</p>
+  </li>
+  <li>
+    <p>wsgi handler 调用注册的wsgi app，并将environ和回调函数传给wsgi app</p>
+  </li>
+  <li>
+    <p>wsgi app 将reponse header/status/body 回传给wsgi handler</p>
+  </li>
+  <li>
+    <p>最终handler还是通过socket将response信息塞回给客户端。</p>
+  </li>
+</ul>
 
 <p><strong>Application Interface</strong></p>
 
@@ -274,7 +321,7 @@ httpd = make_server('localhost', 8051, application)
 httpd.handle_request()
 </code></pre>
 
-<p><strong>WSGI 的GET和POST请求解析</strong></p>
+<p><strong>WSGI请求解析</strong></p>
 
 <hr />
 
@@ -289,36 +336,8 @@ httpd.handle_request()
 from wsgiref.simple_server import make_server
 from cgi import parse_qs, escape
 
-html = """
-&lt;html&gt;
-&lt;body&gt;
-   &lt;form method="get" action=""&gt;
-        &lt;p&gt;
-           Age: &lt;input type="text" name="age" value="%(age)s"&gt;
-        &lt;/p&gt;
-        &lt;p&gt;
-            Hobbies:
-            &lt;input
-                name="hobbies" type="checkbox" value="software"
-                %(checked-software)s
-            &gt; Software
-            &lt;input
-                name="hobbies" type="checkbox" value="tunning"
-                %(checked-tunning)s
-            &gt; Auto Tunning
-        &lt;/p&gt;
-        &lt;p&gt;
-            &lt;input type="submit" value="Submit"&gt;
-        &lt;/p&gt;
-    &lt;/form&gt;
-    &lt;p&gt;
-        Age: %(age)s&lt;br&gt;
-        Hobbies: %(hobbies)s
-    &lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-"""
-
+html = "age: %(age)s software: %(checked-software)s tunning: %(checked-software)s hobbies: %(hobbies)s"
+          
 def application (environ, start_response):
 
     # Returns a dictionary in which the values are lists
@@ -366,36 +385,8 @@ httpd.serve_forever()
 from wsgiref.simple_server import make_server
 from cgi import parse_qs, escape
 
-html = """
-&lt;html&gt;
-&lt;body&gt;
-   &lt;form method="post" action=""&gt;
-        &lt;p&gt;
-           Age: &lt;input type="text" name="age" value="%(age)s"&gt;
-        &lt;/p&gt;
-        &lt;p&gt;
-            Hobbies:
-            &lt;input
-                name="hobbies" type="checkbox" value="software"
-                %(checked-software)s
-            &gt; Software
-            &lt;input
-                name="hobbies" type="checkbox" value="tunning"
-                %(checked-tunning)s
-            &gt; Auto Tunning
-        &lt;/p&gt;
-        &lt;p&gt;
-            &lt;input type="submit" value="Submit"&gt;
-        &lt;/p&gt;
-    &lt;/form&gt;
-    &lt;p&gt;
-        Age: %(age)s&lt;br&gt;
-        Hobbies: %(hobbies)s
-    &lt;/p&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-"""
-
+html = "age: %(age)s software: %(checked-software)s tunning: %(checked-software)s hobbies: %(hobbies)s"
+    
 def application(environ, start_response):
 
     # the environment variable CONTENT_LENGTH may be empty or missing
@@ -438,7 +429,7 @@ httpd = make_server('localhost', 8051, application)
 httpd.serve_forever()
 </code></pre>
 
-<p>WSGI 应用框架</p>
+<p><strong>WSGI 应用框架</strong></p>
 
 <hr />
 
@@ -736,6 +727,7 @@ A module that implements an analogue of the Zope 2 ZPublisher, with some major s
 <p>For versions prior to Python 2.5, see wsgiref’s original home.</p>
 
 
+
   <address class="signature">
     <a class="author" href="/">Zujin</a> 
     <span class="date">10 January 2017</span>
@@ -743,6 +735,8 @@ A module that implements an analogue of the Zope 2 ZPublisher, with some major s
   </address>
   
   <div class="prev-next">
+  
+    <a href="/2017/01/13/spring-boot" class="next" title="Spring Boot入门">Next Post &rarr;</a>
   
   
     <a href="/2017/01/08/cgi" class="prev" title="CGI的前世今生">&larr; Earlier Post</a>
