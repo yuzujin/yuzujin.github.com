@@ -4,7 +4,7 @@
  <title>Tumbler</title>
  <link href="http://username.github.io/atom.xml" rel="self"/>
  <link href="http://username.github.io"/>
- <updated>2017-01-24T14:45:03+08:00</updated>
+ <updated>2017-01-25T09:59:57+08:00</updated>
  <id>http://username.github.io</id>
  <author>
    <name>Zujin</name>
@@ -54,7 +54,7 @@
 
 &lt;p&gt;WSGI将 web 组件分为三类： web服务器，web中间件,web应用程序， wsgi基本处理模式为 ： WSGI Server -&amp;gt; (WSGI Middleware)* -&amp;gt; WSGI Application 。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/wsgi.jpg&quot; alt=&quot;wsgi&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/wsgi.jpg&quot; alt=&quot;wsgi&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;WSGI Server/gateway&lt;/strong&gt;&lt;/p&gt;
 
@@ -898,7 +898,7 @@ A module that implements an analogue of the Zope 2 ZPublisher, with some major s
 
 &lt;p&gt;MongoDB所有的这一切通过他自己的内部机制就可以搞定：&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo15.jpg?raw=true&quot; alt=&quot;mongo15&quot; title=&quot;Title&amp;quot; &amp;quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo15.jpg?raw=true&quot; alt=&quot;mongo15&quot; title=&quot;Title&amp;quot; &amp;quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;从图中可以看到有四个组件：mongos、config server、shard、replica set。&lt;/p&gt;
 
@@ -914,7 +914,7 @@ A module that implements an analogue of the Zope 2 ZPublisher, with some major s
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo16.jpg?raw=true&quot; alt=&quot;mongo16&quot; title=&quot;Title&amp;quot; &amp;quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo16.jpg?raw=true&quot; alt=&quot;mongo16&quot; title=&quot;Title&amp;quot; &amp;quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;&lt;code&gt;replica set&lt;/code&gt;，其实上图4个分片如果没有 replica set 是个不完整架构，假设其中的一个分片挂掉那四分之一的数据就丢失了，所以在高可用性的分片架构还需要对于每一个分片构建 replica set 副本集保证分片的可靠性。生产环境通常是 2个副本 + 1个仲裁。&lt;/li&gt;
@@ -926,7 +926,7 @@ A module that implements an analogue of the Zope 2 ZPublisher, with some major s
 
 &lt;p&gt;首先确定各个组件的数量，mongos 3个， config server 3个，数据分3片 shard server 3个，每个shard 有一个副本一个仲裁也就是 3 * 2 = 6 个，总共需要部署15个实例。这些实例可以部署在独立机器也可以部署在一台机器，我们这里测试资源有限，只准备了3台机器，在同一台机器只要端口不同就可以，看一下物理部署图：&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo17.jpg?raw=true&quot; alt=&quot;mongo17&quot; title=&quot;Title&amp;quot; &amp;quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo17.jpg?raw=true&quot; alt=&quot;mongo17&quot; title=&quot;Title&amp;quot; &amp;quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;1.准备机器，IP分别设置为： 192.168.0.1、192.168.0.2、192.168.0.3。&lt;/p&gt;
 
@@ -1082,7 +1082,7 @@ $ ./mongos 192.168.0.1:20000
 
 &lt;p&gt;比如我们把所有的仲裁节点放在一台机器，其余两台机器承担了全部读写操作，但是作为仲裁的192.168.0.3相当空闲。让机器192.168.0.3多分担点责任吧！架构可以这样调整，把机器的负载分的更加均衡一点，每个机器既可以作为主节点、副本节点、仲裁节点，这样压力就会均衡很多了，如图：&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo18.jpg?raw=true&quot; alt=&quot;mongo18&quot; title=&quot;Title&amp;quot; &amp;quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo18.jpg?raw=true&quot; alt=&quot;mongo18&quot; title=&quot;Title&amp;quot; &amp;quot;Title&quot; /&gt;&lt;/p&gt;
 
 </content>
  </entry>
@@ -1104,11 +1104,11 @@ $ ./mongos 192.168.0.1:20000
 
 &lt;p&gt;MongoDB副本集架构图如下：&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo5.jpg?raw=true&quot; alt=&quot;mongo5&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo5.jpg?raw=true&quot; alt=&quot;mongo5&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;由图可以看到客户端连接到整个副本集，不关心具体哪一台机器是否挂掉。主服务器负责整个副本集的读写，副本集定期同步数据备份，一但主节点挂掉，副本节点就会选举一个新的主服务器，这一切对于应用服务器不需要关心。我们看一下主服务器挂掉后的架构：&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo6.jpg?raw=true&quot; alt=&quot;mongo6&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo6.jpg?raw=true&quot; alt=&quot;mongo6&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;How to config Replica Sets?&lt;/p&gt;
 
@@ -1137,7 +1137,7 @@ $ ./mongod -dbpath ~/mongodbtest/replset2/data --replSet repset -port 27018
 $ ./mongod -dbpath ~/mongodbtest/replset3/data --replSet repset -port 27019
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo7.png?raw=true&quot; alt=&quot;mongo6&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo7.png?raw=true&quot; alt=&quot;mongo6&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;4.初始化副本集&lt;/p&gt;
 
@@ -1147,31 +1147,31 @@ $ ./mongod -dbpath ~/mongodbtest/replset3/data --replSet repset -port 27019
 
 &lt;p&gt;定义副本集配置变量，这里的 _id:”repset” 和上面命令参数“ –replSet repset” 要保持一样。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo8.png?raw=true&quot; alt=&quot;mongo8&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo8.png?raw=true&quot; alt=&quot;mongo8&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;查看日志，副本集启动成功后&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo9.png?raw=true&quot; alt=&quot;mongo9&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo9.png?raw=true&quot; alt=&quot;mongo9&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;查看副本集状态&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo10.png?raw=true&quot; alt=&quot;mongo10&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo10.png?raw=true&quot; alt=&quot;mongo10&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;5.测试副本集数据复制功能&lt;/p&gt;
 
 &lt;p&gt;mongodb默认是从主节点读取数据的，副本节点上不允许读，需要设置副本节点可以读(setSlaveOk)&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo11.png?raw=true&quot; alt=&quot;mongo11&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo11.png?raw=true&quot; alt=&quot;mongo11&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;6.测试副本集故障转移功能&lt;/p&gt;
 
 &lt;p&gt;杀掉27017主节点，查看27018、27019的日志可以看到经过一系列的投票选择操作，27019当选主节点，27018从27019同步数据过来。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo12.png?raw=true&quot; alt=&quot;mongo12&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo12.png?raw=true&quot; alt=&quot;mongo12&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;查看整个集群的状态，可以看到27017为状态不可达。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo13.png?raw=true&quot; alt=&quot;mongo13&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo13.png?raw=true&quot; alt=&quot;mongo13&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;再启动原来的主节点27017，发现27017变为 SECONDARY，还是27019为主节点 PRIMARY。&lt;/p&gt;
 
@@ -1179,7 +1179,7 @@ $ ./mongod -dbpath ~/mongodbtest/replset3/data --replSet repset -port 27019
 
 &lt;p&gt;主节点的读写压力过大如何解决？常见的解决方案是读写分离，mongodb副本集的读写分离如何做呢？&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo14.jpg?raw=true&quot; alt=&quot;mongo14&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo14.jpg?raw=true&quot; alt=&quot;mongo14&quot; title=&quot;Title&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;常规写操作来说并没有读操作多，所以一台主节点负责写，两台副本节点负责读。&lt;/p&gt;
 
@@ -1356,7 +1356,7 @@ $ ./mongod -dbpath ~/mongodbtest/replset3/data --replSet repset -port 27019
 
 &lt;p&gt;这种配置只适合简易开发时使用，生产使用不行，因为单节点挂掉整个数据业务全挂，结构如下图所示：&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo1.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mongo1.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;下载&amp;amp;启动&lt;/p&gt;
 
@@ -1369,17 +1369,17 @@ $ cd mongodb-linux-x86_64-ubuntu1204-3.4.1/bin
 $ ./mongod --dpath ~/mongodbtest/single/data
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo2.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mongo2.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;使用ip+port访问：&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo3.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mongo3.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;主从模式&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;单实例模式的缺点就是单节点挂掉后，整个数据业务全挂，主从模式采用双机备份后主节点挂掉了后从节点可以接替主机继续服务。所以这种模式比单节点的高可用性要好很多。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo4.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mongo4.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;下面看一下怎么一步步搭建一个mongodb的主从复制节点：&lt;/p&gt;
 
@@ -1593,7 +1593,7 @@ SET AUTOCOMMIT = {0|1}
 
 &lt;p&gt;其索引包含表中每一行的last_name、first_name和dob列。其结构大致如下：&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mysql2.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mysql2.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;索引存储的值按索引列中的顺序排列。可以利用B-Tree索引进行全关键字、关键字范围和关键字前缀查询，当然，如果想使用索引，你必须保证按索引的最左边前缀(leftmost prefix of the index)来进行查询。&lt;/p&gt;
 
@@ -2004,7 +2004,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 &lt;p&gt;InnoDB的表空间结构图：&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mysql1.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mysql1.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;InnoDB存储表和索引有以下两种方式：&lt;/p&gt;
 
@@ -2329,7 +2329,7 @@ foreign key(repo_id) references repo_table(repo_id))
 
 &lt;p&gt;图 1 描述了 Linux 操作系统中文件 Cache 管理与内存管理以及文件系统的关系示意图。从图中可以看到，在 Linux 中，具体文件系统，如 ext2/ext3、jfs、ntfs 等，负责在文件 Cache和存储设备之间交换数据，位于具体文件系统之上的虚拟文件系统VFS负责在应用程序和文件 Cache 之间通过 read/write 等接口交换数据，而内存管理系统负责文件 Cache 的分配和回收，同时虚拟内存管理系统(VMM)则允许应用程序和文件 Cache 之间通过 memory map的方式交换数据。可见，在 Linux 系统中，文件 Cache 是内存管理系统、文件系统以及应用程序之间的一个联系枢纽。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/cache.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;cache-1&quot;&gt;文件Cache数据结构&lt;/h2&gt;
 
@@ -2337,13 +2337,13 @@ foreign key(repo_id) references repo_table(repo_id))
 
 &lt;p&gt;在 Linux 的实现中，文件 Cache 分为两个层面，一是 Page Cache，另一个 Buffer Cache，每一个 Page Cache 包含若干 Buffer Cache。内存管理系统和 VFS 只与 Page Cache 交互，内存管理系统负责维护每项 Page Cache 的分配和回收，同时在使用 memory map 方式访问时负责建立映射；VFS 负责 Page Cache 与用户空间的数据交换。而具体文件系统则一般只与 Buffer Cache 交互，它们负责在外围存储设备和 Buffer Cache 之间交换数据。Page Cache、Buffer Cache、文件以及磁盘之间的关系如图 2 所示，Page 结构和 buffer_head 数据结构的关系如图 3 所示。在上述两个图中，假定了 Page 的大小是 4K，磁盘块的大小是 1K。本文所讲述的，主要是指对 Page Cache 的管理。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/cache1.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache1.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/cache2.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache2.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;在 Linux 内核中，文件的每个数据块最多只能对应一个 Page Cache 项，它通过两个数据结构来管理这些 Cache 项，一个是 radix tree，另一个是双向链表。Radix tree 是一种搜索树，Linux 内核利用这个数据结构来通过文件内偏移快速定位 Cache 项，图 4 是 radix tree的一个示意图，该 radix tree 的分叉为4(22)，树高为4，用来快速定位8位文件内偏移。Linux(2.6.7) 内核中的分叉为 64(26)，树高为 6(64位系统)或者 11(32位系统)，用来快速定位 32 位或者 64 位偏移，radix tree 中的每一个叶子节点指向文件内相应偏移所对应的Cache项。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/cache3.gif&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache3.gif&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;另一个数据结构是双向链表，Linux内核为每一片物理内存区域(zone)维护active_list和inactive_list两个双向链表，这两个list主要用来实现物理内存的回收。这两个链表上除了文件Cache之外，还包括其它匿名(Anonymous)内存，如进程堆栈等。&lt;/p&gt;
 
@@ -2355,7 +2355,7 @@ foreign key(repo_id) references repo_table(repo_id))
 
 &lt;p&gt;此外，系统中定义了一个window，它包括前一次预读的group和本次预读的group。任何接下来的读请求都会处于两种情况之一：第一种情况是所请求的页面处于预读window中，这时继续进行异步预读并更新相应的window和group；第二种情况是所请求的页面处于预读window之外，这时系统就要进行同步预读并重置相应的window和group。图5是Linux内核预读机制的一个示意图，其中a是某次读操作之前的情况，b是读操作所请求页面不在window中的情况，而c是读操作所请求页面在window中的情况。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/cache4.gif&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache4.gif&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Linux内核中文件Cache替换的具体过程是这样的：刚刚分配的Cache项链入到inactive_list头部，并将其状态设置为active，当内存不够需要回收Cache时，系统首先从尾部开始反向扫描active_list并将状态不是referenced的项链入到inactive_list的头部，然后系统反向扫描inactive_list，如果所扫描的项的处于合适的状态就回收该项，直到回收了足够数目的Cache项。&lt;/p&gt;
 
@@ -2908,7 +2908,7 @@ Autodetect：通过bean类的自省机制来决定是使用constructor还是byTy
 
 &lt;p&gt;Spring的MVC框架主要由前端控制器(DispatcherServlet)、(处理器映射)HandlerMapping、控制器(Handler或Controller)、处理器适配器(HandlerAdapter或Service)、(视图解析器)View Resolver、(视图)View组成。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/spring3.jpg?raw=true&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/yuzujin/yuzujin.github.com/blob/master/images/spring3.jpg?raw=true&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;运行流程：&lt;/p&gt;
 
@@ -3352,7 +3352,7 @@ applicationContext.xml配置文件需要修改
 
 &lt;p&gt;Spring 框架是一个分层架构，由 7 个定义良好的模块组成。Spring 模块构建在核心容器之上，核心容器定义了创建、配置和管理 bean 的方式。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/spring1.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/spring1.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;组成 Spring 框架的每个模块（或组件）都可以单独存在，或者与其他一个或多个模块联合实现。每个模块的功能如下：&lt;/p&gt;
 
@@ -3438,7 +3438,7 @@ Connection是由spring注入到A中的，依赖注入的名字就这么来的。
 
 &lt;p&gt;Spring 设计的核心是 org.springframework.beans 包，它的设计目标是与 JavaBean 组件一起使用。这个包通常不是由用户直接使用，而是由服务器将其用作其他多数功能的底层中介。下一个最高级抽象是 BeanFactory 接口，它是工厂设计模式的实现，允许通过名称创建和检索对象。BeanFactory 也可以管理对象之间的关系。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/spring2.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/spring2.jpg&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;spring提供了许多IOC容器的实现。比如XmlBeanFactory，ClasspathXmlApplicationContext等。
 其中XmlBeanFactory就是针对最基本的ioc容器的实现，这个IOC容器可以读取XML文件定义的BeanDefinition（XML文件中对bean的描述），ApplicationContext是Spring提供的一个高级的IoC容器，它除了能够提供IoC容器的基本功能外，还为用户提供了以下的附加服务。从ApplicationContext接口的实现，我们看出其特点：&lt;/p&gt;
@@ -4336,7 +4336,7 @@ Master_SSL_Verify_Server_Cert: No
 &lt;pre&gt;&lt;code&gt;rewrite ^/b/(.*)\.html /play.php?video=$1 break;
 如果加上if语句，示例如下： 
 if (!-f $request_filename)
-{ rewrite ^/img/(.*)$ /site/$host/_images/$1 last;      }
+{ rewrite ^/img/(.*)$ /site/$host/images/$1 last;      }
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;strong&gt;Nginx rewrite模块环境变量&lt;/strong&gt;&lt;/p&gt;

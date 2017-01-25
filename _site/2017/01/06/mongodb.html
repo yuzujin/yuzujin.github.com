@@ -11,7 +11,7 @@
 
    <link rel="start" href="/" />
 
-   <link rel="shortcut icon" href="/_images/favicon.ico">
+   <link rel="shortcut icon" href="/images/favicon.ico">
 
 	
 	
@@ -69,7 +69,7 @@
 
 <p>MongoDB所有的这一切通过他自己的内部机制就可以搞定：</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo15.jpg?raw=true" alt="mongo15" title="Title&quot; &quot;Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo15.jpg?raw=true" alt="mongo15" title="Title&quot; &quot;Title" /></p>
 
 <p>从图中可以看到有四个组件：mongos、config server、shard、replica set。</p>
 
@@ -85,7 +85,7 @@
   </li>
 </ul>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo16.jpg?raw=true" alt="mongo16" title="Title&quot; &quot;Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo16.jpg?raw=true" alt="mongo16" title="Title&quot; &quot;Title" /></p>
 
 <ul>
   <li><code>replica set</code>，其实上图4个分片如果没有 replica set 是个不完整架构，假设其中的一个分片挂掉那四分之一的数据就丢失了，所以在高可用性的分片架构还需要对于每一个分片构建 replica set 副本集保证分片的可靠性。生产环境通常是 2个副本 + 1个仲裁。</li>
@@ -97,7 +97,7 @@
 
 <p>首先确定各个组件的数量，mongos 3个， config server 3个，数据分3片 shard server 3个，每个shard 有一个副本一个仲裁也就是 3 * 2 = 6 个，总共需要部署15个实例。这些实例可以部署在独立机器也可以部署在一台机器，我们这里测试资源有限，只准备了3台机器，在同一台机器只要端口不同就可以，看一下物理部署图：</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo17.jpg?raw=true" alt="mongo17" title="Title&quot; &quot;Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo17.jpg?raw=true" alt="mongo17" title="Title&quot; &quot;Title" /></p>
 
 <p>1.准备机器，IP分别设置为： 192.168.0.1、192.168.0.2、192.168.0.3。</p>
 
@@ -253,7 +253,7 @@ $ ./mongos 192.168.0.1:20000
 
 <p>比如我们把所有的仲裁节点放在一台机器，其余两台机器承担了全部读写操作，但是作为仲裁的192.168.0.3相当空闲。让机器192.168.0.3多分担点责任吧！架构可以这样调整，把机器的负载分的更加均衡一点，每个机器既可以作为主节点、副本节点、仲裁节点，这样压力就会均衡很多了，如图：</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo18.jpg?raw=true" alt="mongo18" title="Title&quot; &quot;Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo18.jpg?raw=true" alt="mongo18" title="Title&quot; &quot;Title" /></p>
 
 
 

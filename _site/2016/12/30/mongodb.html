@@ -11,7 +11,7 @@
 
    <link rel="start" href="/" />
 
-   <link rel="shortcut icon" href="/_images/favicon.ico">
+   <link rel="shortcut icon" href="/images/favicon.ico">
 
 	
 	
@@ -169,7 +169,7 @@
 
 <p>这种配置只适合简易开发时使用，生产使用不行，因为单节点挂掉整个数据业务全挂，结构如下图所示：</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo1.jpg" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mongo1.jpg" alt="image" /></p>
 
 <p>下载&amp;启动</p>
 
@@ -182,17 +182,17 @@ $ cd mongodb-linux-x86_64-ubuntu1204-3.4.1/bin
 $ ./mongod --dpath ~/mongodbtest/single/data
 </code></pre>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo2.png" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mongo2.png" alt="image" /></p>
 
 <p>使用ip+port访问：</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo3.png" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mongo3.png" alt="image" /></p>
 
 <p><strong>主从模式</strong></p>
 
 <p>单实例模式的缺点就是单节点挂掉后，整个数据业务全挂，主从模式采用双机备份后主节点挂掉了后从节点可以接替主机继续服务。所以这种模式比单节点的高可用性要好很多。</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/mongo4.jpg" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mongo4.jpg" alt="image" /></p>
 
 <p>下面看一下怎么一步步搭建一个mongodb的主从复制节点：</p>
 

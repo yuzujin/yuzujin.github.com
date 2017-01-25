@@ -11,7 +11,7 @@
 
    <link rel="start" href="/" />
 
-   <link rel="shortcut icon" href="/_images/favicon.ico">
+   <link rel="shortcut icon" href="/images/favicon.ico">
 
 	
 	
@@ -75,7 +75,7 @@
 
 <p>图 1 描述了 Linux 操作系统中文件 Cache 管理与内存管理以及文件系统的关系示意图。从图中可以看到，在 Linux 中，具体文件系统，如 ext2/ext3、jfs、ntfs 等，负责在文件 Cache和存储设备之间交换数据，位于具体文件系统之上的虚拟文件系统VFS负责在应用程序和文件 Cache 之间通过 read/write 等接口交换数据，而内存管理系统负责文件 Cache 的分配和回收，同时虚拟内存管理系统(VMM)则允许应用程序和文件 Cache 之间通过 memory map的方式交换数据。可见，在 Linux 系统中，文件 Cache 是内存管理系统、文件系统以及应用程序之间的一个联系枢纽。</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/cache.jpg" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache.jpg" alt="image" /></p>
 
 <h2 id="cache-1">文件Cache数据结构</h2>
 
@@ -83,13 +83,13 @@
 
 <p>在 Linux 的实现中，文件 Cache 分为两个层面，一是 Page Cache，另一个 Buffer Cache，每一个 Page Cache 包含若干 Buffer Cache。内存管理系统和 VFS 只与 Page Cache 交互，内存管理系统负责维护每项 Page Cache 的分配和回收，同时在使用 memory map 方式访问时负责建立映射；VFS 负责 Page Cache 与用户空间的数据交换。而具体文件系统则一般只与 Buffer Cache 交互，它们负责在外围存储设备和 Buffer Cache 之间交换数据。Page Cache、Buffer Cache、文件以及磁盘之间的关系如图 2 所示，Page 结构和 buffer_head 数据结构的关系如图 3 所示。在上述两个图中，假定了 Page 的大小是 4K，磁盘块的大小是 1K。本文所讲述的，主要是指对 Page Cache 的管理。</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/cache1.jpg" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache1.jpg" alt="image" /></p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/cache2.jpg" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache2.jpg" alt="image" /></p>
 
 <p>在 Linux 内核中，文件的每个数据块最多只能对应一个 Page Cache 项，它通过两个数据结构来管理这些 Cache 项，一个是 radix tree，另一个是双向链表。Radix tree 是一种搜索树，Linux 内核利用这个数据结构来通过文件内偏移快速定位 Cache 项，图 4 是 radix tree的一个示意图，该 radix tree 的分叉为4(22)，树高为4，用来快速定位8位文件内偏移。Linux(2.6.7) 内核中的分叉为 64(26)，树高为 6(64位系统)或者 11(32位系统)，用来快速定位 32 位或者 64 位偏移，radix tree 中的每一个叶子节点指向文件内相应偏移所对应的Cache项。</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/cache3.gif" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache3.gif" alt="image" /></p>
 
 <p>另一个数据结构是双向链表，Linux内核为每一片物理内存区域(zone)维护active_list和inactive_list两个双向链表，这两个list主要用来实现物理内存的回收。这两个链表上除了文件Cache之外，还包括其它匿名(Anonymous)内存，如进程堆栈等。</p>
 
@@ -101,7 +101,7 @@
 
 <p>此外，系统中定义了一个window，它包括前一次预读的group和本次预读的group。任何接下来的读请求都会处于两种情况之一：第一种情况是所请求的页面处于预读window中，这时继续进行异步预读并更新相应的window和group；第二种情况是所请求的页面处于预读window之外，这时系统就要进行同步预读并重置相应的window和group。图5是Linux内核预读机制的一个示意图，其中a是某次读操作之前的情况，b是读操作所请求页面不在window中的情况，而c是读操作所请求页面在window中的情况。</p>
 
-<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/_images/cache4.gif" alt="image" /></p>
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache4.gif" alt="image" /></p>
 
 <p>Linux内核中文件Cache替换的具体过程是这样的：刚刚分配的Cache项链入到inactive_list头部，并将其状态设置为active，当内存不够需要回收Cache时，系统首先从尾部开始反向扫描active_list并将状态不是referenced的项链入到inactive_list的头部，然后系统反向扫描inactive_list，如果所扫描的项的处于合适的状态就回收该项，直到回收了足够数目的Cache项。</p>
 

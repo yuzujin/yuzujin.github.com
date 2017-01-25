@@ -11,7 +11,7 @@
 
    <link rel="start" href="/" />
 
-   <link rel="shortcut icon" href="/_images/favicon.ico">
+   <link rel="shortcut icon" href="/images/favicon.ico">
 
 	
 	
@@ -74,11 +74,11 @@
 
 <p>MongoDB副本集架构图如下：</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo5.jpg?raw=true" alt="mongo5" title="Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo5.jpg?raw=true" alt="mongo5" title="Title" /></p>
 
 <p>由图可以看到客户端连接到整个副本集，不关心具体哪一台机器是否挂掉。主服务器负责整个副本集的读写，副本集定期同步数据备份，一但主节点挂掉，副本节点就会选举一个新的主服务器，这一切对于应用服务器不需要关心。我们看一下主服务器挂掉后的架构：</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo6.jpg?raw=true" alt="mongo6" title="Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo6.jpg?raw=true" alt="mongo6" title="Title" /></p>
 
 <p>How to config Replica Sets?</p>
 
@@ -107,7 +107,7 @@ $ ./mongod -dbpath ~/mongodbtest/replset2/data --replSet repset -port 27018
 $ ./mongod -dbpath ~/mongodbtest/replset3/data --replSet repset -port 27019
 </code></pre>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo7.png?raw=true" alt="mongo6" title="Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo7.png?raw=true" alt="mongo6" title="Title" /></p>
 
 <p>4.初始化副本集</p>
 
@@ -117,31 +117,31 @@ $ ./mongod -dbpath ~/mongodbtest/replset3/data --replSet repset -port 27019
 
 <p>定义副本集配置变量，这里的 _id:”repset” 和上面命令参数“ –replSet repset” 要保持一样。</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo8.png?raw=true" alt="mongo8" title="Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo8.png?raw=true" alt="mongo8" title="Title" /></p>
 
 <p>查看日志，副本集启动成功后</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo9.png?raw=true" alt="mongo9" title="Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo9.png?raw=true" alt="mongo9" title="Title" /></p>
 
 <p>查看副本集状态</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo10.png?raw=true" alt="mongo10" title="Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo10.png?raw=true" alt="mongo10" title="Title" /></p>
 
 <p>5.测试副本集数据复制功能</p>
 
 <p>mongodb默认是从主节点读取数据的，副本节点上不允许读，需要设置副本节点可以读(setSlaveOk)</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo11.png?raw=true" alt="mongo11" title="Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo11.png?raw=true" alt="mongo11" title="Title" /></p>
 
 <p>6.测试副本集故障转移功能</p>
 
 <p>杀掉27017主节点，查看27018、27019的日志可以看到经过一系列的投票选择操作，27019当选主节点，27018从27019同步数据过来。</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo12.png?raw=true" alt="mongo12" title="Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo12.png?raw=true" alt="mongo12" title="Title" /></p>
 
 <p>查看整个集群的状态，可以看到27017为状态不可达。</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo13.png?raw=true" alt="mongo13" title="Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo13.png?raw=true" alt="mongo13" title="Title" /></p>
 
 <p>再启动原来的主节点27017，发现27017变为 SECONDARY，还是27019为主节点 PRIMARY。</p>
 
@@ -149,7 +149,7 @@ $ ./mongod -dbpath ~/mongodbtest/replset3/data --replSet repset -port 27019
 
 <p>主节点的读写压力过大如何解决？常见的解决方案是读写分离，mongodb副本集的读写分离如何做呢？</p>
 
-<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/_images/mongo14.jpg?raw=true" alt="mongo14" title="Title" /></p>
+<p><img src="https://github.com/yuzujin/yuzujin.github.com/blob/master/images/mongo14.jpg?raw=true" alt="mongo14" title="Title" /></p>
 
 <p>常规写操作来说并没有读操作多，所以一台主节点负责写，两台副本节点负责读。</p>
 
