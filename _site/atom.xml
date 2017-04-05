@@ -4,7 +4,7 @@
  <title>Tumbler</title>
  <link href="http://username.github.io/atom.xml" rel="self"/>
  <link href="http://username.github.io"/>
- <updated>2017-01-25T09:59:57+08:00</updated>
+ <updated>2017-02-08T11:08:58+08:00</updated>
  <id>http://username.github.io</id>
  <author>
    <name>Zujin</name>
@@ -13,11 +13,418 @@
 
  
  <entry>
+   <title>Cookie和Session的区别</title>
+   <link href="http://username.github.io/2017/02/07/cookiesession"/>
+   <updated>2017-02-07T00:00:00+08:00</updated>
+   <id>http://username.github.io/2017/02/07/cookiesession</id>
+   <content type="html">
+&lt;p&gt;Http是一个无状态协议，http协议状态的保持通常有两种实现方式：cookie和session。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cookies：通过客户端来保持状态信息&lt;/p&gt;
+
+    &lt;p&gt;Cookie是服务器发给客户端的特殊信息&lt;/p&gt;
+
+    &lt;p&gt;Cookie是以文本的方式保存在客户端，每次请求时都带上它&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Session：通过服务器端来保持状态信息&lt;/p&gt;
+
+    &lt;p&gt;Session是服务器和客户端之间的一系列的交互动作&lt;/p&gt;
+
+    &lt;p&gt;服务器为每个客户端开辟内存空间，从而保持状态信息&lt;/p&gt;
+
+    &lt;p&gt;由于需要客户端也要持有一个标识(id)，因此，也要求服务器端和客户端传输该标识，&lt;/p&gt;
+
+    &lt;p&gt;标识(id)可以借助Cookie机制或者其他的途径来保存&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;COOKIE机制&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;1) Cookie的基本特点&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cookie保存在客户端&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;只能保存字符串对象，不能保存对象类型&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;需要客户端浏览器的支持：客户端可以不支持，浏览器用户可能会禁用Cookie&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;2) 采用Cookie需要解决的问题&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cookie的创建&lt;/p&gt;
+
+    &lt;p&gt;通常是在服务器端创建的(当然也可以通过javascript来创建)&lt;/p&gt;
+
+    &lt;p&gt;服务器通过在http的响应头加上特殊的指示，那么浏览器在读取这个指示后就会生成相应的cookie了&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cookie存放的内容&lt;/p&gt;
+
+    &lt;p&gt;业务信息(“key”,”value”)&lt;/p&gt;
+
+    &lt;p&gt;过期时间&lt;/p&gt;
+
+    &lt;p&gt;域和路径&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;浏览器是如何通过Cookie和服务器通信？&lt;/p&gt;
+
+    &lt;p&gt;通过请求与响应，cookie在服务器和客户端之间传递&lt;/p&gt;
+
+    &lt;p&gt;每次请求和响应都把cookie信息加载到响应头中；依靠cookie的key传递。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;COOKIE编程&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cookie类&lt;/p&gt;
+
+    &lt;p&gt;Servlet API封装了一个类：javax.servlet.http.Cookie，封装了对Cookie的操作，包括：&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;public Cookie(String name, String value) //构造方法，用来创建一个Cookie&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;HttpServletRequest.getCookies() //从Http请求中可以获取Cookies&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;HttpServletResponse.addCookie(Cookie) //往Http响应添加Cookie&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;public int getMaxAge() //获取Cookie的过期时间值&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;public void setMaxAge(int expiry) //设置Cookie的过期时间值&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cookie的创建&lt;/p&gt;
+
+    &lt;p&gt;Cookie是一个名值对(key=value)，而且不管是key还是value都是字符串&lt;/p&gt;
+
+    &lt;p&gt;Cookie visit = new Cookie(“visit”, “1”);&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cookie的类型——过期时间&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;会话Cookie&lt;/p&gt;
+
+        &lt;p&gt;Cookie.setMaxAge(-1);//负整数&lt;/p&gt;
+
+        &lt;p&gt;保存在浏览器的内存中，也就是说关闭了浏览器，cookie就会丢失&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;普通cookie&lt;/p&gt;
+
+        &lt;p&gt;Cookie.setMaxAge(60);//正整数，单位是秒&lt;/p&gt;
+
+        &lt;p&gt;表示浏览器在1分钟内不继续访问服务器，Cookie就会被过时失效并销毁(通常保存在文件中)&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;注意&lt;/code&gt;：&lt;/p&gt;
+
+&lt;p&gt;cookie.setMaxAge(0);//等价于不支持Cookie；&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;SESSION机制&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;每次客户端发送请求，服务断都检查是否含有sessionId。&lt;/p&gt;
+
+&lt;p&gt;如果有，则根据sessionId检索出session并处理；如果没有，则创建一个session，并绑定一个不重复的sessionId。&lt;/p&gt;
+
+&lt;p&gt;1) 基本特点&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;状态信息保存在服务器端。这意味着安全性更高&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;通过类似与Hashtable的数据结构来保存&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;能支持任何类型的对象(session中可含有多个对象)&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;2) 保存会话id的技术&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cookie&lt;/p&gt;
+
+    &lt;p&gt;这是默认的方式，在客户端与服务器端传递JSeesionId&lt;/p&gt;
+
+    &lt;p&gt;缺点：客户端可能禁用Cookie&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;表单隐藏字段&lt;/p&gt;
+
+    &lt;p&gt;在被传递回客户端之前，在 form 里面加入一个hidden域，设置JSeesionId：&lt;/p&gt;
+
+    &lt;p&gt;&amp;lt;input type=hidden name=jsessionid value=”3948E432F90932A549D34532EE2394” /&amp;gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;URL重写&lt;/p&gt;
+
+    &lt;p&gt;直接在URL后附加上session id的信息&lt;/p&gt;
+
+    &lt;p&gt;HttpServletResponse对象中，提供了如下的方法：&lt;/p&gt;
+
+    &lt;p&gt;encodeURL(url); //url为相对路径&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;SESSION编程&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;1) HttpSession接口&lt;/p&gt;
+
+&lt;p&gt;Servlet API定义了接口：javax.servlet.http.HttpSession， Servlet容器必须实现它，用以跟踪状态。&lt;/p&gt;
+
+&lt;p&gt;当浏览器与Servlet容器建立一个http会话时，容器就会通过此接口自动产生一个HttpSession对象&lt;/p&gt;
+
+&lt;p&gt;2) 获取Session&lt;/p&gt;
+
+&lt;p&gt;HttpServletRequest对象获取session，返回HttpSession：&lt;/p&gt;
+
+&lt;p&gt;request.getSession(); //表示如果session对象不存在，就创建一个新的会话&lt;/p&gt;
+
+&lt;p&gt;request.getSession(true); //等价于上面这句；如果session对象不存在，就创建一个新的会话&lt;/p&gt;
+
+&lt;p&gt;request.getSession(false); //表示如果session对象不存在就返回 null，不会创建新的会话对象&lt;/p&gt;
+
+&lt;p&gt;3) Session存取信息&lt;/p&gt;
+
+&lt;p&gt;session.setAttribute(String name,Object o) //往session中保存信息&lt;/p&gt;
+
+&lt;p&gt;Object session.getAttribute(String name) //从session对象中根据名字获取信息&lt;/p&gt;
+
+&lt;p&gt;4) 设置Session的有效时间&lt;/p&gt;
+
+&lt;p&gt;public void setMaxInactiveInterval(int interval)&lt;/p&gt;
+
+&lt;p&gt;设置最大非活动时间间隔，单位秒；&lt;/p&gt;
+
+&lt;p&gt;如果参数interval是负值，表示永不过时。零则是不支持session。&lt;/p&gt;
+
+&lt;p&gt;通过配置web.xml来设置会话超时，单位是分钟&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;   &amp;lt;seesion-config&amp;gt;
+
+       &amp;lt;session-timeout&amp;gt;1&amp;lt;/session-timeout&amp;gt;
+
+   &amp;lt;/session-config&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;允许两种方式并存，但前者优先级更高&lt;/p&gt;
+
+&lt;p&gt;5) 其他常用的API&lt;/p&gt;
+
+&lt;p&gt;HttpSession.invalidate() //手工销毁Session&lt;/p&gt;
+
+&lt;p&gt;boolean HttpSession.isNew() //判断Session是否新建&lt;/p&gt;
+
+&lt;p&gt;如果是true，表示服务器已经创建了该session，但客户端还没有加入(还没有建立会话的握手)&lt;/p&gt;
+
+&lt;p&gt;HttpSession.getId() //获取session的id&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;两种状态跟踪机制的比较&lt;/strong&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Cookie&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Session&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;保持在客户端&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;保存在服务器端&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;只能保持字符串对象&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;支持各种类型对象&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;通过过期时间值区分Cookie的类型&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;需要sessionid来维护与客户端的通信&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;类型1：会话Cookie——负数&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;保存会话技术1：Cookie(默认)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;类型1：普通Cookie——正数&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;保存会话技术2：表单隐藏字段&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;类型3：不支持Cookie——0&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;保存会话技术3：url重写&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;strong&gt;应用领域&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;web交易需要保存状态的时候，都可以使用，比如在分布式场景下可以利用分布式session技术等。&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>Spring Boot入门</title>
    <link href="http://username.github.io/2017/01/13/spring-boot"/>
    <updated>2017-01-13T00:00:00+08:00</updated>
    <id>http://username.github.io/2017/01/13/spring-boot</id>
    <content type="html">
+&lt;h2 id=&quot;why-spring-boot&quot;&gt;Why Spring Boot?&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Spring Boot是由Pivotal团队提供的全新框架，其设计目的是用来简化新Spring应用的初始搭建以及开发过程。该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。&lt;/p&gt;
+
+&lt;p&gt;多年以来，Spring IO平台饱受非议的一点就是大量的XML配置以及复杂的依赖管理。Spring Boot并不是要成为Spring IO平台里面众多“Foundation”层项目的替代者。Spring Boot的目标不在于为已解决的问题域提供新的解决方案，而是为平台带来另一种开发体验，从而简化对这些已有技术的使用。&lt;/p&gt;
+
+&lt;p&gt;Spring Boot，甚至可以说整个Spring生态系统都使用到了Groovy编程语言。Boot所提供的众多便捷功能，都是借助于Groovy强大的MetaObject协议、可插拔的AST转换过程以及内置的依赖解决方案引擎所实现的。在其核心的编译模型之中，Boot使用Groovy来构建工程文件，所以它可以使用通用的导入和样板方法（如类的main方法）对类所生成的字节码进行装饰（decorate）。这样使用Boot编写的应用就能保持非常简洁，却依然可以提供众多的功能。&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-spring-boot&quot;&gt;What’s Spring Boot?&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;从最根本上来讲，Spring Boot就是一些库的集合，它能够被任意项目的构建系统所使用。简便起见，该框架也提供了命令行界面，它可以用来运行和测试Boot应用。框架的发布版本，包括集成的CLI（命令行界面），可以在Spring仓库中手动下载和安装。一种更为简便的方式是使用Groovy环境管理器（Groovy enVironment Manager，GVM），它会处理Boot版本的安装和管理。Boot及其CLI可以通过GVM的命令行gvm install springboot进行安装。&lt;/p&gt;
+
+&lt;p&gt;要进行打包和分发的工程会依赖于像Maven或Gradle这样的构建系统。为了简化依赖图，Boot的功能是模块化的，通过导入Boot所谓的“starter”模块，可以将许多的依赖添加到工程之中。为了更容易地管理依赖版本和使用默认配置，框架提供了一个parent POM，工程可以继承它。Spring Boot工程的样例POM文件定义如下所示：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&amp;gt;
+&amp;lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+     xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&amp;gt;
+	&amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+
+	&amp;lt;groupId&amp;gt;com.example&amp;lt;/groupId&amp;gt;
+	&amp;lt;artifactId&amp;gt;myproject&amp;lt;/artifactId&amp;gt;
+	&amp;lt;version&amp;gt;1.0.0-SNAPSHOT&amp;lt;/version&amp;gt;
+
+	&amp;lt;!-- Inherit defaults from Spring Boot --&amp;gt;
+	&amp;lt;parent&amp;gt;
+    	&amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+    	&amp;lt;artifactId&amp;gt;spring-boot-starter-parent&amp;lt;/artifactId&amp;gt;
+    	&amp;lt;version&amp;gt;1.0.0.RC1&amp;lt;/version&amp;gt;
+	&amp;lt;/parent&amp;gt;
+
+	&amp;lt;!-- Add typical dependencies for a web application --&amp;gt;
+	&amp;lt;dependencies&amp;gt;
+    	&amp;lt;dependency&amp;gt;
+        	&amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+        	&amp;lt;artifactId&amp;gt;spring-boot-starter-web&amp;lt;/artifactId&amp;gt;
+    	&amp;lt;/dependency&amp;gt;
+    	&amp;lt;dependency&amp;gt;
+        	&amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+        	&amp;lt;artifactId&amp;gt;spring-boot-starter-actuator&amp;lt;/artifactId&amp;gt;
+    	&amp;lt;/dependency&amp;gt;
+	&amp;lt;/dependencies&amp;gt;
+
+	&amp;lt;repositories&amp;gt;
+    	&amp;lt;repository&amp;gt;
+        	&amp;lt;id&amp;gt;spring-snapshots&amp;lt;/id&amp;gt;
+        	&amp;lt;url&amp;gt;http://repo.spring.io/libs-snapshot&amp;lt;/url&amp;gt;
+    	&amp;lt;/repository&amp;gt;
+	&amp;lt;/repositories&amp;gt;
+
+	&amp;lt;pluginRepositories&amp;gt;
+    	&amp;lt;pluginRepository&amp;gt;
+        	&amp;lt;id&amp;gt;spring-snapshots&amp;lt;/id&amp;gt;
+        	&amp;lt;url&amp;gt;http://repo.spring.io/libs-snapshot&amp;lt;/url&amp;gt;
+    	&amp;lt;/pluginRepository&amp;gt;
+	&amp;lt;/pluginRepositories&amp;gt;
+
+	&amp;lt;build&amp;gt;
+    	&amp;lt;plugins&amp;gt;
+        	&amp;lt;plugin&amp;gt;
+            	&amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+            	&amp;lt;artifactId&amp;gt;spring-boot-maven-plugin&amp;lt;/artifactId&amp;gt;
+        	&amp;lt;/plugin&amp;gt;
+    	&amp;lt;/plugins&amp;gt;
+	&amp;lt;/build&amp;gt;
+&amp;lt;/project&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;how-to-use&quot;&gt;How to use?&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;使用CLI构建&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Spring Boot在刚刚公开宣布之后就将一个样例发布到了Twitter上，它目前成为了最流行的一个应用样例。它的全部描述如程序清单1.2所示，一个非常简单的Groovy文件可以生成功能强大的以Spring为后端的web应用。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@RestController
+class App {
+	@RequestMapping(&quot;/&quot;)
+	String home() {
+		&quot;hello&quot;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个应用可以通过spring run App.groovy命令在Spring Boot CLI中运行。Boot会分析文件并根据各种“编译器自动配置（compiler auto-configuration）”标示符来确定其意图是生成Web应用。然后，它会在一个嵌入式的Tomcat中启动Spring应用上下文，并且使用默认的8080端口。&lt;/p&gt;
+
+&lt;p&gt;Boot能够自动确定类所需的功能，这一点使其成为了强大的快速应用开发工具。当应用在Boot CLI中执行时，它们在使用内部的Groovy编译器进行构建，这个编译器可以在字节码生成的时候以编码的方式探查并修改类。通过这种方式，使用CLI的开发人员不仅可以省去定义默认配置，在一定程度上甚至可以不用定义特定的导入语句，它们可以在编译的过程中识别出来并自动进行添加。除此之外，当应用在CLI中运行时，Groovy内置的依赖管理器，“Grape”，将会解析编译期和运行时的类路径依赖，与Boot编译器的自动配置机制类似。这种方式不仅使得框架更加对用户友好，而且能够让不同版本的Spring Boot与特定版本的来自于Spring IO平台的库相匹配，这样一来开发人员就不用关心如何管理复杂的依赖图和版本结构了。另外，它还有助于快速原型的开发并生成概念原型的工程代码。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;非CLI构建&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;对于不是使用CLI构建的工程，Boot提供了许多的“starter”模块，它们定义了一组依赖，这些依赖能够添加到构建系统之中，从而解析框架及其父平台所需的特定类库。例如，spring-boot-starter-actuator依赖会引入一组基本的Spring项目，从而实现应用的快速配置和即时可用。关于这种依赖，值得强调的一点就是当开发Web应用，尤其是RESTful Web服务的时候，如果包含了spring-boot-starter-web依赖，它就会为你提供启动嵌入式Tomcat容器的自动化配置，并且提供对微服务应用有价值的端点信息，如服务器信息、应用指标（metrics）以及环境详情。除此之外，如果引入spring-boot-starter-security模块的话，actuator会自动配置Spring Security，从而为应用提供基本的认证以及其他高级的安全特性。它还会为应用结构引入一个内部的审计框架，这个框架可以用来生成报告或其他的用途，比如开发认证失败的锁定策略。&lt;/p&gt;
+
+&lt;p&gt;为了阐述在Java Maven工程中，如何快速地使Spring Web工程准备就绪，如下所示：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;package com.infoq.springboot;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@EnableAutoConfiguration
+public class Application {
+
+	@RequestMapping(&quot;/&quot;)
+	public String home() {
+		return &quot;Hello&quot;;
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在Application类上的@EnableAutoConfiguration注解会告知Boot要采用一种特定的方式来对应用进行配置。这种方法会将其他样板式的配置均假设为框架默认的约定，因此能够聚焦于如何尽快地使应用准备就绪以便运行起来。Application类是可运行的，因此，当我们以Java Application的方式运行这个类时，就能启动该应用及其嵌入式的容器，这样也能实现即时地开发。&lt;/p&gt;
+
+&lt;p&gt;为了发布版本而构建工程时，Boot的Maven和Gradle插件可以嵌入（hook）到这些构建系统的打包过程中，以生成可执行的“胖jar包（fat jar）”，这种jar包含了工程的所有依赖并且能够以可运行jar的方式执行。使用Maven打包Boot应用只需运行mvn package命令，与之类似，使用Gradle时，执行gradle build命令将会在构建的目标地址下生成可运行的jar。&lt;/p&gt;
+
+&lt;h2 id=&quot;use-in-microservice&quot;&gt;Use in MicroService&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Boot对Spring应用的开发进行了简化，提供了模块化方式导入依赖的能力，强调了开发RESTful Web服务的功能并提供了生成可运行jar的能力，这一切都清晰地表明在开发可部署的微服务方面Boot框架是一个强大的工具。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://docs.spring.io/spring-boot/docs/2.0.0.BUILD-SNAPSHOT/reference/htmlsingle/&quot;&gt;Spring Boot Reference Guide&lt;/a&gt;&lt;/p&gt;
+
 </content>
  </entry>
  
@@ -4300,443 +4707,6 @@ Master_SSL_Verify_Server_Cert: No
 &lt;p&gt;&lt;strong&gt;方法四&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;在my.cnf的[mysqld]中设置参数–expire_logs_days=#，此参数的含义是设置日志的过期天数，过了指定的天数后日志将会被自动删除，这样将有利于减少DBA管理日志的工作量。&lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>Apache和Nginx的rewrite规则浅析</title>
-   <link href="http://username.github.io/2016/11/08/apachenginxrewrite"/>
-   <updated>2016-11-08T00:00:00+08:00</updated>
-   <id>http://username.github.io/2016/11/08/apachenginxrewrite</id>
-   <content type="html">
-&lt;h2 id=&quot;nginx-rewrite&quot;&gt;Nginx Rewrite规则相关指令&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;Nginx Rewrite规则相关&lt;code&gt;指令&lt;/code&gt;有&lt;/strong&gt;:&lt;/p&gt;
-
-&lt;p&gt;if        #条件判断&lt;/p&gt;
-
-&lt;p&gt;rewrite   #跳转&lt;/p&gt;
-
-&lt;p&gt;set       #对变量进行了赋值操作&lt;/p&gt;
-
-&lt;p&gt;return    #该指令将结束执行直接返回http状态码到客户端&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Nginx Rewrite规则相关&lt;code&gt;标记&lt;/code&gt;有&lt;/strong&gt;：&lt;/p&gt;
-
-&lt;p&gt;redirect   #返回302临时重定向 地址栏会显示跳转后的地址&lt;/p&gt;
-
-&lt;p&gt;last       #相当于Apache里的[L]标记，表示完成rewrite（重新将rewrite后的地址在server标签中执行）&lt;/p&gt;
-
-&lt;p&gt;break      #终止匹配, 不再匹配后面的规则（将rewrite后的地址在当前location标签中执行）&lt;/p&gt;
-
-&lt;p&gt;permanent  #返回301永久重定向 地址栏会显示跳转后的地址&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;一个简单的Nginx Rewrite规则语法如下&lt;/strong&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;rewrite ^/b/(.*)\.html /play.php?video=$1 break;
-如果加上if语句，示例如下： 
-if (!-f $request_filename)
-{ rewrite ^/img/(.*)$ /site/$host/images/$1 last;      }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;Nginx rewrite模块环境变量&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;$args, 请求中的参数;&lt;/p&gt;
-
-&lt;p&gt;$content_length, HTTP请求信息里的”Content-Length”;&lt;/p&gt;
-
-&lt;p&gt;$content_type, 请求信息里的”Content-Type”;&lt;/p&gt;
-
-&lt;p&gt;$document_root, 针对当前请求的根路径设置值;&lt;/p&gt;
-
-&lt;p&gt;$document_uri, 与$uri相同;&lt;/p&gt;
-
-&lt;p&gt;$host, 请求信息中的”Host”，如果请求中没有Host行，则等于设置的服务器名;&lt;/p&gt;
-
-&lt;p&gt;$limit_rate, 对连接速率的限制;&lt;/p&gt;
-
-&lt;p&gt;$request_method, 请求的方法，比如”GET”、”POST”等;&lt;/p&gt;
-
-&lt;p&gt;$remote_addr, 客户端地址;&lt;/p&gt;
-
-&lt;p&gt;$remote_port, 客户端端口号;&lt;/p&gt;
-
-&lt;p&gt;$remote_user, 客户端用户名，认证用;&lt;/p&gt;
-
-&lt;p&gt;$request_filename, 当前请求的文件路径名&lt;/p&gt;
-
-&lt;p&gt;$request_body_file&lt;/p&gt;
-
-&lt;p&gt;$request_uri, 请求的URI，带查询字符串;&lt;/p&gt;
-
-&lt;p&gt;$query_string, 与$args相同;&lt;/p&gt;
-
-&lt;p&gt;$scheme, 所用的协议，比如http或者是https，比如rewrite  ^(.+)$  $scheme://example.com$1  redirect;&lt;/p&gt;
-
-&lt;p&gt;$server_protocol, 请求的协议版本，”HTTP/1.0”或”HTTP/1.1”;&lt;/p&gt;
-
-&lt;p&gt;$server_addr, 服务器地址，如果没有用listen指明服务器地址，使用这个变量将发起一次系统调用以取得地址(造成资源浪费);&lt;/p&gt;
-
-&lt;p&gt;$server_name, 请求到达的服务器名;&lt;/p&gt;
-
-&lt;p&gt;$server_port, 请求到达的服务器端口号;&lt;/p&gt;
-
-&lt;p&gt;$uri, 请求的URI，可能和最初的值有不同，比如经过重定向之类的。&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;这些变量可以用在rewrite规则里，也可以打印日志的时候用&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;apache-rewrite-&quot;&gt;Apache Rewrite 规则相关指令&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;Apache rewrite规则相关指令有&lt;/strong&gt;：&lt;/p&gt;
-
-&lt;p&gt;RewriteEngine on #打开rewirte功能&lt;/p&gt;
-
-&lt;p&gt;RewriteCond      #相当于nginx if&lt;/p&gt;
-
-&lt;p&gt;RewriteRule      #相当于nginx rewrite命令&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Apache rewrite规则相关&lt;code&gt;标记&lt;/code&gt;有&lt;/strong&gt;：&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;R[=code](force redirect)           #强制外部重定向, 强制在替代字符串加上http://thishost[:thisport]/前缀重定向到外部的URL.如果code不指定，将用缺省的302 HTTP状态码。&lt;/li&gt;
-  &lt;li&gt;F(force URL to be forbidden)       #禁用URL,返回403HTTP状态码。&lt;/li&gt;
-  &lt;li&gt;G(force URL to be gone)            #强制URL为GONE，返回410HTTP状态码。&lt;/li&gt;
-  &lt;li&gt;P(force proxy)                     #强制使用代理转发。&lt;/li&gt;
-  &lt;li&gt;L(last rule)                       #表明当前规则是最后一条规则，停止分析以后规则的重写。&lt;/li&gt;
-  &lt;li&gt;N(next round)                      #重新从第一条规则开始运行重写过程。&lt;/li&gt;
-  &lt;li&gt;C(chained with next rule)          #与下一条规则关联,如果规则匹配则正常处理，该标志无效，如果不匹配，那么下面所有关联的规则都跳过。&lt;/li&gt;
-  &lt;li&gt;T=MIME-type(force MIME type)       #强制MIME类型&lt;/li&gt;
-  &lt;li&gt;NS (used only if no internal sub-request)  #只用于不是内部子请求&lt;/li&gt;
-  &lt;li&gt;NC(no case)                        #不区分大小写&lt;/li&gt;
-  &lt;li&gt;QSA(query string append)           #追加请求字符串&lt;/li&gt;
-  &lt;li&gt;NE(no URI escaping of output)      #不在输出转义特殊字符,例如：RewriteRule /foo/(.*) /bar?arg=P1\%3d$1 [R,NE] #将能正确的将/foo/zoo转换成/bar?arg=P1=zed&lt;/li&gt;
-  &lt;li&gt;S=num(skip next rule(s))           #跳过num条规则&lt;/li&gt;
-  &lt;li&gt;E=VAR:VAL(set environment variable)#设置环境变量&lt;/li&gt;
-  &lt;li&gt;PT(pass through to next handler)   #传递给下一个处理, 例如：&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;pre&gt;&lt;code&gt;    RewriteRule ^/abc(.*) /def$1 [PT] #将会交给/def规则处理
-    Alias /def /ghi
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;一个简单的Apache rewrite规则语法如下&lt;/strong&gt;：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;RewriteEngine on
-RewriteCond %{HTTP_HOST} ^haha.test.com [NC]
-RewriteRule ^/(.*) http://hehe.test.com/ [L]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;Apache rewrite模块环境变量&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;第一部分: HTTP headers 部分参数&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;参数名称: HTTP_USER_AGENT&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.0.8) Gecko/2009032609 Firefox/3.0.8&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“HTTP_USER_AGENT”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: HTTP_REFERER&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: http://www.test.cn/test.php&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: _SERVER[“HTTP_REFERER”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: HTTP_COOKIE&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: ZDEDebuggerPresent=php,phtml,php3&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“HTTP_COOKIE”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: HTTP_FORWARDED&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 如果使用代理服务器的话会是代理服务器的IP地址, 本地不容易搭环境测试出值来.&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“HTTP_FORWARDED”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: HTTP_HOST&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: www.test.com&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“HTTP_HOST”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: HTTP_PROXY_CONNECTION&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 网络连接代理方面的信息. 和HTTP_FORWARDED参数一样. 本地不容易搭环境测试出值来.&lt;/li&gt;
-  &lt;li&gt;说明: PHP中貌似未提供这样的服务器信息值. 如果又的话可能等值于: $_SERVER[“HTTP_PROXY_CONNECTION”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: HTTP_ACCEPT&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: text/html,application/xhtml+xml,application/xml;q=0.9,&lt;em&gt;/&lt;/em&gt;;q=0.8&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“HTTP_ACCEPT”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;第二部分: server internals 部分参数&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;参数名称: DOCUMENT_ROOT&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: C:/webRoot/t&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“DOCUMENT_ROOT”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: SERVER_ADMIN&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: youemailaddress@gmail.com&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“SERVER_ADMIN”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: SERVER_NAME&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: www.test.com&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“SERVER_NAME”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: SERVER_ADDR&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 127.0.0.1&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“SERVER_ADDR”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: SERVER_PORT&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 80&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“SERVER_PORT”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: SERVER_PROTOCOL&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: HTTP/1.1&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“SERVER_PROTOCOL”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: SERVER_SOFTWARE&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: Apache/2.2.11 (Win32) PHP/5.2.9-1&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“SERVER_SOFTWARE”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;第三部分: connection &amp;amp; request 部分参数&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;参数名称: REMOTE_ADDR&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 127.0.0.1 正在浏览当前页面用户的 IP 地址。&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“REMOTE_ADDR”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: REMOTE_HOST&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 127.0.0.1 正在浏览当前页面用户的主机名。反向域名解析基于该用户的 REMOTE_ADDR&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“REMOTE_HOST”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: REMOTE_PORT&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 2574 (变化的值)用户连接到服务器时所使用的端口&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“REMOTE_PORT”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: REMOTE_USER&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 空&lt;/li&gt;
-  &lt;li&gt;说明: PHP 好像未提供相关的$_SERVER值.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: REMOTE_IDENT&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 空&lt;/li&gt;
-  &lt;li&gt;说明: PHP 好像未提供相关的$_SERVER值.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: REQUEST_METHOD&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: GET&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“REQUEST_METHOD”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: SCRIPT_FILENAME&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: C:/webRoot/t/share77.html&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“SCRIPT_FILENAME”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: PATH_INFO&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 空&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_REQUEST[“PATH_INFO”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: QUERY_STRING&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: a=b&amp;amp;c=d&amp;amp;e=f&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“QUERY_STRING”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: AUTH_TYPE&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 空 当 PHP 运行在 Apache 模块方式下，并且正在使用 HTTP 认证功能，这个是认证的类型&lt;/li&gt;
-  &lt;li&gt;说明: 相当于PHP中的服务器参数: $_SERVER[“AUTH_TYPE”]&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;第四部分: date and time 部分参数&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;参数名称: TIME_YEAR&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 2009&lt;/li&gt;
-  &lt;li&gt;说明: 服务器获取当前的年份值&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: TIME_MON&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 04&lt;/li&gt;
-  &lt;li&gt;说明: 服务器获取当前的月份值&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: TIME_DAY&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 22&lt;/li&gt;
-  &lt;li&gt;说明: 服务器获取当前的日值&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: TIME_HOUR&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 16&lt;/li&gt;
-  &lt;li&gt;说明: 服务器获取当前时间的小时&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: TIME_MIN&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 26&lt;/li&gt;
-  &lt;li&gt;说明: 服务器获取当前时间的分钟&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: TIME_SEC&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 34&lt;/li&gt;
-  &lt;li&gt;说明: 服务器获取当前时间的秒&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: TIME_WDAY&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 3&lt;/li&gt;
-  &lt;li&gt;说明: 服务器获取当天是星期几, 从星期日-星期六, 数字从 0-6&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: TIME&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 20090422162634&lt;/li&gt;
-  &lt;li&gt;说明: 服务器获取当前的时间, 格式为: 年月日时分秒&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;em&gt;第五部分: specials 部分参数&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;参数名称: API_VERSION&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: 20051115:21&lt;/li&gt;
-  &lt;li&gt;说明: apache 的 API 版本信息.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: THE_REQUEST&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: GET /share77.html HTTP/1.1&lt;/li&gt;
-  &lt;li&gt;说明: 浏览器发给服务器的请求值. 不包括其他的头信息.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: REQUEST_URI&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: /share77.html&lt;/li&gt;
-  &lt;li&gt;说明: 浏览器请求的资源信息.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: REQUEST_FILENAME&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: C:/webRoot/t/share77.html&lt;/li&gt;
-  &lt;li&gt;说明: 被请求的资源的在磁盘的物理地址.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: IS_SUBREQ&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: false&lt;/li&gt;
-  &lt;li&gt;说明: 如果是 sub-request 则显示为 true, 否则为 false.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;参数名称: HTTPS&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;样例参考值: off&lt;/li&gt;
-  &lt;li&gt;说明: 如果连接使用 SSL/TLS 模式, 则值为on , 否则值为off, 这个参数比较安全, 即使未载入 mod_ssl 模块时.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;apachenginx&quot;&gt;Apache和Nginx实例对比&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;Apache Rewrite&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;RewriteRule ^/(test1|test2)/$ /yzj/index.php?name=$1 [L]
-RewriteRule ^/test/$ /yzj/test.php [L]
-RewriteRule ^/(test)&lt;em&gt;([a-zA-Z]+)/$ /yzj/index.php?name=$1&lt;/em&gt;$2 [L] 
-RewriteRule ^/test([0-9]*)/$ /yzj/test.php?id=$1 [L]&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Nginx Rewrite&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;rewrite ^/(test1|test2)/$ /yzj/index.php?name=$1 last;
-rewrite ^/test/$ /yzj/test.php last;
-rewrite ^/(test)&lt;em&gt;([a-zA-Z]+)/$ /zl/index.php?name=$1&lt;/em&gt;$2 last;
-rewrite ^/test([0-9]*)/$ /yzj/test.php?id=$1 last;&lt;/p&gt;
-
-&lt;h2 id=&quot;apachenginx-rewrite&quot;&gt;Apache与Nginx Rewrite规则的一些功能相同或类似的指令、标记对应关系&lt;/h2&gt;
-
-&lt;p&gt;Apache的RewriteCond指令对应Nginx的if指令；&lt;/p&gt;
-
-&lt;p&gt;Apache的RewriteRule指令对应Nginx的rewrite指令；&lt;/p&gt;
-
-&lt;p&gt;Apache的[R]标记对应Nginx的redirect标记；&lt;/p&gt;
-
-&lt;p&gt;Apache的[P]标记对应Nginx的last标记；&lt;/p&gt;
-
-&lt;p&gt;Apache的[R,L]标记对应Nginx的redirect标记；&lt;/p&gt;
-
-&lt;p&gt;Apache的[P,L]标记对应Nginx的last标记；&lt;/p&gt;
-
-&lt;p&gt;Apache的[PT,L]标记对应Nginx的last标记；&lt;/p&gt;
 </content>
  </entry>
  

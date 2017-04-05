@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>Cookie和Session的区别 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">Cookie和Session的区别</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<p>Http是一个无状态协议，http协议状态的保持通常有两种实现方式：cookie和session。</p>
+
+<ul>
+  <li>
+    <p>Cookies：通过客户端来保持状态信息</p>
+
+    <p>Cookie是服务器发给客户端的特殊信息</p>
+
+    <p>Cookie是以文本的方式保存在客户端，每次请求时都带上它</p>
+  </li>
+  <li>
+    <p>Session：通过服务器端来保持状态信息</p>
+
+    <p>Session是服务器和客户端之间的一系列的交互动作</p>
+
+    <p>服务器为每个客户端开辟内存空间，从而保持状态信息</p>
+
+    <p>由于需要客户端也要持有一个标识(id)，因此，也要求服务器端和客户端传输该标识，</p>
+
+    <p>标识(id)可以借助Cookie机制或者其他的途径来保存</p>
+  </li>
+</ul>
+
+<p><strong>COOKIE机制</strong></p>
+
+<p>1) Cookie的基本特点</p>
+
+<ul>
+  <li>
+    <p>Cookie保存在客户端</p>
+  </li>
+  <li>
+    <p>只能保存字符串对象，不能保存对象类型</p>
+  </li>
+  <li>
+    <p>需要客户端浏览器的支持：客户端可以不支持，浏览器用户可能会禁用Cookie</p>
+  </li>
+</ul>
+
+<p>2) 采用Cookie需要解决的问题</p>
+
+<ul>
+  <li>
+    <p>Cookie的创建</p>
+
+    <p>通常是在服务器端创建的(当然也可以通过javascript来创建)</p>
+
+    <p>服务器通过在http的响应头加上特殊的指示，那么浏览器在读取这个指示后就会生成相应的cookie了</p>
+  </li>
+  <li>
+    <p>Cookie存放的内容</p>
+
+    <p>业务信息(“key”,”value”)</p>
+
+    <p>过期时间</p>
+
+    <p>域和路径</p>
+  </li>
+  <li>
+    <p>浏览器是如何通过Cookie和服务器通信？</p>
+
+    <p>通过请求与响应，cookie在服务器和客户端之间传递</p>
+
+    <p>每次请求和响应都把cookie信息加载到响应头中；依靠cookie的key传递。</p>
+  </li>
+</ul>
+
+<p><strong>COOKIE编程</strong></p>
+
+<ul>
+  <li>
+    <p>Cookie类</p>
+
+    <p>Servlet API封装了一个类：javax.servlet.http.Cookie，封装了对Cookie的操作，包括：</p>
+
+    <ul>
+      <li>
+        <p>public Cookie(String name, String value) //构造方法，用来创建一个Cookie</p>
+      </li>
+      <li>
+        <p>HttpServletRequest.getCookies() //从Http请求中可以获取Cookies</p>
+      </li>
+      <li>
+        <p>HttpServletResponse.addCookie(Cookie) //往Http响应添加Cookie</p>
+      </li>
+      <li>
+        <p>public int getMaxAge() //获取Cookie的过期时间值</p>
+      </li>
+      <li>
+        <p>public void setMaxAge(int expiry) //设置Cookie的过期时间值</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Cookie的创建</p>
+
+    <p>Cookie是一个名值对(key=value)，而且不管是key还是value都是字符串</p>
+
+    <p>Cookie visit = new Cookie(“visit”, “1”);</p>
+  </li>
+  <li>
+    <p>Cookie的类型——过期时间</p>
+
+    <ul>
+      <li>
+        <p>会话Cookie</p>
+
+        <p>Cookie.setMaxAge(-1);//负整数</p>
+
+        <p>保存在浏览器的内存中，也就是说关闭了浏览器，cookie就会丢失</p>
+      </li>
+      <li>
+        <p>普通cookie</p>
+
+        <p>Cookie.setMaxAge(60);//正整数，单位是秒</p>
+
+        <p>表示浏览器在1分钟内不继续访问服务器，Cookie就会被过时失效并销毁(通常保存在文件中)</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><code>注意</code>：</p>
+
+<p>cookie.setMaxAge(0);//等价于不支持Cookie；</p>
+
+<p><strong>SESSION机制</strong></p>
+
+<p>每次客户端发送请求，服务断都检查是否含有sessionId。</p>
+
+<p>如果有，则根据sessionId检索出session并处理；如果没有，则创建一个session，并绑定一个不重复的sessionId。</p>
+
+<p>1) 基本特点</p>
+
+<ul>
+  <li>
+    <p>状态信息保存在服务器端。这意味着安全性更高</p>
+  </li>
+  <li>
+    <p>通过类似与Hashtable的数据结构来保存</p>
+  </li>
+  <li>
+    <p>能支持任何类型的对象(session中可含有多个对象)</p>
+  </li>
+</ul>
+
+<p>2) 保存会话id的技术</p>
+
+<ul>
+  <li>
+    <p>Cookie</p>
+
+    <p>这是默认的方式，在客户端与服务器端传递JSeesionId</p>
+
+    <p>缺点：客户端可能禁用Cookie</p>
+  </li>
+  <li>
+    <p>表单隐藏字段</p>
+
+    <p>在被传递回客户端之前，在 form 里面加入一个hidden域，设置JSeesionId：</p>
+
+    <p>&lt;input type=hidden name=jsessionid value=”3948E432F90932A549D34532EE2394” /&gt;</p>
+  </li>
+  <li>
+    <p>URL重写</p>
+
+    <p>直接在URL后附加上session id的信息</p>
+
+    <p>HttpServletResponse对象中，提供了如下的方法：</p>
+
+    <p>encodeURL(url); //url为相对路径</p>
+  </li>
+</ul>
+
+<p><strong>SESSION编程</strong></p>
+
+<p>1) HttpSession接口</p>
+
+<p>Servlet API定义了接口：javax.servlet.http.HttpSession， Servlet容器必须实现它，用以跟踪状态。</p>
+
+<p>当浏览器与Servlet容器建立一个http会话时，容器就会通过此接口自动产生一个HttpSession对象</p>
+
+<p>2) 获取Session</p>
+
+<p>HttpServletRequest对象获取session，返回HttpSession：</p>
+
+<p>request.getSession(); //表示如果session对象不存在，就创建一个新的会话</p>
+
+<p>request.getSession(true); //等价于上面这句；如果session对象不存在，就创建一个新的会话</p>
+
+<p>request.getSession(false); //表示如果session对象不存在就返回 null，不会创建新的会话对象</p>
+
+<p>3) Session存取信息</p>
+
+<p>session.setAttribute(String name,Object o) //往session中保存信息</p>
+
+<p>Object session.getAttribute(String name) //从session对象中根据名字获取信息</p>
+
+<p>4) 设置Session的有效时间</p>
+
+<p>public void setMaxInactiveInterval(int interval)</p>
+
+<p>设置最大非活动时间间隔，单位秒；</p>
+
+<p>如果参数interval是负值，表示永不过时。零则是不支持session。</p>
+
+<p>通过配置web.xml来设置会话超时，单位是分钟</p>
+
+<pre><code>   &lt;seesion-config&gt;
+
+       &lt;session-timeout&gt;1&lt;/session-timeout&gt;
+
+   &lt;/session-config&gt;
+</code></pre>
+
+<p>允许两种方式并存，但前者优先级更高</p>
+
+<p>5) 其他常用的API</p>
+
+<p>HttpSession.invalidate() //手工销毁Session</p>
+
+<p>boolean HttpSession.isNew() //判断Session是否新建</p>
+
+<p>如果是true，表示服务器已经创建了该session，但客户端还没有加入(还没有建立会话的握手)</p>
+
+<p>HttpSession.getId() //获取session的id</p>
+
+<p><strong>两种状态跟踪机制的比较</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Cookie</th>
+      <th style="text-align: center">Session</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">保持在客户端</td>
+      <td style="text-align: center">保存在服务器端</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">只能保持字符串对象</td>
+      <td style="text-align: center">支持各种类型对象</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">通过过期时间值区分Cookie的类型</td>
+      <td style="text-align: center">需要sessionid来维护与客户端的通信</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">类型1：会话Cookie——负数</td>
+      <td style="text-align: center">保存会话技术1：Cookie(默认)</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">类型1：普通Cookie——正数</td>
+      <td style="text-align: center">保存会话技术2：表单隐藏字段</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">类型3：不支持Cookie——0</td>
+      <td style="text-align: center">保存会话技术3：url重写</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>应用领域</strong></p>
+
+<p>web交易需要保存状态的时候，都可以使用，比如在分布式场景下可以利用分布式session技术等。</p>
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">07 February 2017</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+  
+    <a href="/2017/01/13/spring-boot" class="prev" title="Spring Boot入门">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+
