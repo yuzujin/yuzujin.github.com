@@ -64,7 +64,9 @@ QEP 中每个行的所有列表如下所示：
 
 这些列展示了SELECT 语句对每一个表的QEP。一个表可能和一个物理模式表或者在SQL 执行时生成的内部临时表(例如从子查询或者合并操作会产生内部临时表)相关联。
 
-可以参考MySQL Reference Manual 获得更多信息：http://dev.mysql.com/doc/refman/5.5/en/explain-output.html。
+可以参考MySQL Reference Manual 获得更多信息：
+
+http://dev.mysql.com/doc/refman/5.5/en/explain-output.html。
 
 **key**
 
@@ -229,22 +231,22 @@ QEP 中每个行的所有列表如下所示：
 
  select_type 列提供了各种表示table 列引用的使用方式的类型。最常见的值包括SIMPLE、PRIMARY、DERIVED 和UNION。其他可能的值还有UNION RESULT、DEPENDENT SUBQUERY、DEPENDENT UNION、UNCACHEABLE UNION 以及UNCACHEABLE QUERY。
  
- 1. SIMPLE
+ 1.SIMPLE
  
  对于不包含子查询和其他复杂语法的简单查询，这是一个常见的类型。
 
- 2. PRIMARY
+ 2.PRIMARY
  
  这是为更复杂的查询而创建的首要表(也就是最外层的表)。这个类型通常可以在DERIVED 和UNION 类型混合使用时见到。
  
- 3. DERIVED
+ 3.DERIVED
  
  当一个表不是一个物理表时，那么就被叫做DERIVED。下面的SQL 语句给出了一个QEP 中DERIVED select-type 类型的示例：
  
     mysql> EXPLAIN SELECT MAX(id)
     -> FROM (SELECT id FROM users WHERE first = 'west') c;
 
- 4. DEPENDENT SUBQUERY
+ 4.DEPENDENT SUBQUERY
  
  这个select-type 值是为使用子查询而定义的。下面的SQL语句提供了这个值：
  
@@ -252,11 +254,11 @@ QEP 中每个行的所有列表如下所示：
     -> FROM parent p
     -> WHERE p.id NOT IN (SELECT c.parent_id FROM child c);
  
- 5. UNION
+ 5.UNION
  
  这是UNION 语句其中的一个SQL 元素。
  
- 6. UNION RESULT
+ 6.UNION RESULT
  
  这是一系列定义在UNION 语句中的表的返回结果。当select_type 为这个值时，经常可以看到table 的值是<unionN,M>，这说明匹配的id 行是这个集合的一部分。下面的SQL产生了一个UNION和UNION RESULT select-type：
  
@@ -274,51 +276,53 @@ QEP 中每个行的所有列表如下所示：
  
  http://dev.mysql.com/doc/refman/5.5/en/explain-output.html。
  
- 1. Using where
+ 1.Using where
  
  这个值表示查询使用了where 语句来处理结果——例如执行全表扫描。如果也用到了索引，那么行的限制条件是通过获取必要的数据之后处理读缓冲区来实现的。
  
- 2. Using temporary
+ 2.Using temporary
  
  这个值表示使用了内部临时(基于内存的)表。一个查询可能用到多个临时表。有很多原因都会导致MySQL 在执行查询期间创建临时表。两个常见的原因是在来自不同表的列上使用了DISTINCT，或者使用了不同的ORDER BY 和GROUP BY 列。
  
- 想了解更多内容可以访问http://forge.mysql.com/wiki/Overview_of_query_execution_and_use_of_temp_tables。
+想了解更多内容可以访问：
+
+http://forge.mysql.com/wiki/Overview_of_query_execution_and_use_of_temp_tables。
  
- 可以强制指定一个临时表使用基于磁盘的MyISAM 存储引擎。这样做的原因主要有两个：
+可以强制指定一个临时表使用基于磁盘的MyISAM 存储引擎。这样做的原因主要有两个：
  
     内部临时表占用的空间超过min(tmp_table_size，max_heap_table_size)系统变量的限制
  
     使用了TEXT/BLOB 列
  
- 3. Using filesort
+ 3.Using filesort
  
  这是ORDER BY 语句的结果。这可能是一个CPU 密集型的过程。
  可以通过选择合适的索引来改进性能，用索引来为查询结果排序。详细过程请参考第4 章。
  
- 4. Using index
+ 4.Using index
  
  这个值重点强调了只需要使用索引就可以满足查询表的要求，不需要直接访问表数据。请参考第5 章的详细示例来理解这个值。
  
- 5. Using join buffer
+ 5.Using join buffer
  
  这个值强调了在获取连接条件时没有使用索引，并且需要连接缓冲区来存储中间结果。
  如果出现了这个值，那应该注意，根据查询的具体情况可能需要添加索引来改进性能。
  
- 6. Impossible where
+ 6.Impossible where
  
  这个值强调了where 语句会导致没有符合条件的行。请看下面的示例：
  
-        mysql> EXPLAIN SELECT * FROM user WHERE 1=2;
+    mysql> EXPLAIN SELECT * FROM user WHERE 1=2;
      
- 7. Select tables optimized away
+ 7.Select tables optimized away
  
  这个值意味着仅通过使用索引，优化器可能仅从聚合函数结果中返回一行。
  
  
- 8. Distinct
+ 8.Distinct
  这个值意味着MySQL 在找到第一个匹配的行之后就会停止搜索其他行。
  
- 9. Index merges
+ 9.Index merges
  
  当MySQL 决定要在一个给定的表上使用超过一个索引的时候，就会出现以下格式中的一个，详细说明使用的索引以及合并的类型。
  

@@ -5,10 +5,445 @@
         <description>Tumbler - Zujin</description>
         <link>http://username.github.io</link>
         <atom:link href="http://username.github.io/rss.xml" rel="self" type="application/rss+xml" />
-        <lastBuildDate>Wed, 08 Feb 2017 11:08:58 +0800</lastBuildDate>
-        <pubDate>Wed, 08 Feb 2017 11:08:58 +0800</pubDate>
+        <lastBuildDate>Wed, 05 Apr 2017 15:03:43 +0800</lastBuildDate>
+        <pubDate>Wed, 05 Apr 2017 15:03:43 +0800</pubDate>
         <ttl>60</ttl>
 
+
+        <item>
+                <title>MySQL explain命令详解</title>
+                <description>
+&lt;p&gt;MySQL的EXPLAIN命令用于SQL语句的查询执行计划(QEP)。这条命令的输出结果能够让我们了解MySQL 优化器是如何执行SQL 语句的。这条命令并没有提供任何调整建议，但它能够提供重要的信息帮助你做出调优决策。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;语法&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;MySQL 的EXPLAIN 语法可以运行在SELECT 语句或者特定表上。如果作用在表上，那么此命令等同于DESC 表命令。&lt;/p&gt;
+
+&lt;p&gt;UPDATE和DELETE 命令也需要进行性能改进，当这些命令不是直接在表的主码上运行时，为了确保最优化的索引使用率，需要把它们改写成SELECT 语句(以便对它们执行EXPLAIN 命令)。请看下面的示例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;UPDATE table1
+SET col1 = X, col2 = Y
+WHERE id1 = 9
+AND dt &amp;gt;= &#39;2010-01-01&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个UPDATE语句可以被重写成为下面这样的SELECT语句：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;SELECT col1, col2
+FROM table1
+WHERE id1 = 9
+AND dt &amp;gt;= &#39;2010-01-01&#39;;  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在5.6.10版本里面,是可以直接对DML语句进行explain分析操作的.&lt;/p&gt;
+
+&lt;p&gt;MySQL 优化器是基于开销来工作的，它并不提供任何的QEP的位置。这意味着QEP 是在每条SQL 语句执行的时候动态地计算出来的。在MySQL 存储过程中的SQL 语句也是在每次执行时计算QEP 的。存储过程缓存仅仅解析查询树。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;各列详解&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;MySQL EXPLAIN命令能够为SQL语句中的每个表生成以下信息：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mysql1.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这个QEP 显示没有使用任何索引(也就是全表扫描)并且处理了大量的行来满足查询。&lt;/p&gt;
+
+&lt;p&gt;对同样一条SELECT 语句，一个优化过的QEP 如下所示:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mysql2.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在这个QEP 中，我们看到使用了一个索引，且估计只有一行数据将被获取。&lt;/p&gt;
+
+&lt;p&gt;QEP 中每个行的所有列表如下所示：&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;列&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;描述&lt;/th&gt;
+      &lt;th&gt;备注&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;id&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;The SELECT identifier&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;select_type&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;The SELECT type&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;table&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;The table for the output row&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;partitions&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;The matching partitions&lt;/td&gt;
+      &lt;td&gt;(这一列只有在EXPLAIN PARTITIONS 语法中才会出现)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;type&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;The join type&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;possible_keys&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;The possible indexes to choose&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;key&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;The index actually chosen&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;key_len&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;The length of the chosen key&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;ref&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;The columns compared to the index&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;rows&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Estimate of rows to be examined&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;filtered&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Percentage of rows filtered by table condition&lt;/td&gt;
+      &lt;td&gt;(这一列只有在EXPLAINED EXTENDED 语法中才会出现)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Extra&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;Additional information&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;这些列展示了SELECT 语句对每一个表的QEP。一个表可能和一个物理模式表或者在SQL 执行时生成的内部临时表(例如从子查询或者合并操作会产生内部临时表)相关联。&lt;/p&gt;
+
+&lt;p&gt;可以参考MySQL Reference Manual 获得更多信息：&lt;/p&gt;
+
+&lt;p&gt;http://dev.mysql.com/doc/refman/5.5/en/explain-output.html。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;key&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;key 列指出优化器选择使用的索引。一般来说SQL 查询中的每个表都仅使用一个索引。也存在索引合并的少数例外情况，如给定表上用到了两个或者更多索引。&lt;/p&gt;
+
+&lt;p&gt;下面是QEP 中key 列的示例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;key: item_id
+key: NULL
+key: first, last
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;SHOW CREATE TABLE &amp;lt;table&amp;gt;命令是最简单的查看表和索引列细节的方式。和key 列相关的列还包括possible_keys、rows 以及key_len。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;ROWS&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;rows 列提供了试图分析所有存在于累计结果集中的行数目的MySQL 优化器估计值。QEP 很容易描述这个很困难的统计量。查询中总的读操作数量是基于合并之前行的每一行的rows 值的连续积累而得出的。这是一种嵌套行算法。&lt;/p&gt;
+
+&lt;p&gt;以连接两个表的QEP 为例。通过id=1 这个条件找到的第一行的rows 值为1，这等于对第一个表做了一次读操作。第二行是通过id=2 找到的，rows 的值为5。这等于有5 次读操作符合当前1 的积累量。参考两个表，读操作的总数目是6。在另一个QEP 中，第一rows 的值是5，第二rows 的值是1。这等于第一个表有5 次读操作，对5个积累量中每个都有一个读操作。因此两个表总的读操作的次数是10(5+5)次。&lt;/p&gt;
+
+&lt;p&gt;最好的估计值是1，一般来说这种情况发生在当寻找的行在表中可以通过主键或者唯一键找到的时候。
+ 在下面的QEP 中，外面的嵌套循环可以通过id=1 来找到，其估计的物理行数是1。第二个循环处理了10行。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;********************* 1. row ***********************
+id: 1
+select_type: SIMPLE
+table: p
+type: const
+possible_keys: PRIMARY
+key: PRIMARY
+key_len: 4
+ref: const
+rows: 1
+Extra:
+********************* 2. row ***********************
+id: 1
+select_type: SIMPLE
+table: c
+type: ref
+possible_keys: parent_id
+key: parent_id
+key_len: 4
+ref: const
+rows: 10
+Extra:
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以使用SHOW STATUS 命令来查看实际的行操作。这个命令可以提供最佳的确认物理行操作的方式。请看下面的示例：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mysql3.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在下一个QEP 中，通过id=1 找到的外层嵌套循环估计有160行。第二个循环估计有1 行。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;********************* 1. row ***********************
+id: 1
+select_type: SIMPLE
+table: p
+type: ALL
+possible_keys: NULL
+key: NULL
+key_len: NULL
+ref: NULL
+rows: 160
+Extra:
+********************* 2. row ***********************
+id: 1
+select type: SIMPLE
+table: c
+type: ref
+possible_keys: PRIMARY,parent_id
+key: parent_id
+key_len: 4
+ref: test.p.parent_id
+rows: 1
+Extra: Using where
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;通过SHOW STATUS 命令可以查看实际的行操作，该命令表明物理读操作数量大幅增加。请看下面的示例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysql&amp;gt; SHOW SESSION STATUS LIKE &#39;Handler_read%&#39;;
++--------------------------------------+---------+
+| Variable_name | Value |
++--------------------------------------+---------+
+| Handler_read_first | 1 |
+| Handler_read_key | 164 |
+| Handler_read_last | 0 |
+| Handler_read_next | 107 |
+| Handler_read_prev | 0 |
+| Handler_read_rnd | 0 |
+| Handler_read_rnd_next | 161 |
++--------------------------------------+---------+
+相关的QEP 列还包括key列。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;possible_keys&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;possible_keys 列指出优化器为查询选定的索引。&lt;/p&gt;
+
+&lt;p&gt;一个会列出大量可能的索引(例如多于3 个)的QEP 意味着备选索引数量太多了，同时也可能提示存在一个无效的单列索引。&lt;/p&gt;
+
+&lt;p&gt;可以用SHOW INDEXES 命令来检查索引是否有效且是否具有合适的基数。&lt;/p&gt;
+
+&lt;p&gt;为查询确定QEP 的速度也会影响到查询的性能。如果发现有大量的可能的索引，则意味着这些索引没有被使用到。
+ 相关的QEP 列还包括key 列。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;key_len&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;key_len 列定义了用于SQL 语句的连接条件的键的长度。此列值对于确认索引的有效性以及多列索引中用到的列的数目很重要。此列的一些示例值如下所示：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;key_len: 4 // INT NOT NULL
+key_len: 5 // INT NULL
+key_len: 30 // CHAR(30) NOT NULL
+key_len: 32 // VARCHAR(30) NOT NULL
+key_len: 92 // VARCHAR(30) NULL CHARSET=utf8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;从这些示例中可以看出，是否可以为空、可变长度的列以及key_len 列的值只和用在连接和WHERE 条件中的索引的列有关。索引中的其他列会在ORDER BY 或者GROUP BY 语句中被用到。&lt;/p&gt;
+
+&lt;p&gt;下面这个来自于著名的开源博客软件WordPress 的表展示了如何以最佳方式使用带有定义好的表索引的SQL 语句：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; CREATE TABLE `wp_posts` (
+  `ID` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `post_date` datetime NOT NULL DEFAULT &#39;0000-00-00 00:00:00&#39;,
+  `post_status` varchar(20) NOT NULL DEFAULT &#39;publish&#39; ,
+  `post_type` varchar(20) NOT NULL DEFAULT &#39;post&#39;,
+  PRIMARY KEY (`ID`),
+  KEY `type_status_date`(`post_type`,`post_status`,`post_date`,`ID`)
+ ) DEFAULT CHARSET=utf8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个表的索引包括post_type、post_status、post_date 以及ID列。&lt;/p&gt;
+
+&lt;p&gt;下面是一个演示索引列用法的SQL 查询：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;EXPLAIN SELECT ID, post_title FROM wp_posts WHERE post_type=&#39;post&#39; AND post_date &amp;gt; &#39;2010-06-01&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个查询的QEP 返回的key_len 是62。这说明只有post_type列上的索引用到了(因为(20×3)+2=62)。尽管查询在WHERE 语句中使用了post_type 和post_date 列，但只有post_type 部分被用到了。其他索引没有被使用的原因是MySQL 只能使用定义索引的最左边部分。为了更好地利用这个索引，可以修改这个查询来调整索引的列。请看下面的示例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysql&amp;gt; EXPLAIN SELECT ID, post_title
+-&amp;gt; FROM wp_posts
+-&amp;gt; WHERE post_type=&#39;post&#39;
+-&amp;gt; AND post_status=&#39;publish&#39;
+-&amp;gt; AND post_date &amp;gt; &#39;2010-06-01&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在SELECT查询的添加一个post_status 列的限制条件后，QEP显示key_len 的值为132，这意味着post_type、post_status、post_date 三列(62+62+8，(20×3)+2，(20×3)+2，8)都被用到了。&lt;/p&gt;
+
+&lt;p&gt;此外，这个索引的主码列ID 的定义是使用MyISAM 存储索引的遗留痕迹。当使用InnoDB 存储引擎时，在非主码索引中包含主码列是多余的，这可以从key_len 的用法看出来。相关的QEP 列还包括带有Using index 值的Extra 列。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;注&lt;/code&gt;：key_len 计算&lt;/p&gt;
+
+&lt;p&gt;(1) 索引字段的附加信息：可以分为变长和定长数据类型讨论，当索引字段为定长数据类型，比如char，int，datetime，需要有是否为空的标记，这个标记需要占用1个字节；对于变长数据类型，比如：varchar，除了是否为空的标记外，还需要有长度信息，需要占用2个字节；&lt;/p&gt;
+
+&lt;p&gt;(备注：当字段定义为非空的时候，是否为空的标记将不占用字节)&lt;/p&gt;
+
+&lt;p&gt;(2)同时还需要考虑表所使用的字符集，不同的字符集，gbk编码的为一个字符2个字节，utf8编码的一个字符3个字节;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;table&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;table 列是EXPLAIN 命令输出结果中的一个单独行的唯一标识符。这个值可能是表名、表的别名或者一个为查询产生临时表的标识符，如派生表、子查询或集合。下面是QEP 中table 列的一些示例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;table: item
+table: &amp;lt;derivedN&amp;gt;
+table: &amp;lt;unionN,M&amp;gt;  表中N 和M 的值参考了另一个符合id 列值的table 行。相关的QEP 列还有select_type
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;select_type&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;select_type 列提供了各种表示table 列引用的使用方式的类型。最常见的值包括SIMPLE、PRIMARY、DERIVED 和UNION。其他可能的值还有UNION RESULT、DEPENDENT SUBQUERY、DEPENDENT UNION、UNCACHEABLE UNION 以及UNCACHEABLE QUERY。&lt;/p&gt;
+
+&lt;p&gt;1.SIMPLE&lt;/p&gt;
+
+&lt;p&gt;对于不包含子查询和其他复杂语法的简单查询，这是一个常见的类型。&lt;/p&gt;
+
+&lt;p&gt;2.PRIMARY&lt;/p&gt;
+
+&lt;p&gt;这是为更复杂的查询而创建的首要表(也就是最外层的表)。这个类型通常可以在DERIVED 和UNION 类型混合使用时见到。&lt;/p&gt;
+
+&lt;p&gt;3.DERIVED&lt;/p&gt;
+
+&lt;p&gt;当一个表不是一个物理表时，那么就被叫做DERIVED。下面的SQL 语句给出了一个QEP 中DERIVED select-type 类型的示例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysql&amp;gt; EXPLAIN SELECT MAX(id)
+-&amp;gt; FROM (SELECT id FROM users WHERE first = &#39;west&#39;) c;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;4.DEPENDENT SUBQUERY&lt;/p&gt;
+
+&lt;p&gt;这个select-type 值是为使用子查询而定义的。下面的SQL语句提供了这个值：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysql&amp;gt; EXPLAIN SELECT p.*
+-&amp;gt; FROM parent p
+-&amp;gt; WHERE p.id NOT IN (SELECT c.parent_id FROM child c);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;5.UNION&lt;/p&gt;
+
+&lt;p&gt;这是UNION 语句其中的一个SQL 元素。&lt;/p&gt;
+
+&lt;p&gt;6.UNION RESULT&lt;/p&gt;
+
+&lt;p&gt;这是一系列定义在UNION 语句中的表的返回结果。当select_type 为这个值时，经常可以看到table 的值是&amp;lt;unionN,M&amp;gt;，这说明匹配的id 行是这个集合的一部分。下面的SQL产生了一个UNION和UNION RESULT select-type：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysql&amp;gt; EXPLAIN SELECT p.* FROM parent p WHERE p.val LIKE &#39;a%&#39;
+-&amp;gt; UNION
+-&amp;gt; SELECT p.* FROM parent p WHERE p.id &amp;gt; 5;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;partitions&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;partitions 列代表给定表所使用的分区。这一列只会在EXPLAIN PARTITIONS 语句中出现。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Extra&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Extra 列提供了有关不同种类的MySQL 优化器路径的一系列额外信息。Extra 列可以包含多个值，可以有很多不同的取值，并且这些值还在随着MySQL 新版本的发布而进一步增加。下面给出常用值的列表。你可以从下面的地址找到更全面的值的列表：&lt;/p&gt;
+
+&lt;p&gt;http://dev.mysql.com/doc/refman/5.5/en/explain-output.html。&lt;/p&gt;
+
+&lt;p&gt;1.Using where&lt;/p&gt;
+
+&lt;p&gt;这个值表示查询使用了where 语句来处理结果——例如执行全表扫描。如果也用到了索引，那么行的限制条件是通过获取必要的数据之后处理读缓冲区来实现的。&lt;/p&gt;
+
+&lt;p&gt;2.Using temporary&lt;/p&gt;
+
+&lt;p&gt;这个值表示使用了内部临时(基于内存的)表。一个查询可能用到多个临时表。有很多原因都会导致MySQL 在执行查询期间创建临时表。两个常见的原因是在来自不同表的列上使用了DISTINCT，或者使用了不同的ORDER BY 和GROUP BY 列。&lt;/p&gt;
+
+&lt;p&gt;想了解更多内容可以访问：&lt;/p&gt;
+
+&lt;p&gt;http://forge.mysql.com/wiki/Overview_of_query_execution_and_use_of_temp_tables。&lt;/p&gt;
+
+&lt;p&gt;可以强制指定一个临时表使用基于磁盘的MyISAM 存储引擎。这样做的原因主要有两个：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;内部临时表占用的空间超过min(tmp_table_size，max_heap_table_size)系统变量的限制
+ 
+使用了TEXT/BLOB 列
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3.Using filesort&lt;/p&gt;
+
+&lt;p&gt;这是ORDER BY 语句的结果。这可能是一个CPU 密集型的过程。
+ 可以通过选择合适的索引来改进性能，用索引来为查询结果排序。详细过程请参考第4 章。&lt;/p&gt;
+
+&lt;p&gt;4.Using index&lt;/p&gt;
+
+&lt;p&gt;这个值重点强调了只需要使用索引就可以满足查询表的要求，不需要直接访问表数据。请参考第5 章的详细示例来理解这个值。&lt;/p&gt;
+
+&lt;p&gt;5.Using join buffer&lt;/p&gt;
+
+&lt;p&gt;这个值强调了在获取连接条件时没有使用索引，并且需要连接缓冲区来存储中间结果。
+ 如果出现了这个值，那应该注意，根据查询的具体情况可能需要添加索引来改进性能。&lt;/p&gt;
+
+&lt;p&gt;6.Impossible where&lt;/p&gt;
+
+&lt;p&gt;这个值强调了where 语句会导致没有符合条件的行。请看下面的示例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysql&amp;gt; EXPLAIN SELECT * FROM user WHERE 1=2;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;7.Select tables optimized away&lt;/p&gt;
+
+&lt;p&gt;这个值意味着仅通过使用索引，优化器可能仅从聚合函数结果中返回一行。&lt;/p&gt;
+
+&lt;p&gt;8.Distinct
+ 这个值意味着MySQL 在找到第一个匹配的行之后就会停止搜索其他行。&lt;/p&gt;
+
+&lt;p&gt;9.Index merges&lt;/p&gt;
+
+&lt;p&gt;当MySQL 决定要在一个给定的表上使用超过一个索引的时候，就会出现以下格式中的一个，详细说明使用的索引以及合并的类型。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Using sort_union(...)
+Using union(...)
+Using intersect(...)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;id&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;id 列是在QEP 中展示的表的连续引用。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;ref&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;ref 列可以被用来标识那些用来进行索引比较的列或者常量。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;filtered&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;filtered 列给出了一个百分比的值，这个百分比值和rows 列的值一起使用，可以估计出那些将要和QEP 中的前一个表进行连接的行的数目。前一个表就是指id 列的值比当前表的id 小的表。这一列只有在EXPLAIN EXTENDED 语句中才会出现。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;type&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;type 列代表QEP 中指定的表使用的连接方式。下面是最常用的几种连接方式：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;const 当这个表最多只有一行匹配的行时出现system 这是const 的特例，当表只有一个row 时会出现eq_ref 这个值表示有一行是为了每个之前确定的表而读取的
+ref 这个值表示所有具有匹配的索引值的行都被用到
+range 这个值表示所有符合一个给定范围值的索引行都被用到
+ALL 这个值表示需要一次全表扫描其他类型的值还有fulltext 、ref_or_null 、index_merge 、unique_subquery、index_subquery 以及index。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;想了解更多信息可以访问http://dev.mysql.com/doc/refman/5.5/en/explain-output.html。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;解释EXPLAIN 输出结果&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;理解你的应用程序(包括技术和实现可能性)和优化SQL 语句同等重要。下面给出一个从父子关系中获取孤立的父辈记录的商业需求的例子。这个查询可以用三种不同的方式构造。尽管会产生相同的结果，但QEP 会显示三种不同的路径。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mysql4.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/mysql5.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+
+</description>
+                <link>http://username.github.io/2017/04/05/mysql-explain</link>
+                <guid>http://username.github.io/2017/04/05/mysql-explain</guid>
+                <pubDate>Wed, 05 Apr 2017 00:00:00 +0800</pubDate>
+        </item>
 
         <item>
                 <title>Cookie和Session的区别</title>
@@ -4559,153 +4994,6 @@ Master_SSL_Verify_Server_Cert: No
                 <link>http://username.github.io/2016/11/17/mysql</link>
                 <guid>http://username.github.io/2016/11/17/mysql</guid>
                 <pubDate>Thu, 17 Nov 2016 00:00:00 +0800</pubDate>
-        </item>
-
-        <item>
-                <title>mysql binlog入门</title>
-                <description>
-&lt;h1 id=&quot;binlog&quot;&gt;Binlog&lt;/h1&gt;
-
-&lt;p&gt;二进制日志（BINLOG），记录了所有的DDL（数据定义语言）语句和DML（数据操纵语言）语句，但是不包括数据查询语句。语句以“事件”的形式保存，它描述了数据的更改过程。此日志对于灾难时的数据恢复起着极其重要的作用。&lt;/p&gt;
-
-&lt;h2 id=&quot;section&quot;&gt;日志的位置和格式&lt;/h2&gt;
-
-&lt;p&gt;当用–log-bin[=file_name]选项启动时，mysqld开始将数据变更情况写入日志文件。如果没有给出filename值，默认名为主机名后面跟“-bin”。如果给出了文件名，但没有包含路径，则文件默认被写入参数DATADIR（数据目录）指定的目录（重启mysql一次将会自动生成一个新的binlog）。&lt;/p&gt;
-
-&lt;p&gt;开启状态的查看:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;mysql&amp;gt; show variables like &#39;%log_bin%&#39;;
-+---------------------------------+-------+
-| Variable_name                   | Value |
-+---------------------------------+-------+
-| log_bin                         | ON    |
-| log_bin_trust_function_creators | OFF   |
-| log_bin_trust_routine_creators  | OFF   |
-| sql_log_bin                     | ON    |
-+---------------------------------+-------+
-4 rows in set (0.00 sec)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;MySQL 5.5中，二进制日志的格式分为3种：STATEMENT、ROW、MIXED，可以在启动时通过参数–binlog_format进行设置，这三种日志格式区别如下：&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Statement&lt;/code&gt;：每一条会修改数据的sql都会记录在binlog中。&lt;/p&gt;
-
-&lt;p&gt;优点：不需要记录每一行的变化，减少了binlog日志量，节约了IO，提高性能。(相比row能节约多少性能与日志量，这个取决于应用的SQL情况，正常同一条记录修改或者插入，row格式所产生的日志量还小于Statement产生的日志量，但是考虑到如果带条件的update操作，以及整表删除，alter表等操作，ROW格式会产生大量日志，因此在考虑是否使用ROW格式日志时应该跟据应用的实际情况，其所产生的日志量会增加多少，以及带来的IO性能问题。)&lt;/p&gt;
-
-&lt;p&gt;缺点：由于记录的只是执行语句，为了这些语句能在slave上正确运行，因此还必须记录每条语句在执行的时候的一些相关信息，以保证所有语句能在slave得到和在master端执行时候相同 的结果。另外mysql 的复制,像一些特定函数功能，slave可与master上要保持一致会有很多相关问题(如sleep()函数， last_insert_id()，以及user-defined functions(udf)会出现问题).&lt;/p&gt;
-
-&lt;p&gt;使用以下函数的语句也无法被复制：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;LOAD_FILE()&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;UUID()&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;USER()&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;FOUND_ROWS()&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;SYSDATE() (除非启动时启用了 –sysdate-is-now 选项)&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;同时在INSERT …SELECT 会产生比 RBR 更多的行级锁&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Row&lt;/code&gt;：不记录sql语句上下文相关信息，仅保存哪条记录被修改。&lt;/p&gt;
-
-&lt;p&gt;优点： binlog中可以不记录执行的sql语句的上下文相关的信息，仅需要记录那一条记录被修改成什么了。所以rowlevel的日志内容会非常清楚的记录下每一行数据修改的细节。而且不会出现某些特定情况下的存储过程，或function，以及trigger的调用和触发无法被正确复制的问题&lt;/p&gt;
-
-&lt;p&gt;缺点:所有的执行的语句当记录到日志中的时候，都将以每行记录的修改来记录，这样可能会产生大量的日志内容,比如一条update语句，修改多条记录，则binlog中每一条修改都会有记录，这样造成binlog日志量会很大，特别是当执行alter table之类的语句的时候，由于表结构修改，每条记录都发生改变，那么该表每一条记录都会记录到日志中。&lt;/p&gt;
-
-&lt;p&gt;&lt;code&gt;Mixedlevel&lt;/code&gt;： 是以上两种level的混合使用，一般的语句修改使用statment格式保存binlog，如一些函数，statement无法完成主从复制的操作，则采用row格式保存binlog,MySQL会根据执行的每一条具体的sql语句来区分对待记录的日志形式，也就是在Statement和Row之间选择一种.新版本的MySQL中队row level模式也被做了优化，并不是所有的修改都会以row level来记录，像遇到表结构变更的时候就会以statement模式来记录。至于update或者delete等修改数据的语句，还是会记录所有行的变更。&lt;/p&gt;
-
-&lt;h2 id=&quot;section-1&quot;&gt;二进制日志的管理&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;开启二进制日志配置&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;方法一、修改my.cnf参数文件，该方法需要重启&lt;/p&gt;
-
-&lt;p&gt;log-bin = mysql-bin #打开日志(主机需要打开)，这个mysql-bin也可以自定义，这里也可以加上路径，如：/home/www/mysql_bin_log/mysql-bin&lt;/p&gt;
-
-&lt;p&gt;关闭二进制日志的方法：log-bin = mysql-bin注释掉即可&lt;/p&gt;
-
-&lt;p&gt;方法二、不重启修改二进制日志配置，该方法mysql的版本需要5.6以上&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;SET @@global.log_bin=1&lt;/td&gt;
-      &lt;td&gt;0  （1为开启，0为关闭）&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;SET @@global.binlog_size=37268(单位bytes)&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;暂停二进制日志&lt;/strong&gt;&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;SET sql_log_bin={0&lt;/td&gt;
-      &lt;td&gt;1}&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;strong&gt;修改二进制日志的大小&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;修改my.cnf参数文件中的max_binlog_size的值；&lt;/p&gt;
-
-&lt;p&gt;说明：如果你的二进制文件的大小超过了max_binlog_size，它就是自动创建新的二进制文件。当然如果恰好在日志文件到达它的最大尺寸时写入了大的事务，那么日志文件还是会超过max_binlog_size的大小&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;进行二进制日志的切换&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;默认情况下当二进制日志写满了或者数据库重启了才会进行切换，但是也可以手工的进行切换的动作&lt;/p&gt;
-
-&lt;p&gt;mysql&amp;gt; flush logs;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;其他参数&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;binlog-cache-size=100m 设置二进制日志缓存大小&lt;/p&gt;
-
-&lt;p&gt;sync-binlog=N（每个N秒将缓存中的二进制日志记录写回硬盘，默认值为0。不过，你经常会陷入group commit函数与I/O之间二选一的矛盾。如果在replication环境中，由于考虑到耐久性与一致性，则需要设置1。同时，还需要设置innodb_flush_log_at_trx_commit=1以及innodb-support-xa=1默认开启；）&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;二进制日志的读取&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;由于日志以二进制方式存储，不能直接读取，需要用mysqlbinlog工具来查看，语法如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;shell&amp;gt; mysqlbinlog log-file
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&quot;section-2&quot;&gt;二进制日志的删除&lt;/h2&gt;
-
-&lt;p&gt;对于比较繁忙的OLTP（在线事务处理）系统，由于每天生成日志量大，这些日志如果长时间不清除，将对磁盘空间带来很大的浪费。因此，定期删除日志是DBA维护MYSQL数据库的一个重要工作内容。下面将介绍几种删除日志的常见方法。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;方法一&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;执行RESET MASTER命令，该命令将删除所有BINLOG日志，新日志编号从“000001”开始，hostname-bin.index是日志的索引文件，记录了最大的日志序号。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;方法二&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;执行PURGE MASTER LOGS TO “mysql-bin.&lt;strong&gt;**&lt;/strong&gt;“命令，该命令将删除“&lt;strong&gt;**&lt;/strong&gt;”编号之前的所有日志。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;方法三&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;执行PURGE MASTER LOGS BEFORE ‘yyyy-mm-dd hh24:mi:ss’命令，该命令将删除日期为“yyyy-mm-dd hh24:mi:ss”之前产生的所有日志。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;方法四&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;在my.cnf的[mysqld]中设置参数–expire_logs_days=#，此参数的含义是设置日志的过期天数，过了指定的天数后日志将会被自动删除，这样将有利于减少DBA管理日志的工作量。&lt;/p&gt;
-</description>
-                <link>http://username.github.io/2016/11/08/mysql-binlog</link>
-                <guid>http://username.github.io/2016/11/08/mysql-binlog</guid>
-                <pubDate>Tue, 08 Nov 2016 00:00:00 +0800</pubDate>
         </item>
 
 
