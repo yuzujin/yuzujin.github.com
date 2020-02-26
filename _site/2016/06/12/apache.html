@@ -63,7 +63,7 @@
   </ul>
 
   
-<h2 id="apachempm">Apache多路处理模块(MPM)</h2>
+<h2 id="apache多路处理模块mpm">Apache多路处理模块(MPM)</h2>
 
 <p>Apache是一个跨平台的、采用模块化设计的服务器。为了应对不同的平台和不同的环境产生的各种不同的需求，也为了在具体的平台或环境下达到最佳的效果，Apache在web服务器的基础功能方面(端口绑定、接收请求等)也同样采用了模块化设计，这个Apache的核心模块就叫做多路处理模块(Multi-Processing Module，简称MPM)。</p>
 
@@ -118,7 +118,7 @@
 
 <p>在windowshe和Unix/Linux操作系统上，MPM模块主要有mpm_prefork、mpm_worker、mpm_winnt三种。</p>
 
-<h3 id="mpmprefork">mpm_prefork模块</h3>
+<h3 id="mpm_prefork模块">mpm_prefork模块</h3>
 
 <hr />
 
@@ -126,7 +126,7 @@
 
 <p>由于在mpm_prefork模块中，每个请求对应一个子进程，因此占用的系统资源相对于其他两种模块而言较多。不过mpm_prefork模块的优点在于它的每个子进程都会独立处理对应的单个请求，这样，如果其中一个请求出现问题就不会影响其他请求。mpm_prefork模块可以应用于不具备线程安全的第三方模块（比如php的非线程安全版本），且在不支持线程调试的平台上易于调试。</p>
 
-<h3 id="mpmworker">mpm_worker模块</h3>
+<h3 id="mpm_worker模块">mpm_worker模块</h3>
 
 <hr />
 
@@ -134,13 +134,13 @@
 
 <p>与mpm_prefork模块相比，mpm_worker模块可以进一步减少系统资源的开销。再加上它也使用了多进程，每个进程又有多个线程，因此它与完全基于线程的处理方式相比，又增加了一定的稳定性。</p>
 
-<h3 id="mpmwinnt">mpm_winnt模块</h3>
+<h3 id="mpm_winnt模块">mpm_winnt模块</h3>
 
 <hr />
 
 <p>mpm_winnt模块是专门针对Windows操作系统而优化设计的MPM模块。它只创建一个单独的子进程，并在这个子进程中轮流产生多个线程来处理请求</p>
 
-<h2 id="mpm">MPM模块配置</h2>
+<h2 id="mpm模块配置">MPM模块配置</h2>
 
 <p>在对Apache的MPM模块具备一定了解后，我们就可以针对不同的MPM模块来修改Apache的最大并发连接数配置了。</p>
 
@@ -212,7 +212,7 @@ MaxRequestsPerChild    0 #推荐设置：小=10000 中或大=20000~100000
   <li>给进程一个有限寿命，从而有助于当服务器负载减轻的时候减少活动进程的数量。</li>
 </ol>
 
-<h2 id="section">配置参数详细说明</h2>
+<h2 id="配置参数详细说明">配置参数详细说明</h2>
 
 <hr />
 

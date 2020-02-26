@@ -50,10 +50,10 @@
 	
 <h1 class="emphnext">使用github pages 和jekll-bootstrap搭建博客</h1>
 
-<h2 id="github">创建一个github仓库</h2>
+<h2 id="创建一个github仓库">创建一个github仓库</h2>
 <p>首先，登录<a href="https://github.com">https://github.com</a>建一个仓库，名字为username.github.com，将username替换为你实际的用户名，必须使用你的用户名，这点很重要。</p>
 
-<h2 id="jekll-bootstrap">安装Jekll-bootstrap</h2>
+<h2 id="安装jekll-bootstrap">安装Jekll-bootstrap</h2>
 <p>执行以下几个命令</p>
 
 <pre><code>git clone https://github.com/plusjade/jekyll-bootstrap.git username.github.com
@@ -65,7 +65,7 @@ git remote add origin https://github.com/username/username.github.com.git
 git push origin master 之所以删除.git等文件，重新初始化仓库，是为了去掉原作者的提交信息。
 </code></pre>
 
-<h2 id="jekll">运行Jekll</h2>
+<h2 id="运行jekll">运行Jekll</h2>
 <p>等待几分钟后，访问username.github.io即可显示初始页面。</p>
 
 <p>假设你已经使用gem安装jekll在本地电脑上，否则使用以下命令安装：</p>
@@ -82,7 +82,7 @@ git push origin master 之所以删除.git等文件，重新初始化仓库，�
 
 <p>然后打开浏览器，输入http://127.0.0.1:4000 就可以看到你的博客雏形。</p>
 
-<h2 id="post">新建post</h2>
+<h2 id="新建post">新建post</h2>
 
 <p>可以使用rake命令创建post</p>
 
@@ -109,7 +109,7 @@ categories: [jekyll,mood]
 
 <p>其实Jekyll会为每个category创建一个文件夹，然后将生成的html文件放到对应的category下.</p>
 
-<h2 id="section">创建页面</h2>
+<h2 id="创建页面">创建页面</h2>
 
 <p>依然是通过rake命令创建页面</p>
 
@@ -130,7 +130,7 @@ this will create the file: ./pages/about/index.html
 
 </code></pre>
 
-<h2 id="section-1">发布</h2>
+<h2 id="发布">发布</h2>
 
 <p>添加或修改完文章后，本地提交，然后推向github。</p>
 
@@ -139,7 +139,7 @@ $ git commit -m "Add new content"
 $ git push origin master
 </code></pre>
 
-<h2 id="section-2">个性化</h2>
+<h2 id="个性化">个性化</h2>
 
 <hr />
 
@@ -175,7 +175,7 @@ $ git push origin master
 # for 0.1.0 users `rake switch_theme` still works.
 </code></pre>
 
-<h2 id="section-3">配置博客</h2>
+<h2 id="配置博客">配置博客</h2>
 
 <p>Your Jekyll-Bootstrap blog can be configured by setting options within the <code>./_config.yml</code> file. You’ll note the extensive documentation provided within the file itself. Let’s go over some of these in detail:</p>
 
@@ -192,7 +192,7 @@ $ git push origin master
 
 <p>Play around with what url configuration works best for you.</p>
 
-<h3 id="set-basepath">Set BASE_PATH</h3>
+<h3 id="set-base_path">Set BASE_PATH</h3>
 
 <p>All post and page urls in Jekyll-Bootstrap expect to be prepended with BASE_PATH</p>
 

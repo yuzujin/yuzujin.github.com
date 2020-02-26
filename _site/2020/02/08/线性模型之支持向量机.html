@@ -1,0 +1,248 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>线性模型之支持向量机 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">线性模型之支持向量机</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<h2 id="间隔与支持向量">间隔与支持向量</h2>
+<p>给定训练样本集D = {(x1,y1),(x2,y2),…,(xm,ym)}, yi∈{-1, +1}，分类学习最基本的想法就是基于训练集D在样本空间中找到一个划分超平面，将不同类别的样本分开。但能将训练样本分开的超平面有很多，如图所示，我们应该努力去找到哪一个呢？  <br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm1.jpg?raw=true" alt="1" title="Title" height="300px" width="400px" /><br />
+直观上看，应该去找位于两类训练样本”正中间“的划分超平面，即图6.1中红色的那个，因为该划分超平面对训练样本局部扰动的”容忍“性最好。</p>
+
+<p><strong>函数间隔</strong> （||<strong>wx</strong>+b||） <br />
+在超平面<strong>wx</strong> + b = 0确定的情况下，|<strong>wx</strong>+b|能够代表点 <strong>x</strong>距离超平面的远近，易知：当<strong>wx</strong>+b&gt;0时，表示x在超平面的一侧（正类，类标为1），而当<strong>wx</strong>+b&lt;0时，则表示x在超平面的另外一侧（负类，类别为-1），因此（<strong>wx</strong>+b)y 的正负性恰能表示数据点x是否被分类正确。于是便引出了函数间隔的定义（functional margin）:<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm14.png?raw=true" alt="14" title="Title" height="50px" width="200px" /> <br />
+定义超平面(w,b)关于训练集T的函数间隔为超平面(w,b)关于T中所有样本点(xi,yi)的函数间隔之最小值，即<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm15.png?raw=true" alt="15" title="Title" height="50px" width="150px" />   <br />
+函数间隔可以表示分类预测的正确性及确信度，但是选择分离超平面时，只有函数间隔还不够，因为只要成比例改变w和b，函数间隔也会成比例改变。这就引出了几何间隔。</p>
+
+<p><strong>几何间隔</strong> （点到超平面的距离）<br />
+在样本空间中，划分超平面可通过如下线性方程来描述：<br />
+                            wTx + b = 0<br />
+其中w = (w1;w2;…;wd)为法向量，决定了超平面的方向；b为位移项，决定了超平面与原点之间的距离。显然，划分超平面可被法向量 <strong><em>w</em></strong> 和位移b确定，下面我们将其记为（w,b)，样本空间中任意点x到超平面(w,b)的距离可写为<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm2.png?raw=true" alt="2" title="Title" height="80px" width="150px" /><br />
+假设超平面(w,b)能将训练样本正确分类，即对于(xi,yi)∈ D，若yi = +1，则有wTxi + b &gt; 0；若yi = -1，则有wTxi + b &lt; 0. 令  （缩放变换）<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm3.png?raw=true" alt="3" title="Title" height="100px" width="250px" /><br />
+如图2所示，距离超平面最近的这几个训练样本点使上式的等号成立，它们被称为”<strong>支持向量（support vector）</strong>“，两个异类支持向量到超平面的距离之和为<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm4.png?raw=true" alt="4" title="Title" height="50px" width="100px" /><br />
+它被称为”间隔（margin）“<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm6.jpg?raw=true" alt="6" title="Title" height="300px" width="450px" /></p>
+
+<p>想要找到具有”最大间隔“的划分超平面，也就是要找到能满足上式中约束的参数w和b，使得γ最大，即<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm5.png?raw=true" alt="5" title="Title" height="80px" width="250px" /> <br />
+显然，为了最大化间隔，仅需最大化1/||w||，这等价于最小化||w||的平方，于是，上式可重写为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm7.png?raw=true" alt="7" title="Title" height="80px" width="300px" /><br />
+这就是 <strong>支持向量机(support vector machine)</strong>的基本型。</p>
+
+<h2 id="对偶问题">对偶问题</h2>
+<p>我们希望求解式(6.6)来得到大间隔划分超平面所对应的模型<br />
+                        f(x)=<strong><em>w</em></strong>T <strong><em>x</em></strong> + b
+其中 <strong><em>w</em></strong> 和 <strong><em>b</em></strong> 是模型参数，注意到式（6.6）本身是一个凸二次规划问题，能直接用现成的优化计算包(QP优化包)求解，但我们可以有更高效的方法-将原问题转换为它的对偶问题。原因如下：<br />
+<strong><em>1. 是因为使用对偶问题更容易求解</em></strong>  <br />
+<strong><em>2. 是因为通过对偶问题求解出现了向量内积的形式，从而能更加自然地引出核函数。</em></strong></p>
+
+<p>对式(6.6)使用 <strong>拉格朗日乘子法</strong> 可得到其 ”对偶问题“。具体来说，对式(6.6)的每条约束添加拉格朗日乘子αi &gt;=0，则该问题的拉格朗日函数可写为<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm8.png?raw=true" alt="8" title="Title" height="80px" width="400px" /> <br />
+其中，α = (α1;α2;…;αm). 上式很容易验证：当其中有一个约束条件不满足时，L的最大值为 ∞（只需令其对应的α为 ∞即可）；当所有约束条件都满足时，L的最大值为1/2||w||^2（此时令所有的α为0），因此实际上原问题等价于：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm16.png?raw=true" alt="16" title="Title" height="50px" width="300px" /><br />
+由于这个的求解问题不好做，因此一般我们将最小和最大的位置交换一下（需满足KKT条件） ，变成原问题的对偶问题：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm17.png?raw=true" alt="17" title="Title" height="50px" width="300px" /> <br />
+令L(w,b,a)对w和b的偏导为零可得<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm9.png?raw=true" alt="9" title="Title" height="80px" width="400px" /> <br />
+将式(6.9)代入(6.8)，即可将L(w,b,α)中的w和b消去，再考虑式(6.10)的约束，就得到式(6.6)的对偶问题：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm11.png?raw=true" alt="11" title="Title" height="150px" width="400px" /> <br />
+解出α后，求出w与b即可得到模型:<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm12.png?raw=true" alt="12" title="Title" height="80px" width="400px" /><br />
+从对偶问题(6.11)解出的αi 是式(6.8)中拉格朗日乘子，它恰对应着训练样本(xi,yi)。
+上述过程需要满足KKT(Karush-Kuhn-Tucker)条件，即要求<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm13.png?raw=true" alt="13" title="Title" height="100px" width="300px" /> <br />
+于是，对任意训练样本(xi,yi)，总有αi = 0 或 yif(xi) = 1. 若 αi = 0，则该样本将不会在式(6.12)的求和中出现，也就不会对f(x)有任何影响；若αi &gt; 0，则必有yif(xi) = 1，所对应的样本位于最大间隔边界上，是一个支持向量。因此，支持向量机有一个重要性质：
+<strong>训练完成后，大部分的训练样本都不需要保留，最终模型仅与支持向量有关。</strong></p>
+
+<p>如何求解式(6.11)呢？SMO(Sequential Minimal Optimization)是其中一个著名的算法。
+SMO的基本思路是先固定αi之外的所有参数，然后求αi上的极值。由于存在约束<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm18.png?raw=true" alt="18" title="Title" height="50px" width="50px" />，若固定αi之外的其他变量，则αi可由其他变量导出。于是，SMO每次选择两个变量αi和αj，并固定其他参数。这样，在参数初始化后，SMO不断执行如下两个步骤直至收敛：</p>
+<ol>
+  <li>选取一对需要更新的变量αi和α;</li>
+  <li>固定αi和αj以外的参数，求解式(6.11)获得更新后的αi和αj.</li>
+</ol>
+
+<h2 id="核函数">核函数</h2>
+<p>由于上述的超平面只能解决线性可分的问题，对于线性不可分的问题，例如：异或问题<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm19.jpeg?raw=true" alt="19" title="Title" height="250px" width="500px" /><br />
+我们需要使用核函数将其进行推广。一般地，解决线性不可分问题时，常常采用映射的方式，将低维原始空间映射到高维特征空间，使得数据集在高维空间中变得线性可分，从而再使用线性学习器分类。如果原始空间为有限维，即属性数有限，那么总是存在一个高维特征空间使得样本线性可分。若∅代表一个映射，则在特征空间中的划分函数变为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm20.png?raw=true" alt="20" title="Title" height="50px" width="150px" /><br />
+按照同样的方法，先写出新目标函数的拉格朗日函数，接着写出其对偶问题，求L关于w和b的极大，最后运用SOM求解α。可以得出：</p>
+
+<p>(1) 原对偶问题变为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm22.png?raw=true" alt="22" title="Title" height="150px" width="400px" /> <br />
+(2) 分类函数：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm21.png?raw=true" alt="21" title="Title" height="80px" width="400px" /> <br />
+因此，在线性不可分问题中，核函数的选择成了支持向量机的最大变数，若选择了不合适的核函数，则意味着将样本映射到了一个不合适的特征空间，则极可能导致性能不佳。同时，核函数需要满足以下这个必要条件：<br />
+定理6.1（核函数）令X为输入控件，k(.,.)是定义在X*X上的对称函数，则k是核函数当且仅当对于任意数据D = {x1,x2,…,xm}，”核矩阵“K总是半正定的：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm23.png?raw=true" alt="23" title="Title" height="200px" width="400px" /><br />
+由于核函数的构造十分困难，通常我们都是从一些常用的核函数中选择，下面列出了几种常用的核函数：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm24.jpg?raw=true" alt="24" title="Title" height="200px" width="600px" /><br />
+其中线性核为处理线性可分的情形，这使得它们在形式上统一起来。</p>
+
+<h2 id="软间隔支持向量机">软间隔支持向量机</h2>
+<p>前面的讨论中，我们主要解决了两个问题：<strong>当数据线性可分时，直接使用最大间隔的超平面划分；当数据线性不可分时，则通过核函数将数据映射到高维特征空间，使之线性可分</strong>。然而在现实问题中，对于某些情形还是很难处理，例如数据中有噪声的情形，噪声数据（outlier）本身就偏离了正常位置，但是在前面的SVM模型中，我们要求所有的样本数据都必须满足约束（6.3），这称为”<strong>硬间隔</strong>“。如果不要这些噪声数据还好，当加入这些outlier后导致划分超平面被挤歪了，如下图所示，对支持向量机的泛化性能造成很大的影响。<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm25.jpg?raw=true" alt="25" title="Title" height="300px" width="500px" /><br />
+为了解决这一问题，我们需要允许某一些数据点不满足约束，即可以在一定程度上偏移超平面，同时使得不满足约束的数据点尽可能少，这便引出了“<strong>软间隔</strong>”支持向量机的概念</p>
+<ol>
+  <li>允许某些数据点不满足约束y(w’x+b)≥1；</li>
+  <li>同时又使得不满足约束的样本尽可能少。
+这样优化目标变为：
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm26.png?raw=true" alt="26" title="Title" height="80px" width="400px" /><br />
+其中C &gt; 0是一个常数，l0/1是”0/1损失函数“<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm27.png?raw=true" alt="27" title="Title" height="80px" width="200px" /><br />
+如同阶跃函数，0/1损失函数虽然表示效果最好，但是数学性质不佳。因此常用其它函数作为“替代损失函数”。</li>
+</ol>
+
+<p>三种常用的替代损失函数如下：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm28.png?raw=true" alt="28" title="Title" height="150px" width="600px" /><br />
+支持向量机中的损失函数为hinge损失，引入“<strong>松弛变量</strong>”，目标函数与约束条件可以写为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm29.png?raw=true" alt="29" title="Title" height="100px" width="450px" /><br />
+其中C为一个参数，控制着目标函数与新引入正则项之间的权重，这样显然每个样本数据都有一个对应的松弛变量，用以表示该样本不满足约束的程度，将新的目标函数转化为拉格朗日函数得到：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm30.png?raw=true" alt="30" title="Title" height="80px" width="600px" /><br />
+按照与之前相同的方法，先让L求关于w，b以及松弛变量的极小，再使用SMO求出α，有：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm31.png?raw=true" alt="31" title="Title" height="150px" width="400px" /><br />
+将w代入L化简，便得到其对偶问题：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/svm31.png?raw=true" alt="32" title="Title" height="150px" width="400px" /><br />
+将“软间隔”下产生的对偶问题与原对偶问题对比可以发现：新的对偶问题只是约束条件中的α多出了一个上限C，其它的完全相同，因此在引入核函数处理线性不可分问题时，便能使用与“硬间隔”支持向量机完全相同的方法。</p>
+
+<h2 id="参考">参考</h2>
+<ol>
+  <li>周志华《机器学习》</li>
+  <li>https://blog.csdn.net/u011826404/article/details/54647611</li>
+  <li>李航 《统计学方法》</li>
+</ol>
+
+<h2 id="附录">附录</h2>
+<ol>
+  <li>
+    <p>朗格朗日乘子法</p>
+  </li>
+  <li>
+    <p>闭式解</p>
+  </li>
+  <li>
+    <p>对偶问题</p>
+  </li>
+</ol>
+
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">08 February 2020</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2020/02/13/%E6%A0%91%E5%9E%8B%E6%A8%A1%E5%9E%8B" class="next" title="树型模型">Next Post &rarr;</a>
+  
+  
+    <a href="/2020/02/04/%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B%E4%B9%8B%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92" class="prev" title="线性模型之逻辑回归">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

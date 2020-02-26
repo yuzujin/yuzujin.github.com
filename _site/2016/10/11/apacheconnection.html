@@ -63,7 +63,7 @@
   </ul>
 
   
-<h2 id="section">概述</h2>
+<h2 id="概述">概述</h2>
 
 <hr />
 
@@ -109,7 +109,7 @@ LAST_ACK 5            #关闭一个TCP连接需要从两个方向上分别进行
 
 <p>因为linux分配给一个用户的文件句柄是有限的，而TIME_WAIT和CLOSE_WAIT两种状态如果一直被保持，那么意味着对应数目的通道就一直被占着，一旦达到句柄数上限，新的请求就无法被处理了，接着就是大量Too Many Open Files异常，tomcat崩溃。。。</p>
 
-<h2 id="timewait">大量time_wait问题解决</h2>
+<h2 id="大量time_wait问题解决">大量time_wait问题解决</h2>
 
 <hr />
 

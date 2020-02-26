@@ -1,0 +1,198 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>线性模型之线性回归 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">线性模型之线性回归</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+     
+    	<li><a href="/tags.html#线性模型，回归-ref">线性模型，回归 <span>1</span></a></li>
+    
+  
+
+
+
+  </ul>
+
+  
+<p>线性回归（linear regression）试图学得一个线性模型以尽可能准确地预测实值输出标记。</p>
+
+<p>我们使用从UCI Housing Data Set获得的波士顿房价数据集进行模型的训练和预测。下面的散点图展示了使用模型对部分房屋价格进行的预测。其中，每个点的横坐标表示同一类房屋真实价格的中位数，纵坐标表示线性回归模型根据特征预测的结果，当二者值完全相等的时候就会落在虚线上。所以模型预测得越准确，则点离虚线越近。</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归0.png?raw=true" alt="0" title="Title" height="200px" width="500px" /></p>
+
+<h2 id="输入一维输出一维">输入一维，输出一维</h2>
+<p>我们先考虑一种最简单的情形：输入属性的数目只有一个。<br />
+对于点对 <img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/lir1.png?raw=true" alt="lir1" title="Title" /> , 其中xi ∈ R。对离散属性，若属性值间存在”序“关系，可通过连续化将其转化为连续值，例如二值属性”身高“的取值”高“ 和 ”矮“ 可转化为{1.0, 0.0}</p>
+
+<p>有以下线性模型：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归1.png?raw=true" alt="线性回归1" title="Title" /><br />
+使得<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归2.png?raw=true" alt="线性回归2" title="Title" /><br />
+当输入是很多个xi ，每个xi都有一个标签yi ，那么该线性模型，就是找一条直线拟合这些点，也就是上式中的f(x) ，对于每一个输出的f(xi) 与 yi ，可以设置不同的损失函数，我们以MSE（均方误差）为例：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归3.png?raw=true" alt="线性回归3" title="Title" /><br />
+均方误差有非常好的几何意义，它对应了常用的欧几里得距离或简称欧式距离。基于均方误差最小化来进行模型求解的方法称为”最小二乘法“（least square method）。在线性回归中，最小二乘法就是试图找到一条直线，使所有样本到直线上的欧氏距离之和最小。
+那么使得 Loss 最小的 w 与 b ，就是最优模型参数。既：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归4.png?raw=true" alt="线性回归4" title="Title" /> <br />
+求解方法，我们可以先将 Loss 对 w 与 b 求导：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归5.png?raw=true" alt="线性回归5" title="Title" /></p>
+
+<p>直接令上式为0，求解 w 与 b ，就是“最小二乘法”；在一维输入，一维输出的情形下，通常直接使用最小二乘求出最优解。当输入输出维度变多后，可以使用梯度下降法迭代求解。</p>
+
+<h2 id="输入多维输出一维">输入多维，输出一维</h2>
+<p>更一般的情形是样本有d个属性描述，对于点对<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归6.png?raw=true" alt="6" title="Title" />，其中<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归7.png?raw=true" alt="7" title="Title" />，有以下线性模型：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归8.png?raw=true" alt="8" title="Title" /><br />
+使得<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归9.png?raw=true" alt="9" title="Title" /><br />
+为了便于讨论，我们把w和b吸收入向量形式w=(w;b),即<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归10.png?raw=true" alt="10" title="Title" /><br />
+相应的，把数据集D表示为一个m x (d+1)大小的矩阵X，其中每行对应于一个示例，该行前d个元素对应于示例的d个属性值，最后一个元素恒置为1，即<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归11.png?raw=true" alt="11" title="Title" /><br />
+上式可改写为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归12.png?raw=true" alt="12" title="Title" /><br />
+由于 <strong><em>X</em></strong> 的维度是m x (n + 1) ， <strong><em>W</em></strong> 的维度是 (n + 1) x 1， 方程组的个数和求解未知数个数（<strong><em>W</em></strong>）不相等，上式无法使用传统求解方程组的算法来求解。这里同样使用最小二乘法，在等式两边同乘<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归16.png?raw=true" alt="16" title="Title" /> ：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归13.png?raw=true" alt="13" title="Title" /><br />
+现在左边 <strong><em>W</em></strong> 的系数矩阵<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归17.png?raw=true" alt="17" title="Title" />的维度是(n+1) x (n+1) ，右边的矩阵维度也为 (n+1) x (n+1) ，并且此方程 <strong><em>W</em></strong> 的解正是最小二乘解，相应证明可参照数值代数中的详解。即该模型的参数最优解为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归14.png?raw=true" alt="14" title="Title" /><br />
+该线性模型为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归15.png?raw=true" alt="15" title="Title" /></p>
+
+<h2 id="输入多维输出多维">输入多维，输出多维</h2>
+<p>对于点对<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归18.png?raw=true" alt="18" title="Title" /> ，其中 <img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归19.png?raw=true" alt="19" title="Title" />，<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归20.png?raw=true" alt="20" title="Title" />，有以下线性模型：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归21.png?raw=true" alt="21" title="Title" /></p>
+
+<p>这就是神经网络中的全连接层，用矩阵的形式可写为下式：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归22.png?raw=true" alt="22" title="Title" /></p>
+
+<p>可简写为下式：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归23.png?raw=true" alt="23" title="Title" /></p>
+
+<p>其中，<strong><em>X</em></strong> 的维度为 m x (n + 1) ，<strong><em>W</em></strong> 的维度为 (n + 1) x k ，<strong><em>Y</em></strong> 的维度为 m x k 。多维输入，多维输出的线性模型，也就是全连接层，一般不使用最小二乘法求解，在神经网络寻优中，通常使用梯度下降法，求解参数。</p>
+
+<p>类似于一维输入最小化均方误差公式，有：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归24.png?raw=true" alt="24" title="Title" height="50px" width="350px" /><br />
+令<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归25.png?raw=true" alt="25" title="Title" height="20px" width="200px" />，对w^求导得到：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归26.png?raw=true" alt="26" title="Title" height="50px" width="250px" /><br />
+令上式为零可得w^最优解的闭式解，但由于涉及矩阵逆的计算，比单变量情形要复杂一些。<br />
+当<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归29.png?raw=true" alt="29" title="Title" height="20px" width="30px" />为满秩矩阵或正定矩阵时，令上式为零可得：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归27.png?raw=true" alt="27" title="Title" height="30px" width="150px" /><br />
+其中<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归28.png?raw=true" alt="28" title="Title" height="20px" width="30px" />是矩阵<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归29.png?raw=true" alt="29" title="Title" height="20px" width="30px" />的逆矩阵。令xi^ = (xi:1)，则最终学得的多元线性回归模型为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归30.png?raw=true" alt="30" title="Title" height="30px" width="200px" /></p>
+
+<p>然而，现实任务中<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归29.png?raw=true" alt="29" title="Title" height="20px" width="30px" />往往不是满秩矩阵。例如在许多任务中我们会遇到大量的变量，其数目甚至超过样例数，导致<strong><em>X</em></strong>的列数多于行数，<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/线性回归29.png?raw=true" alt="29" title="Title" height="20px" width="30px" />显然不满秩。此时可解出多个w^，它们都能使均方误差最小化。选择哪一个解作为输出，将由学习算法的归纳偏好决定，常见的做法是引入正则化项。</p>
+
+<h2 id="参考">参考：</h2>
+<ol>
+  <li>https://zhuanlan.zhihu.com/p/90917024</li>
+  <li>周志华《机器学习》</li>
+</ol>
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">03 February 2020</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2020/02/04/%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B%E4%B9%8B%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92" class="next" title="线性模型之逻辑回归">Next Post &rarr;</a>
+  
+  
+    <a href="/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/2020/01/02/%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B" class="prev" title="线性模型">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

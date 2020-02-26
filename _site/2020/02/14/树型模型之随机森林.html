@@ -1,0 +1,202 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>树型模型之随机森林 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">树型模型之随机森林</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<h2 id="集成学习">集成学习</h2>
+<p>讲随机森林之前，我们先了解一下什么叫集成学习。顾名思义，集成学习（ensemble learning）指的是将多个学习器进行有效地结合，组建一个“学习器委员会”，其中每个学习器担任委员会成员并行使投票表决权，使得委员会最后的决定更能够四方造福普度众生~…~，即其泛化性能要能优于其中任何一个学习器。</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林1.jpeg?raw=true" alt="随机森林" title="Title" height="300px" width="650px" /><br />
+在上图的集成模型中，若个体学习器都属于同一类别，例如都是决策树或都是神经网络，则称该集成为同质的（homogeneous）;若个体学习器包含多种类型的学习算法，例如既有决策树又有神经网络，则称该集成为异质的（heterogenous）。<br />
+<strong>同质集成</strong>：个体学习器称为“基学习器”（base learner），对应的学习算法为“基学习算法”（base learning algorithm）。<br />
+<strong>异质集成</strong>：个体学习器称为“组件学习器”（component learner）或直称为“个体学习器”。</p>
+
+<p>对个体学习器的要求： 要获得好的集成效果，个体学习器应该“好而不同”，即个体学习器要有一定的“准确性”，即学习器不能太坏，并且要有“多样性”，即学习器间要有差异。由于“准确性”和“多样性”本身就存在冲突，（根据交叉验证方式：“准确性”依托大量的样本，就会降低训练集的“多样性”，进而导致个体学习器“多样性”下降）所以如何产生并结合“好而不同”的个体学习器，恰恰是集成学习研究的核心内容。</p>
+
+<p>多个弱学习器集成就可以得到强学习器的推导：
+以二分类问题为例，预测值y∈{-1,1}和真实函数f(x),假定基分类器的错误率为ϵ,则有：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林2.png?raw=true" alt="随机森林" title="Title" height="80px" width="400px" /><br />
+假设集成通过简单投票法结合TT个基分类器，若有超过半数的基分类器正确，则集成分类就正确：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林3.png?raw=true" alt="随机森林" title="Title" height="100px" width="400px" /><br />
+假设基分类器的错误率相互独立，则可得：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林4.png?raw=true" alt="随机森林" title="Title" height="80px" width="600px" /><br />
+故，随着个体学习器数目TT的增大，集成的错误率将指数级下降，并最终趋于0。这就是为什么多个弱学习器能够组合出强学习器的原因所在。</p>
+
+<p><strong>集成学习分类</strong>：</p>
+<ul>
+  <li>Boosting:个体学习器之间存在强依赖关系，必须串行生成的序列化方法。</li>
+  <li>Bagging：个体学习器之间存在弱依赖关系，可同时生成的并行化方法。</li>
+</ul>
+
+<h2 id="bagging">Bagging</h2>
+<p>Bagging是一种并行式的集成学习方法，即基学习器的训练之间没有前后顺序可以同时进行，Bagging使用“有放回”采样的方式选取训练集，对于包含m个样本的训练集，进行m次有放回的随机采样操作，从而得到m个样本的采样集，这样训练集中有接近36.8%的样本没有被采到。按照相同的方式重复进行，我们就可以采集到T个包含m个样本的数据集，从而训练出T个基学习器，最终对这T个基学习器的输出进行结合。
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林5.png?raw=true" alt="随机森林" title="Title" height="50px" width="300px" /></p>
+
+<p>Bagging算法的流程如下所示：</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林6.jpeg?raw=true" alt="随机森林" title="Title" height="300px" width="600px" /><br />
+可以看出Bagging主要通过样本的扰动来增加基学习器之间的多样性，因此Bagging的基学习器应为那些对训练集十分敏感的不稳定学习算法，例如：神经网络与决策树等。从偏差-方差分解来看，Bagging算法主要关注于降低方差，即通过多次重复训练提高稳定性。不同于AdaBoost的是，Bagging可以十分简单地移植到多分类、回归等问题。总的说起来则是：AdaBoost关注于降低偏差，而Bagging关注于降低方差。</p>
+
+<h2 id="随机森林">随机森林</h2>
+<p>随机森林（Random Forest）是Bagging的一个拓展体，它的基学习器固定为决策树，多棵树也就组成了森林，而“随机”则在于选择划分属性的随机，随机森林在训练基学习器时，也采用有放回采样的方式添加 <strong>样本扰动</strong>，同时它还引入了一种 <strong>属性扰动</strong>，即在基决策树的训练过程中，在选择划分属性时，RF先从候选属性集中随机挑选出一个包含K个属性的子集，再从这个子集中选择最优划分属性，一般推荐K=log2（d）</p>
+
+<p>这样随机森林中基学习器的多样性不仅来自样本扰动，还来自属性扰动，从而进一步提升了基学习器之间的差异度。相比决策树的Bagging集成，随机森林的起始性能较差（由于属性扰动，基决策树的准确度有所下降），但随着基学习器数目的增多，随机森林往往会收敛到更低的泛化误差。同时不同于Bagging中决策树从所有属性集中选择最优划分属性，随机森林只在属性集的一个子集中选择划分属性，因此训练效率更高。
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林7.jpeg?raw=true" alt="随机森林" title="Title" height="300px" width="600px" /></p>
+
+<h2 id="结合策略">结合策略</h2>
+<p>结合策略指的是在训练好基学习器后，如何将这些基学习器的输出结合起来产生集成模型的最终输出，下面将介绍一些常用的结合策略：</p>
+<h3 id="平均法回归问题">平均法（回归问题）</h3>
+<p>对数型输出hi(x) = R, 最常见的结合策略是使用平均法（averaging）.</p>
+<ol>
+  <li>简单平均法（simple averaging）
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林8.png?raw=true" alt="随机森林" title="Title" height="100px" width="400px" /></li>
+  <li>加权平均法
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林9.png?raw=true" alt="随机森林" title="Title" height="100px" width="400px" /></li>
+</ol>
+
+<p>易知简单平均法是加权平均法的一种特例，加权平均法可以认为是集成学习研究的基本出发点。由于各个基学习器的权值在训练中得出，一般而言，在个体学习器性能相差较大时宜使用加权平均法，在个体学习器性能相差较小时宜使用简单平均法。</p>
+
+<h3 id="投票法分类问题">投票法（分类问题）</h3>
+<ol>
+  <li>绝对多数投票法
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林10.png?raw=true" alt="随机森林" title="Title" height="100px" width="400px" /></li>
+  <li>绝对多数投票法
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林11.png?raw=true" alt="随机森林" title="Title" height="100px" width="400px" /></li>
+  <li>加权投票法
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林12.png?raw=true" alt="随机森林" title="Title" height="100px" width="500px" /></li>
+</ol>
+
+<p>绝对多数投票法（majority voting）提供了拒绝选项，这在可靠性要求很高的学习任务中是一个很好的机制。同时，对于分类任务，各个基学习器的输出值有两种类型，分别为类标记和类概率。</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林13.png?raw=true" alt="随机森林" title="Title" height="200px" width="600px" /> <br />
+一些在产生类别标记的同时也生成置信度的学习器，置信度可转化为类概率使用，一般基于类概率进行结合往往比基于类标记进行结合的效果更好，需要注意的是对于异质集成，其类概率不能直接进行比较，此时需要将类概率转化为类标记输出，然后再投票。</p>
+
+<h3 id="学习法">学习法</h3>
+<p>学习法是一种更高级的结合策略，即学习出一种“投票”的学习器，Stacking是学习法的典型代表。Stacking的基本思想是：首先训练出T个基学习器，对于一个样本它们会产生T个输出，将这T个基学习器的输出与该样本的真实标记作为新的样本，m个样本就会产生一个m*T的样本集，来训练一个新的“投票”学习器。投票学习器的输入属性与学习算法对Stacking集成的泛化性能有很大的影响，书中已经提到：投票学习器采用类概率作为输入属性，选用多响应线性回归（MLR）一般会产生较好的效果。</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/随机森林14.png?raw=true" alt="随机森林" title="Title" height="400px" width="600px" /></p>
+
+<h2 id="参考">参考</h2>
+<ol>
+  <li>周志华 《机器学习》</li>
+  <li>https://blog.csdn.net/u011826404/article/details/70172971</li>
+</ol>
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">14 February 2020</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2020/02/15/gbdt" class="next" title="树型模型之GBDT">Next Post &rarr;</a>
+  
+  
+    <a href="/2020/02/13/%E6%A0%91%E5%9E%8B%E6%A8%A1%E5%9E%8B" class="prev" title="树型模型">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

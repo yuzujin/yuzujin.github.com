@@ -63,7 +63,7 @@
   </ul>
 
   
-<h2 id="cache">文件Cache</h2>
+<h2 id="文件cache">文件Cache</h2>
 
 <hr />
 
@@ -77,7 +77,7 @@
 
 <p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/cache.jpg" alt="image" /></p>
 
-<h2 id="cache-1">文件Cache数据结构</h2>
+<h2 id="文件cache数据结构">文件Cache数据结构</h2>
 
 <hr />
 
@@ -93,7 +93,7 @@
 
 <p>另一个数据结构是双向链表，Linux内核为每一片物理内存区域(zone)维护active_list和inactive_list两个双向链表，这两个list主要用来实现物理内存的回收。这两个链表上除了文件Cache之外，还包括其它匿名(Anonymous)内存，如进程堆栈等。</p>
 
-<h2 id="cache-2">文件Cache预读和替换</h2>
+<h2 id="文件cache预读和替换">文件Cache预读和替换</h2>
 
 <hr />
 
@@ -105,7 +105,7 @@
 
 <p>Linux内核中文件Cache替换的具体过程是这样的：刚刚分配的Cache项链入到inactive_list头部，并将其状态设置为active，当内存不够需要回收Cache时，系统首先从尾部开始反向扫描active_list并将状态不是referenced的项链入到inactive_list的头部，然后系统反向扫描inactive_list，如果所扫描的项的处于合适的状态就回收该项，直到回收了足够数目的Cache项。</p>
 
-<h2 id="linux-cache">Linux Cache查看</h2>
+<h2 id="linux-cache查看">Linux Cache查看</h2>
 
 <hr />
 
@@ -185,7 +185,7 @@ cached——缓存，用于已打开的文件 
 <pre><code>swap的使用：used——已使用 free——未使用
 </code></pre>
 
-<h2 id="cache-3">手动释放Cache（不建议）</h2>
+<h2 id="手动释放cache不建议">手动释放Cache（不建议）</h2>
 
 <hr />
 

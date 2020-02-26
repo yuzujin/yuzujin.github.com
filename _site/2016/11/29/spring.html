@@ -97,7 +97,7 @@
 
 <p>Spring 框架的功能可以用在任何 J2EE 服务器中，大多数功能也适用于不受管理的环境。Spring 的核心要点是：支持不绑定到特定 J2EE 服务的可重用业务和数据访问对象。毫无疑问，这样的对象可以在不同 J2EE 环境 （Web 或 EJB）、独立应用程序、测试环境之间重用。</p>
 
-<h2 id="iocdi">控制反转(IOC/DI)</h2>
+<h2 id="控制反转iocdi">控制反转(IOC/DI)</h2>
 
 <p>控制反转模式（也称作依赖性介入）的基本概念是：不创建对象，但是描述创建它们的方式。在代码中不直接与对象和服务连接，但在配置文件中描述哪一个组件需要哪一项服务。容器 （在 Spring 框架中是 IOC 容器） 负责将这些联系在一起。原因就是java程序中的每个业务逻辑至少需要两个或以上的对象来协作完成，通常，每个对象在使用他的合作对象时，自己均要使用像new object() 这样的语法来完成合作对象的申请工作。这样做的结果就是对象间的耦合度高了。而IOC的思想是：Spring容器来实现这些相互依赖对象的创建、协调工作。对象只需要关系业务逻辑本身就可以了。从这方面来说，对象如何得到他的协作对象的责任被反转了（IOC、DI）。</p>
 
@@ -147,7 +147,7 @@ Connection是由spring注入到A中的，依赖注入的名字就这么来的。
 属性，spring就是通过反射来实现注入的。关于反射的相关资料请查阅java doc。
 </code></pre>
 
-<h2 id="ioc-">IOC 容器</h2>
+<h2 id="ioc-容器">IOC 容器</h2>
 
 <p><em>BeanFactory</em></p>
 
@@ -170,7 +170,7 @@ Connection是由spring注入到A中的，依赖注入的名字就这么来的。
 <p>SpringIOC容器管理了我们定义的各种Bean对象及其相互的关系，Bean对象在Spring实现中是以BeanDefinition来描述的。
 Bean 的解析过程非常复杂，功能被分的很细，因为这里需要被扩展的地方很多，必须保证有足够的灵活性，以应对可能的变化。Bean 的解析主要就是对 Spring 配置文件的解析。</p>
 
-<h2 id="section">示例</h2>
+<h2 id="示例">示例</h2>
 
 <pre><code>接口Animal
 
@@ -209,7 +209,7 @@ public static void main(String[] args) {
 
 <p>输出I am kitty!</p>
 
-<h2 id="section-1">参考</h2>
+<h2 id="参考">参考</h2>
 
 <p>http://projects.spring.io/spring-framework/</p>
 

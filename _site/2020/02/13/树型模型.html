@@ -1,0 +1,217 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>树型模型 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">树型模型</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<h2 id="树型模型">树型模型</h2>
+
+<p>树型模型有助于探索数据集，并可视化预测的决策规则。当你听到关于树型模型的东西时，你可以将其想成是决策树或分支操作序列。树型模型高度精确、稳定且更易于解释。与线性模型相反，它们可以映射非线性关系以求解问题。</p>
+
+<p><img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型.jpeg?raw=true" alt="树型模型" title="Title" height="200px" width="650px" /></p>
+
+<h2 id="决策树">决策树</h2>
+<p>决策树(decision tress)是一类常见的机器学习方法。以二分类任务为例，我们希望从给定训练数据集学得一个模型用以对新示例进行分类，这个把样本分类的任务，可看做对“当前样本是正常分类吗？”这个问题的“决策”或“判定”过程。<br />
+顾名思义，决策树是基于树结构来进行决策的，这恰是人类面临决策问题时一种很自然的处理机制。例如下面判断西瓜是“好瓜”还是“坏瓜”的过程：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/西瓜决策树.jpg?raw=true" alt="西瓜决策树" title="Title" height="300px" width="300px" /><br />
+在上图的决策树中，决策过程的每一次判定都是对某一属性的“测试”，决策最终结论则对应最终的判定结果。一般一颗决策树包含：一个根节点、若干个内部节点和若干个叶子节点，易知：</p>
+<ul>
+  <li>每个非叶节点表示一个特征属性测试。</li>
+  <li>每个分支代表这个特征属性在某个值域上的输出。</li>
+  <li>每个叶子节点存放一个类别。</li>
+  <li>每个节点包含的样本集合通过属性测试被划分到子节点中，根节点包含样本全集。</li>
+</ul>
+
+<h3 id="决策树的构造过程">决策树的构造过程</h3>
+<p>决策树的构造是一个递归的过程，有三种情形会导致递归返回：</p>
+<ul>
+  <li>(1) 当前结点包含的样本全属于同一类别，这时直接将该节点标记为叶节点，并设为相应的类别；</li>
+  <li>(2) 当前属性集为空，或是所有样本在所有属性上取值相同，无法划分，这时将该节点标记为叶节点，并将其类别设为该节点所含样本最多的类别；</li>
+  <li>(3) 当前结点包含的样本集合为空，不能划分，这时也将该节点标记为叶节点，并将其类别设为父节点中所含样本最多的类别。算法的基本流程如下图所示：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型1.png?raw=true" alt="1" title="Title" height="550px" width="650px" /><br />
+可以看出：决策树学习的关键在于如何选择划分属性，不同的划分属性得出不同的分支结构，从而影响整颗决策树的性能。属性划分的目标是让各个划分出来的子节点尽可能地“纯”，即属于同一类别。因此下面便是介绍量化纯度的具体方法，决策树最常用的算法有三种：ID3，C4.5和CART。</li>
+</ul>
+
+<h3 id="id3算法">ID3算法</h3>
+<p>ID3算法使用信息增益为准则来选择划分属性，“信息熵”(information entropy)是度量样本结合纯度的常用指标，假定当前样本集合D中第k类样本所占比例为pk，则样本集合D的信息熵定义为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型2.png?raw=true" alt="2" title="Title" height="80px" width="400px" /><br />
+“信息熵“值越大表示越混乱，只有一个类别时，信息熵为0。
+假定通过属性划分样本集D，产生了V个分支节点，v表示其中第v个分支节点，易知：分支节点包含的样本数越多，表示该分支节点的影响力越大。故可以计算出划分后相比原始数据集D获得的“信息增益”（information gain）。<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型3.png?raw=true" alt="3" title="Title" height="80px" width="400px" /><br />
+信息增益越大，表示使用该属性划分样本集D的效果越好，因此ID3算法在递归过程中，每次选择最大信息增益的属性作为当前的划分属性。</p>
+
+<h3 id="c45算法">C4.5算法</h3>
+<p>ID3算法存在一个问题，就是偏向于取值数目较多的属性，例如：如果存在一个唯一标识，这样样本集D将会被划分为|D|个分支，每个分支只有一个样本，这样划分后的信息熵为零，十分纯净，但是对分类毫无用处。因此C4.5算法使用了“增益率”（gain ratio）来选择划分属性，来避免这个问题带来的困扰。首先使用ID3算法计算出信息增益高于平均水平的候选属性，接着C4.5计算这些候选属性的增益率，增益率定义为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型4.png?raw=true" alt="4" title="Title" height="120px" width="400px" /></p>
+
+<h3 id="cart算法">CART算法</h3>
+<p>CART决策树使用“基尼指数”（Gini index）来选择划分属性，基尼指数反映的是从样本集D中随机抽取两个样本，其类别标记不一致的概率，因此Gini(D)越小越好（表示集合越纯），基尼指数定义如下：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型5.png?raw=true" alt="5" title="Title" height="80px" width="400px" /><br />
+进而，使用属性α划分后的基尼指数为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型6.png?raw=true" alt="6" title="Title" height="80px" width="400px" /></p>
+
+<h2 id="剪枝处理">剪枝处理</h2>
+<p>从决策树的构造流程中我们可以直观地看出：不管怎么样的训练集，决策树总是能很好地将各个类别分离开来，这时就会遇到之前提到过的问题：过拟合（overfitting），即太依赖于训练样本。剪枝（pruning）则是决策树算法对付过拟合的主要手段，剪枝的策略有两种如下：</p>
+<ul>
+  <li>预剪枝（prepruning）：在构造的过程中先评估，再考虑是否分支。</li>
+  <li>后剪枝（post-pruning）：在构造好一颗完整的决策树后，自底向上，评估分支的必要性。
+评估指的是性能度量，即决策树的泛化性能。之前提到：可以使用测试集作为学习器泛化性能的近似，因此可以将数据集划分为训练集和测试集。预剪枝表示在构造数的过程中，对一个节点考虑是否分支时，首先计算决策树不分支时在测试集上的性能，再计算分支之后的性能，若分支对性能没有提升，则选择不分支（即剪枝）。后剪枝则表示在构造好一颗完整的决策树后，从最下面的节点开始，考虑该节点分支对模型的性能是否有提升，若无则剪枝，即将该节点标记为叶子节点，类别标记为其包含样本最多的类别。</li>
+</ul>
+
+<p>未剪枝决策树：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型7.jpeg?raw=true" alt="7" title="Title" height="400px" width="600px" /><br />
+预剪枝决策树：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型8.png?raw=true" alt="8" title="Title" height="350px" width="600px" /><br />
+后剪枝决策树：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型9.jpg?raw=true" alt="9" title="Title" height="400px" width="600px" /></p>
+
+<p>预剪枝与后剪枝优缺点比较
+（1）时间开销　　　</p>
+
+<p>　　•   预剪枝：训练时间开销降低，测试时间开销降低</p>
+
+<p>　　•  后剪枝：训练时间开销增加，测试时间开销降低</p>
+
+<p>（2）过/欠拟合风险</p>
+
+<p>　　•  预剪枝：过拟合风险降低，欠拟合风险增加</p>
+
+<p>　　•  后剪枝：过拟合风险降低，欠拟合风险基本不变</p>
+
+<p>（3）泛化性能：后剪枝通常优于预剪枝</p>
+
+<h2 id="连续值和缺失值处理">连续值和缺失值处理</h2>
+<p>对于连续值的属性，若每个取值作为一个分支则显得不可行，因此需要进行离散化处理，常用的方法为二分法，基本思想为：给定样本集D与连续属性α，二分法试图找到一个划分点t将样本集D在属性α上分为≤t与＞t。</p>
+<ul>
+  <li>首先将α的所有取值按升序排列，所有相邻的属性取值的均值作为候选划分点（n-1个，n为α所有的取值数目）。</li>
+  <li>计算每一个划分点划分集合D（即划分为两个分支）后的信息增益。</li>
+  <li>选择最大信息增益的划分点作为最优划分点。
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型10.png?raw=true" alt="10" title="Title" height="100px" width="400px" /><br />
+现实中常会遇到不完整的样本，即某些属性值缺失。有时若简单采取剔除，则会造成大量的信息浪费，因此在属性值缺失的情况下需要解决两个问题：（1）如何选择划分属性。（2）给定划分属性，若某样本在该属性上缺失值，如何划分到具体的分支上。假定为样本集中的每一个样本都赋予一个权重，根节点中的权重初始化为1，则定义：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型11.png?raw=true" alt="11" title="Title" height="200px" width="500px" /><br />
+对于（1）：通过在样本集D中选取在属性α上没有缺失值的样本子集，计算在该样本子集上的信息增益，最终的信息增益等于该样本子集划分后信息增益乘以样本子集占样本集的比重。即：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型12.png?raw=true" alt="12" title="Title" height="100px" width="400px" /><br />
+对于（2）：若该样本子集在属性α上的值缺失，则将该样本以不同的权重（即每个分支所含样本比例）划入到所有分支节点中。该样本在分支节点中的权重变为：<br />
+<img src="https://raw.githubusercontent.com/yuzujin/yuzujin.github.com/master/images/树型模型13.png?raw=true" alt="13" title="Title" height="100px" width="400px" /></li>
+</ul>
+
+<h2 id="参考">参考</h2>
+<p>1.周志华《机器学习》<br />
+2.https://blog.csdn.net/u011826404/article/details/53606485</p>
+
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">13 February 2020</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2020/02/14/%E6%A0%91%E5%9E%8B%E6%A8%A1%E5%9E%8B%E4%B9%8B%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97" class="next" title="树型模型之随机森林">Next Post &rarr;</a>
+  
+  
+    <a href="/2020/02/08/%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B%E4%B9%8B%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA" class="prev" title="线性模型之支持向量机">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

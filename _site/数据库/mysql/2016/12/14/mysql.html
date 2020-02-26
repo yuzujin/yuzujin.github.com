@@ -1,0 +1,227 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+   <title>MySQL事务入门 &larr; </title>
+   <meta name="author" content="Zujin" />
+
+   <link rel="start" href="/" />
+
+   <link rel="shortcut icon" href="/images/favicon.ico">
+
+	
+	
+	
+  	<link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/feedname" title="RSS feed" />
+	
+	
+
+   <!-- syntax highlighting CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/syntax.css" type="text/css" />
+
+   <!-- Homepage CSS -->
+   <link rel="stylesheet" href="/assets/themes/mark-reid/css/screen.css" type="text/css" />
+
+</head>
+<body id="">
+<div id="site">
+  
+  <div id="header">
+    <h1>
+    	<a href="/" title="Tumbler">Tumbler</a>
+    	<span class="byline">&larr; <a href="/">Zujin</a></span>
+    </h1>
+    <ul class="nav">
+      <li><a class="home" href="/">Home</a></li>
+      <li><a  href="/archive.html">Archive</a></li>
+      <li><a  href="/pages.html">Pages</a></li>
+      <li><a  href="/categories.html">Categories</a></li>
+      <li><a  href="/tags.html">Tags</a></li>
+    </ul>
+  </div>
+
+  
+
+<div id="page">
+	
+  <h1 class="emphnext">MySQL事务入门</h1>
+  <ul class="tag_box inline">
+  
+  
+
+
+  
+    
+  
+
+
+
+  </ul>
+
+  
+<h2 id="概述">概述</h2>
+
+<hr />
+
+<p>InnoDB 和 MyISAM 的最大不同有两点：一是支持事务（TRANSACTION）；二是采用了行级锁。</p>
+
+<p>事务是由一组SQL语句组成逻辑处理单元，事务具有以下4个属性，通常简称为事务的ACID属性。</p>
+
+<p><strong>事务的ACID属性</strong></p>
+
+<ul>
+  <li>原子性(Atomicity)：事务是一个原子操作单元，其对数据的修改，要么全都执行，要么全都不执行。</li>
+  <li>一致性(Consistent)：在事务开始和完成时，数据都必须保持一致状态。这意味着所有相关的数据规则都必须应用于事务的修改，以保持数据的完整性；事务结束时，所有的内部数据结构(如B树索引或双向链表)也都必须是正确的。</li>
+  <li>隔离性(Isolation)：数据库系统提供一定的隔离机制，保证事务在不受外部并发操作影响的“独立”环境执行。这意味着事务处理过程中的中间状态对外部是不可见的，反之亦然。</li>
+  <li>持久性(Durable)：事务完成之后，它对于数据的修改是永久性的，即使出现系统故障也能够保持。</li>
+</ul>
+
+<p><strong>并发事务带来的问题</strong></p>
+
+<p>相对于串行处理来说，并发处理能大大增加数据库资源的利用率，提高数据库系统的事务吞吐量，从而可以支持更多的用户。但并发事务处理也会带来一些问题，主要包括以下几种情况：</p>
+
+<ul>
+  <li>更新丢失(Lost Update)：当两个或多个事务选择同一行，然后基于最初选定的值更新该行时，由于每个事务都不知道其他事务的存在，就会发生丢失更新问题—最后的更新覆盖了由其他事务所做的更新。</li>
+  <li>脏读(Dirty Reads)：一个事务正在对一条记录做修改，在这个事务完成并提交前，这条记录的数据就处于不一致状态；这时，另一个事务也来读取同一条记录，如果不加控制，第二个事务读取了这些“脏”数据，并据此做进一步的处理，就会产生未提交的数据依赖关系，这种现象被形象地称为“脏读”。</li>
+  <li>不可重复读(Non-Repeatable Reads)：一个事务在读取某些数据后的某个时间，再次读取以前读过的数据，却发现其读出的数据已经发生改变或某些记录已经被删除，这种现象就叫做“不可重复读”。</li>
+  <li>幻读(Phanton Reads)：一个事务按相同的查询条件重新读取以前检索过的数据，却发现其他事务插入了满足其查询条件的新数据，这种现象就称为“幻读”。</li>
+</ul>
+
+<p><strong>事务隔离级别</strong></p>
+
+<p>“脏读”、“不可重复读”、“幻读”，其实都是数据库读一致性问题，必须由数据库提供一定的事务隔离机制来解决。数据库实现事务隔离的方式，可以分为两种：</p>
+
+<ul>
+  <li>一种是在读取数据前，对其加锁，阻止其他事务对数据进行修改。</li>
+  <li>另一种是不用加任何锁，通过一定机制生成一个数据请求时间点的一致性数据快照(snapshot)，并用这个快照来提供一定级别(语句级或事务级)的一致性读取。从用户的角度来看，好像是数据库可以提供同一数据的多个版本，因此，这种技术叫做<code>数据多版本并发控制(MultiVersion Concurrency Control)</code>，也经常称为“多版本数据库”。</li>
+</ul>
+
+<p>数据库的事务隔离越严格，并发副作用越小，但付出的代价越大，因为事务隔离实质上就是使事务在一定程度上“串行化”进行，这显然与“并发”是矛盾的。</p>
+
+<p>为了解决“隔离”与“并发”的矛盾，ISO/ANSI SQL92定义了4个事务隔离级别，每个级别的隔离程度不同，允许出现的副作用也不同，应用可以根据自己的业务逻辑要求，通过选择不同的隔离级别来平衡“隔离”和“并发”的矛盾。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">隔离级别</th>
+      <th style="text-align: center">读数据一致性</th>
+      <th style="text-align: center">脏读</th>
+      <th style="text-align: center">不可重复读</th>
+      <th style="text-align: center">幻读</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">未提交读</td>
+      <td style="text-align: center">最低级别，只能保证不读取物理上损坏的数据</td>
+      <td style="text-align: center">是</td>
+      <td style="text-align: center">是</td>
+      <td style="text-align: center">是</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">已提交读</td>
+      <td style="text-align: center">语句级</td>
+      <td style="text-align: center">否</td>
+      <td style="text-align: center">是</td>
+      <td style="text-align: center">是</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">可重复读</td>
+      <td style="text-align: center">事务级</td>
+      <td style="text-align: center">否</td>
+      <td style="text-align: center">否</td>
+      <td style="text-align: center">是</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">可序列化</td>
+      <td style="text-align: center">最高级别，事务级</td>
+      <td style="text-align: center">否</td>
+      <td style="text-align: center">否</td>
+      <td style="text-align: center">否</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>各具体数据库并不一定完全实现了上述4个隔离级别，MySQL支持全部4个隔离级别，但是具体实现时，有一些特点。</p>
+
+<h2 id="事务控制">事务控制</h2>
+
+<hr />
+
+<p>MySQL通过SET AUTOCOMMIT、START TRANSACTION、COMMIT和ROLLBACK等语句支持本地事务，语法如下：</p>
+
+<pre><code>START TRANSACTION|BEGIN[WORK]
+COMMIT[WORK][AND [NO] CHAIN][NO][RELEASE]
+ROLLBACK[WORK][AND [NO] CHAIN][NO][RELEASE]
+SET AUTOCOMMIT = {0|1}
+</code></pre>
+
+<p>默认情况下，MySQL是自动提交的，如果需要通过明确的commit和rollback来提交和回滚事务，那么就需要通过明确的事务控制命令来开启事务，这是和Oracle的事务管理明显不同的地方。如果应用是从Oracle数据库迁移到MySQL数据库，则需要确保应用中是否对事务进行了明确的管理。</p>
+
+<ul>
+  <li>START TRANSACTION或BEGIN语句可以开始一项新的事务。</li>
+  <li>COMMIT 和 ROLLBACK用来提交或者回滚事务。</li>
+  <li>CHAIN和RELEASE子句分别用来定义在事务提交或者回滚之后的操作，CHAIN会立即启动一个新事务，并且和刚才的事务具有相同的隔离级别，RELEASE则会断开和客户端的链接。</li>
+  <li>SET AUTOCOMMIT可以修改当前连接的提交方式，如果设置为0，则设置之后所有事务都需要通过明确的命令进行提交或者回滚。</li>
+</ul>
+
+
+  <address class="signature">
+    <a class="author" href="/">Zujin</a> 
+    <span class="date">14 December 2016</span>
+    <span class="location"></span>
+  </address>
+  
+  <div class="prev-next">
+  
+    <a href="/2016/12/30/mongodb" class="next" title="MongoDB介绍及配置">Next Post &rarr;</a>
+  
+  
+    <a href="/2016/12/13/mysql" class="prev" title="MySQL索引">&larr; Earlier Post</a>
+  
+  </div>
+  
+</div><!-- End Page -->
+
+
+
+
+  <!--
+  <div id="footer">
+  	<address>
+  		<span class="copyright">
+  			Content by <a href="/info/site.html">Zujin</a>. Design by 
+  			<a href="http://mark.reid.name/">Mark Reid</a>
+  			<br/>
+  			(<a rel="licence" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Some rights reserved</a>)			
+  		</span>
+  		<span class="engine">
+  			Powered by <a href="http://github.com/mojombo/jekyll/" title="A static, minimalist CMS">Jekyll</a>
+  		</span>
+  	</address>
+  </div>
+  -->
+  
+</div>
+
+<!--[if IE 6]>
+<script type="text/javascript"> 
+	/*Load jQuery if not already loaded*/ if(typeof jQuery == 'undefined'){ document.write("<script type=\"text/javascript\"   src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js\"></"+"script>"); var __noconflict = true; } 
+	var IE6UPDATE_OPTIONS = {
+		icons_path: "http://static.ie6update.com/hosted/ie6update/images/"
+	}
+</script>
+<script type="text/javascript" src="http://static.ie6update.com/hosted/ie6update/ie6update.js"></script>
+<![endif]-->
+
+  
+
+
+
+</body>
+</html>
+

@@ -63,7 +63,7 @@
   </ul>
 
   
-<h2 id="nginx-rewrite">Nginx Rewrite规则相关指令</h2>
+<h2 id="nginx-rewrite规则相关指令">Nginx Rewrite规则相关指令</h2>
 
 <p><strong>Nginx Rewrite规则相关<code>指令</code>有</strong>:</p>
 
@@ -141,7 +141,7 @@ if (!-f $request_filename)
   <p>这些变量可以用在rewrite规则里，也可以打印日志的时候用</p>
 </blockquote>
 
-<h2 id="apache-rewrite-">Apache Rewrite 规则相关指令</h2>
+<h2 id="apache-rewrite-规则相关指令">Apache Rewrite 规则相关指令</h2>
 
 <p><strong>Apache rewrite规则相关指令有</strong>：</p>
 
@@ -460,7 +460,7 @@ RewriteRule ^/(.*) http://hehe.test.com/ [L]
   <li>说明: 如果连接使用 SSL/TLS 模式, 则值为on , 否则值为off, 这个参数比较安全, 即使未载入 mod_ssl 模块时.</li>
 </ul>
 
-<h2 id="apachenginx">Apache和Nginx实例对比</h2>
+<h2 id="apache和nginx实例对比">Apache和Nginx实例对比</h2>
 
 <p><strong>Apache Rewrite</strong></p>
 
@@ -476,7 +476,7 @@ rewrite ^/test/$ /yzj/test.php last;
 rewrite ^/(test)<em>([a-zA-Z]+)/$ /zl/index.php?name=$1</em>$2 last;
 rewrite ^/test([0-9]*)/$ /yzj/test.php?id=$1 last;</p>
 
-<h2 id="apachenginx-rewrite">Apache与Nginx Rewrite规则的一些功能相同或类似的指令、标记对应关系</h2>
+<h2 id="apache与nginx-rewrite规则的一些功能相同或类似的指令标记对应关系">Apache与Nginx Rewrite规则的一些功能相同或类似的指令、标记对应关系</h2>
 
 <p>Apache的RewriteCond指令对应Nginx的if指令；</p>
 

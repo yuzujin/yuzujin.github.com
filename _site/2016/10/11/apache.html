@@ -73,7 +73,7 @@ LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
 LoadModule proxy_connect_module modules/mod_proxy_connect.so
 </code></pre>
 
-<h3 id="section">正向代理配置</h3>
+<h3 id="正向代理配置">正向代理配置</h3>
 
 <p>需要需改的配置文件是httpd-vhosts.conf，使用的代理命令是ProxyRequests和ProxyVia。正向代理配置场景如下所示：</p>
 
@@ -125,7 +125,7 @@ LoadModule proxy_connect_module modules/mod_proxy_connect.so
   <p>如果设置为Block ，每个代理请求中的所有”Via:”头行都将被删除。且不会产生新的”Via:”头。</p>
 </blockquote>
 
-<h3 id="section-1">正向代理测试</h3>
+<h3 id="正向代理测试">正向代理测试</h3>
 
 <p>浏览器设置（以FireFox为例）</p>
 
@@ -137,7 +137,7 @@ LoadModule proxy_connect_module modules/mod_proxy_connect.so
 
 <p>可以看到，Via：www.test.com，正向代理成功了。</p>
 
-<h3 id="section-2">反向代理配置</h3>
+<h3 id="反向代理配置">反向代理配置</h3>
 
 <p>需要需改的配置文件是httpd-vhosts.conf，使用的代理命令是ProxyPass和ProxyPassReverse。正向代理配置场景如下所示：</p>
 
@@ -242,7 +242,7 @@ www.proxypass.com/proxy/login.php 中有如下代码：</p>
   </li>
 </ol>
 
-<h3 id="section-3">反向代理测试</h3>
+<h3 id="反向代理测试">反向代理测试</h3>
 
 <p>访问 www.test.com/proxy/login.php</p>
 

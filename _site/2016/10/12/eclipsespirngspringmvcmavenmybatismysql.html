@@ -106,7 +106,7 @@
 
 <p>下面详细讲述使用eclipse进行Spring+SpringMVC+Maven+Mybatis+MySQL项目搭建过程，包括搭建步骤和配置步骤。</p>
 
-<h2 id="section">创建数据库和表</h2>
+<h2 id="创建数据库和表">创建数据库和表</h2>
 
 <pre><code>CREATE TABLE `t_user` (
   `USER_ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -120,7 +120,7 @@ INSERT INTO t_user (USER_ID, USER_NAME, USER_PASSWORD) VALUES (1, 'test1', '1234
 INSERT INTO t_user (USER_ID, USER_NAME, USER_PASSWORD) VALUES (2, 'test2', '123456');
 </code></pre>
 
-<h2 id="maven">创建Maven工程</h2>
+<h2 id="创建maven工程">创建Maven工程</h2>
 
 <ol>
   <li>选择工程</li>
@@ -389,9 +389,9 @@ INSERT INTO t_user (USER_ID, USER_NAME, USER_PASSWORD) VALUES (2, 'test2', '1234
 &lt;/project&gt;
 </code></pre>
 
-<h2 id="section-1">配置文件</h2>
+<h2 id="配置文件">配置文件</h2>
 
-<h3 id="mybatis">mybatis配置</h3>
+<h3 id="mybatis配置">mybatis配置</h3>
 
 <p>在src/main/resources下创建mybatis目录，在目录下创建mybatis-config.xml文件：</p>
 
@@ -402,7 +402,7 @@ INSERT INTO t_user (USER_ID, USER_NAME, USER_PASSWORD) VALUES (2, 'test2', '1234
 &lt;/configuration&gt;
 </code></pre>
 
-<h3 id="section-2">数据源配置</h3>
+<h3 id="数据源配置">数据源配置</h3>
 
 <p>在src/main/resources下创建properties目录，在目录下创建test_jdbc.properties文件：</p>
 
@@ -414,7 +414,7 @@ jdbc_password=123
 
 <p>其中jdbc_url中的useUnicode=true&amp;characterEncoding=utf8指定编码格式，zeroDateTimeBehavior=round会将0000-00-00 00:00:00转换为最近的日期0001-01-01，否则会报错Cannot convert value ‘0000-00-00 00:00:00’ from column 1 to TIMESTAMP。</p>
 
-<h3 id="section-3">表映射文件配置</h3>
+<h3 id="表映射文件配置">表映射文件配置</h3>
 
 <p>在src/main/resources下创建mapper目录，在目录下创建userMapper.xml文件：</p>
 
@@ -435,7 +435,7 @@ jdbc_password=123
     &lt;/mapper&gt;
 </code></pre>
 
-<h3 id="spring-application">Spring application文件配置</h3>
+<h3 id="spring-application文件配置">Spring application文件配置</h3>
 
 <p>在src/main/resources下创建applicationContext.xml文件：</p>
 
@@ -503,9 +503,9 @@ jdbc_password=123
 &lt;/beans&gt;
 </code></pre>
 
-<h2 id="section-4">接口和类的配置</h2>
+<h2 id="接口和类的配置">接口和类的配置</h2>
 
-<h3 id="pojo">添加POJO类</h3>
+<h3 id="添加pojo类">添加POJO类</h3>
 
 <p>在src/main/java下创建package为com.test.global.mobile.tools.pb.model，在package下创建User.java类文件：</p>
 
@@ -544,7 +544,7 @@ public class User {
 }
 </code></pre>
 
-<h3 id="dao">添加DAO层类文件</h3>
+<h3 id="添加dao层类文件">添加DAO层类文件</h3>
 
 <p>在src/main/java下创建package为com.test.global.mobile.tools.pb.dao，在package下创建UserDao.java类文件：</p>
 
@@ -563,7 +563,7 @@ public interface UserDao {
 }
 </code></pre>
 
-<h3 id="section-5">添加实现类和接口</h3>
+<h3 id="添加实现类和接口">添加实现类和接口</h3>
 
 <p>在src/main/java下创建package为com.test.global.mobile.tools.pb.service，在package下创建UserService.java接口类和UserServiceImpl实现类：</p>
 
@@ -596,9 +596,9 @@ public class UserServiceImpl implements UserService {
 }
 </code></pre>
 
-<h2 id="section-6">单元测试</h2>
+<h2 id="单元测试">单元测试</h2>
 
-<h3 id="section-7">添加测试用例类</h3>
+<h3 id="添加测试用例类">添加测试用例类</h3>
 
 <p>在src/test/java下创建包com.test.baseTest，包下面创建测试用例类SpringTestCase.java：</p>
 
@@ -642,7 +642,7 @@ public class UserServiceTest extends SpringTestCase {
 
 <p>运行单元测试，UserServiceTest右键Run As –&gt;Junit Test，在控制台可以看到运行结果。</p>
 
-<h2 id="springmvc">配置Springmvc</h2>
+<h2 id="配置springmvc">配置Springmvc</h2>
 
 <p>在src/main/resource中添加springmvc文件夹，然后添加文件spring-mvc.xml，内容如下：</p>
 
@@ -670,7 +670,7 @@ public class UserServiceTest extends SpringTestCase {
 &lt;/beans&gt;
 </code></pre>
 
-<h2 id="webxml">配置web.xml</h2>
+<h2 id="配置webxml">配置web.xml</h2>
 
 <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -753,7 +753,7 @@ public class UserServiceTest extends SpringTestCase {
 &lt;/web-app&gt;
 </code></pre>
 
-<h2 id="section-8">添加控制类</h2>
+<h2 id="添加控制类">添加控制类</h2>
 
 <p>在src/main/java下新建一个包com.test.global.mobile.tools.pd.controller.然后新建一个类UserController.java,其内容如下</p>
 
@@ -784,7 +784,7 @@ public class UserController {
 
 <p>完成。</p>
 
-<h2 id="section-9">遇到的问题</h2>
+<h2 id="遇到的问题">遇到的问题</h2>
 
 <p>解决Cannot change version of project facet Dynamic web module to 2.5：</p>
 
