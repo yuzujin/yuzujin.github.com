@@ -2,8 +2,8 @@
 layout: post
 title: "mysql binlog入门"
 description: ""
-category: 
-tags: []
+category: [MySQL]
+tags: [binlog]
 ---
 {% include JB/setup %}
 

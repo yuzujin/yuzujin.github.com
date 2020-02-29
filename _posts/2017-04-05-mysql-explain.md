@@ -2,8 +2,8 @@
 layout: post
 title: "MySQL explain命令详解"
 description: ""
-category: 
-tags: []
+category: [MySQL]
+tags: [explain命令]
 ---
 {% include JB/setup %}
 
