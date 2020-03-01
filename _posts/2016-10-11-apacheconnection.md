@@ -2,8 +2,8 @@
 layout: post
 title: "查看Apache的connection数及time_wait过多问题解决"
 description: ""
-category: 
-tags: []
+category: [Apache]
+tags: [连接]
 ---
 {% include JB/setup %}
 

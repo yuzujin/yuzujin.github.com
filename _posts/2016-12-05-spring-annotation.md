@@ -2,8 +2,8 @@
 layout: post
 title: "Spring Annotation详解"
 description: ""
-category: 
-tags: []
+category: [Java Web]
+tags: [Annotation]
 ---
 {% include JB/setup %}
 

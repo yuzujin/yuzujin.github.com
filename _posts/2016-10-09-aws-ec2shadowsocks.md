@@ -2,8 +2,8 @@
 layout: post
 title: "在aws ec2实例上搭建shadowsocks服务"
 description: ""
-category: 
-tags: []
+category: [基础架构]
+tags: [代理]
 ---
 {% include JB/setup %}
 

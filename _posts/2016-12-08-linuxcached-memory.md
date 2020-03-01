@@ -2,8 +2,8 @@
 layout: post
 title: "Linux的Cached Memory"
 description: ""
-category: 
-tags: []
+category: [基础架构]
+tags: [缓存]
 ---
 {% include JB/setup %}
 

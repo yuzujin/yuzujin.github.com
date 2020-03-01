@@ -2,8 +2,8 @@
 layout: post
 title: "Spring AOP介绍"
 description: ""
-category: 
-tags: []
+category: [Java Web]
+tags: [AOP]
 ---
 {% include JB/setup %}
 

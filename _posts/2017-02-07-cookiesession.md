@@ -2,8 +2,8 @@
 layout: post
 title: "Cookie和Session的区别"
 description: ""
-category: 
-tags: []
+category: [基础架构]
+tags: [Cookie]
 ---
 {% include JB/setup %}
 

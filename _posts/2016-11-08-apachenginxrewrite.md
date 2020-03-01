@@ -2,8 +2,8 @@
 layout: post
 title: "Apache和Nginx的rewrite规则浅析"
 description: ""
-category: 
-tags: []
+category: [Apache]
+tags: [rewrite]
 ---
 {% include JB/setup %}
 

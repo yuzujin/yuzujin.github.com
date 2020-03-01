@@ -2,8 +2,8 @@
 layout: post
 title: "Spring Boot入门"
 description: ""
-category: 
-tags: []
+category: [Java Web]
+tags: [SprintBoot]
 ---
 {% include JB/setup %}
 

@@ -2,8 +2,8 @@
 layout: post
 title: "SpringMVC框架理解"
 description: ""
-category: 
-tags: []
+category: [Java Web]
+tags: [MVC框架]
 ---
 {% include JB/setup %}
 
